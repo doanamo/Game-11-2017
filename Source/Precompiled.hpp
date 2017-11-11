@@ -30,6 +30,9 @@
     #include <windows.h>
 #endif
 
+// GLM
+#include <glm/glm.hpp>
+
 // GLEW
 #include <gl/glew.h>
 

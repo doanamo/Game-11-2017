@@ -178,6 +178,13 @@ If("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 EndIf()
 
 #
+# GLM
+#
+
+# Add include directory.
+Include_Directories("../External/GLM-0.9.8.5")
+
+#
 # OpenGL
 #
 
