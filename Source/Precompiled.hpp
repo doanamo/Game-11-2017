@@ -30,6 +30,9 @@
     #include <windows.h>
 #endif
 
+// GLEW
+#include <gl/glew.h>
+
 // GLFW
 #include <glfw/glfw3.h>
 

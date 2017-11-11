@@ -7,6 +7,8 @@ int main(int argc, char* argv[])
     Logger::Initialize();
 
     // Initialize GLFW library.
+    glewInit();
+
     if(!glfwInit())
     {
         Log() << "Failed to initialize GLFW library!";
@@ -26,9 +28,20 @@ int main(int argc, char* argv[])
 
     glfwMakeContextCurrent(window);
 
+    // Initialize GLEW library.
+    GLenum error = glewInit();
+
+    if(error != GLEW_OK)
+    {
+        Log() << "GLEW Error: " << glewGetErrorString(error);
+        Log() << "Couldn't initialize GLEW library.";
+        return -1;
+    }
+
     // Main application loop.
     while(!glfwWindowShouldClose(window))
     {
+        glClear(GL_COLOR_BUFFER_BIT);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

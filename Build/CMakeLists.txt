@@ -178,6 +178,37 @@ If("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 EndIf()
 
 #
+# OpenGL
+#
+
+# Find library.
+Find_Package(OpenGL REQUIRED)
+
+# Link library.
+Target_Link_Libraries(${TargetName} ${OPENGL_gl_LIBRARY})
+
+#
+# GLEW
+#
+
+# Set build options.
+Set(BUILD_UTILS OFF)
+
+# Add library directory.
+Add_Subdirectory("../External/GLEW-2.1.0/build/cmake" "GLEW" EXCLUDE_FROM_ALL)
+
+# Add include directory.
+Include_Directories("../External/GLEW-2.1.0/include")
+
+# Move library target to dependencies.
+Set_Property(TARGET "glew_s" PROPERTY PROJECT_LABEL "GLEW")
+Set_Property(TARGET "glew_s" PROPERTY FOLDER "External")
+
+# Link library target.
+Add_Dependencies(${TargetName} "glew_s")
+Target_Link_Libraries(${TargetName} "glew_s")
+
+#
 # GLFW
 #
 
