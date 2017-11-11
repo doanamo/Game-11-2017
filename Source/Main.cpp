@@ -11,9 +11,9 @@ int main(int argc, char* argv[])
     System::Config config;
     config.Initialize("Game.cfg");
 
-    int width = config.GetVariable<int>("Window.Width", 1024);
-    int height = config.GetVariable<int>("Window.Height", 576);
-    bool vsync = config.GetVariable<bool>("Window.Vsync", true);
+    int width = config.GetParameter<int>("Window.Width", 1024);
+    int height = config.GetParameter<int>("Window.Height", 576);
+    bool vsync = config.GetParameter<bool>("Window.Vsync", false);
 
     // Initialize GLFW library.
     glewInit();

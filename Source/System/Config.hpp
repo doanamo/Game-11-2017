@@ -12,9 +12,9 @@
         System::Config config;
         config.Initialize("Config.cfg");
     
-        width = config.GetVariable<int>("Window.Width", 1024);
-        height = config.GetVariable<int>("Window.Height", 576);
-        vsync = config.GetVariable<bool>("Window.Vsync", true);
+        width = config.GetParameter<int>("Window.Width", 1024);
+        height = config.GetParameter<int>("Window.Height", 576);
+        vsync = config.GetParameter<bool>("Window.Vsync", true);
 */
 
 namespace System
@@ -30,26 +30,47 @@ namespace System
         void Cleanup();
 
         // Initializes the config.
-        // Can load variables from a configuration file.
+        // Can load parameters from a configuration file.
         bool Initialize(const std::string filename = "");
 
-        // Sets a config variable with provided value.
+        // Sets a config parameters with provided value.
         template<typename Type>
-        void SetVariable(const std::string name, const Type& value);
+        void SetParameter(const std::string name, const Type& value);
 
-        // Gets a config variable.
-        // Returns a specified default value if queried variable does not exit.
-        // Can create a variable that does not exists with provided default value.
+        // Gets a config parameters.
+        // Returns a specified default value if queried parameters does not exit.
+        // Can create a parameters that does not exists with provided default value.
         template<typename Type>
-        Type GetVariable(const std::string name, const Type& default, bool create = false);
+        Type GetParameter(const std::string name, const Type& default, bool create = false);
+
+    private:
+        // Converts a value from its type to a string.
+        template<typename Type>
+        std::string ConvertValueFrom(const Type& value);
+
+        template<>
+        std::string ConvertValueFrom(const std::string& value);
+
+        template<>
+        std::string ConvertValueFrom(const bool& value);
+
+        // Converts a value from a string back to its type.
+        template<typename Type>
+        Type ConvertValueTo(const std::string& text);
+
+        template<>
+        std::string ConvertValueTo(const std::string& text);
+
+        template<>
+        bool ConvertValueTo(const std::string& text);
 
     private:
         // Type declarations.
-        typedef std::map<std::string, std::string> VariableMap;
+        typedef std::map<std::string, std::string> ParameterMap;
 
     private:
-        // Map of variables.
-        VariableMap m_variables;
+        // Map of parameters.
+        ParameterMap m_parameters;
 
         // Initialization state.
         bool m_initialized;
@@ -57,48 +78,85 @@ namespace System
 
     // Template implementations.
     template<typename Type>
-    void Config::SetVariable(const std::string name, const Type& value)
+    void Config::SetParameter(const std::string name, const Type& value)
     {
         if(!m_initialized)
             return;
 
-        // Set the variable value.
-        auto result = m_variables.insert_or_assign(name, std::to_string(value));
-        Assert(result.first != m_variables.end(), "Failed to set a config variable!");
+        // Set parameter's value.
+        auto result = m_parameters.insert_or_assign(name, ConvertValueFrom<Type>(value));
+        Assert(result.first != m_parameters.end(), "Failed to set a config parameter!");
     }
 
     template<typename Type>
-    Type Config::GetVariable(const std::string name, const Type& default, bool create)
+    Type Config::GetParameter(const std::string name, const Type& default, bool create)
     {
         if(!m_initialized)
             return Type();
 
-        // Find the variable by name.
-        auto it = m_variables.find(name);
+        // Find a parameter by name.
+        auto it = m_parameters.find(name);
 
-        if(it == m_variables.end())
+        if(it == m_parameters.end())
         {
             if(create)
             {
-                // Insert a new variable if it does not exist yet.
-                auto result = m_variables.insert(std::make_pair(name, std::to_string(default)));
-                Assert(result.first != m_variables.end(), "Failed to insert a new config variable!");
-                Assert(result.second, "Failed to insert a new config variable!");
+                // Insert a new parameter if it does not exist yet.
+                auto result = m_parameters.insert(std::make_pair(name, std::to_string(default)));
+                Assert(result.first != m_parameters.end(), "Failed to insert a new config parameter!");
+                Assert(result.second, "Failed to insert a new config parameter!");
 
                 it = result.first;
             }
             else
             {
-                // Return default value without inserting a new variable.
+                // Return default value without inserting a new parameter.
                 return default;
             }
         }
 
-        // Convert variable's value from a string and return it.
-        std::istringstream convert(it->second);
+        // Convert parameter's value from a string and return it.
+        return ConvertValueTo<Type>(it->second);
+    }
+
+    template<typename Type>
+    std::string Config::ConvertValueFrom(const Type& value)
+    {
+        return std::to_string(value);
+    }
+
+    template<>
+    std::string Config::ConvertValueFrom(const std::string& value)
+    {
+        return value;
+    }
+
+    template<>
+    std::string Config::ConvertValueFrom(const bool& value)
+    {
+        return value ? "true" : "false";
+    }
+
+    template<typename Type>
+    Type Config::ConvertValueTo(const std::string& text)
+    {
+        std::istringstream convert(text);
 
         Type value;
         convert >> value;
         return value;
     }
+
+    template<>
+    std::string Config::ConvertValueTo(const std::string& text)
+    {
+        return text;
+    }
+
+    template<>
+    bool Config::ConvertValueTo(const std::string& text)
+    {
+        return text == "true";
+    }
+
 }
