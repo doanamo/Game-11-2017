@@ -33,4 +33,22 @@ namespace Utility
 
     // Gets the content of a binary file.
     std::vector<char> GetBinaryFileContent(std::string filename);
+
+    // Removes leading characters in a string.
+    inline std::string LeftStringTrim(std::string& text, const char* characters = " ")
+    {
+        return text.erase(0, text.find_first_not_of(characters));
+    }
+
+    // Removes trailing character in a string.
+    inline std::string RightStringTrim(std::string& text, const char* characters = " ")
+    {
+        return text.erase(text.find_last_not_of(characters) + 1);
+    }
+
+    // Removes characters from both ends of a string.
+    inline std::string StringTrim(std::string& text, const char* characters = " ")
+    {
+        return LeftStringTrim(RightStringTrim(text, characters), characters);
+    }
 }
