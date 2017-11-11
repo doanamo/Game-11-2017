@@ -53,6 +53,9 @@ Set(SourceFiles
     "Logger/Outputs/ConsoleOutput.cpp"
     "Logger/Outputs/FileOutput.hpp"
     "Logger/Outputs/FileOutput.cpp"
+
+	"System/Config.hpp"
+	"System/Config.cpp"
 )
 
 # Append source directory path to each source file.

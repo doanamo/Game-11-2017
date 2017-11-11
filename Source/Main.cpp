@@ -1,10 +1,19 @@
 #include "Precompiled.hpp"
+#include "System/Config.hpp"
 
 int main(int argc, char* argv[])
 {
     Build::Initialize();
     Debug::Initialize();
     Logger::Initialize();
+
+    // Initialize a config instance.
+    System::Config config;
+    config.Initialize("Game.cfg");
+
+    int width = config.GetVariable<int>("Window.Width", 1024);
+    int height = config.GetVariable<int>("Window.Height", 576);
+    bool vsync = config.GetVariable<bool>("Window.Vsync", true);
 
     // Initialize GLFW library.
     glewInit();
@@ -18,7 +27,7 @@ int main(int argc, char* argv[])
     SCOPE_GUARD(glfwTerminate());
 
     // Create a window.
-    GLFWwindow* window = glfwCreateWindow(1024, 576, "Game", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(width, height, "Game", nullptr, nullptr);
 
     if(!window)
     {
