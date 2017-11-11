@@ -1,0 +1,5 @@
+# Temporary build directories.
+Build/CMake-*/
+
+# Hidden backup files.
+*~
