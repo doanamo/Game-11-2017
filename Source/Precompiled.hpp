@@ -30,6 +30,9 @@
     #include <windows.h>
 #endif
 
+// GLFW
+#include <glfw/glfw3.h>
+
 /*
     Project
 */
