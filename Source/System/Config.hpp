@@ -34,12 +34,13 @@ namespace System
         bool Initialize(const std::string filename = "");
 
         // Sets a config parameters with provided value.
+        // Creates a parameter that does not exists with provided value by default.
         template<typename Type>
-        void SetParameter(const std::string name, const Type& value);
+        void SetParameter(const std::string name, const Type& value, bool create = true);
 
         // Gets a config parameters.
         // Returns a specified default value if queried parameters does not exit.
-        // Can create a parameters that does not exists with provided default value.
+        // Can create a parameter that does not exists with provided default value.
         template<typename Type>
         Type GetParameter(const std::string name, const Type& default, bool create = false);
 
@@ -78,14 +79,32 @@ namespace System
 
     // Template implementations.
     template<typename Type>
-    void Config::SetParameter(const std::string name, const Type& value)
+    void Config::SetParameter(const std::string name, const Type& value, bool create)
     {
         if(!m_initialized)
             return;
 
-        // Set parameter's value.
-        auto result = m_parameters.insert_or_assign(name, ConvertValueFrom<Type>(value));
-        Assert(result.first != m_parameters.end(), "Failed to set a config parameter!");
+        // Find a parameter by name.
+        auto it = m_parameters.find(name);
+
+        if(it == m_parameters.end())
+        {
+            // Insert a new parameter if it does not exist yet.
+            if(create)
+            {
+                auto result = m_parameters.emplace(std::make_pair(name, ConvertValueFrom<Type>(value)));
+                Assert(result.first != m_parameters.end(), "Failed to insert a new config parameter!");
+                Assert(result.second, "Failed to insert a new config parameter!");
+            }
+
+            // Return after creating a new parameter or not.
+            return;
+        }
+        else
+        {
+            // Asign a new value for the found parameter.
+            it->second = ConvertValueFrom<Type>(value);
+        }
     }
 
     template<typename Type>
@@ -99,24 +118,22 @@ namespace System
 
         if(it == m_parameters.end())
         {
+            // Insert a new parameter if it does not exist yet.
             if(create)
             {
-                // Insert a new parameter if it does not exist yet.
-                auto result = m_parameters.insert(std::make_pair(name, std::to_string(default)));
+                auto result = m_parameters.emplace(std::make_pair(name, ConvertValueFrom<Type>(default)));
                 Assert(result.first != m_parameters.end(), "Failed to insert a new config parameter!");
                 Assert(result.second, "Failed to insert a new config parameter!");
+            }
 
-                it = result.first;
-            }
-            else
-            {
-                // Return default value without inserting a new parameter.
-                return default;
-            }
+            // Return default value.
+            return default;
         }
-
-        // Convert parameter's value from a string and return it.
-        return ConvertValueTo<Type>(it->second);
+        else
+        {
+            // Convert parameter's value from a string and return it.
+            return ConvertValueTo<Type>(it->second);
+        }
     }
 
     template<typename Type>

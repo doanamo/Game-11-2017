@@ -80,7 +80,7 @@ bool Config::Initialize(const std::string filename)
                 value = Utility::StringTrim(value);
 
                 // Set a new parameter.
-                SetParameter(section + "." + name, value);
+                SetParameter(section + "." + name, value, true);
             }
         }
 
