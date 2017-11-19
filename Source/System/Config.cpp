@@ -97,6 +97,17 @@ bool Config::Initialize(const std::string filename)
         Log() << LogInitializeError(filename) << "Could not open the file.";
     }
 
+    // Print all read parameters.
+    if(!m_parameters.empty())
+    {
+        Log() << "Printing a list of parameters from \"" << filename << "\" file...";
+
+        for(auto parameter : m_parameters)
+        {
+            Log() << "Parameter \"" << parameter.first << "\" is set to \"" << parameter.second << "\".";
+        }
+    }
+
     // Success!
     return m_initialized;
 }
