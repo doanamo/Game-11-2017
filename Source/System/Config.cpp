@@ -2,6 +2,12 @@
 #include "Config.hpp"
 using namespace System;
 
+namespace
+{
+    // Log message strings.
+    #define LogInitializeError(filename) "Could not read a config from \"" << filename << "\" file! "
+}
+
 Config::Config() :
     m_initialized(false)
 {
@@ -88,7 +94,7 @@ bool Config::Initialize(const std::string filename)
     }
     else
     {
-        Log() << "Could not read a config from \"" << filename << "\" file!";
+        Log() << LogInitializeError(filename) << "Could not open the file.";
     }
 
     // Success!
