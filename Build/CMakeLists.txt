@@ -56,6 +56,8 @@ Set(SourceFiles
 
 	"System/Config.hpp"
 	"System/Config.cpp"
+	"System/Window.hpp"
+	"System/Window.cpp"
 )
 
 # Append source directory path to each source file.

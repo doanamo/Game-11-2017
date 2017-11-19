@@ -1,5 +1,6 @@
 #include "Precompiled.hpp"
 #include "System/Config.hpp"
+#include "System/Window.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -7,52 +8,32 @@ int main(int argc, char* argv[])
     Debug::Initialize();
     Logger::Initialize();
 
-    // Initialize a config instance.
+    // Instantiate a config instance.
     System::Config config;
     config.Initialize("Game.cfg");
 
-    int width = config.GetParameter<int>("Window.Width", 1024);
-    int height = config.GetParameter<int>("Window.Height", 576);
-    bool vsync = config.GetParameter<bool>("Window.Vsync", false);
+    // Preare window initialization structure.
+    System::WindowInfo windowInfo;
+    windowInfo.name = "Game";
+    windowInfo.width = config.GetParameter<int>("Window.Width", 1024);
+    windowInfo.height = config.GetParameter<int>("Window.Height", 576);
+    windowInfo.vsync = config.GetParameter<bool>("Window.Vsync", false);
 
-    // Initialize GLFW library.
-    glewInit();
+    // Instantiate a window instance.
+    System::Window window;
 
-    if(!glfwInit())
+    if(!window.Initialize(windowInfo))
     {
-        Log() << "Failed to initialize GLFW library!";
+        Log() << "Fatal error encountered! Could not create a window.";
         return -1;
     }
 
-    SCOPE_GUARD(glfwTerminate());
-
-    // Create a window.
-    GLFWwindow* window = glfwCreateWindow(width, height, "Game", nullptr, nullptr);
-
-    if(!window)
+    // Main loop processing.
+    while(window.IsOpen())
     {
-        Log() << "Failed to create a window!";
-        return -1;
-    }
+        window.ProcessEvents();
 
-    glfwMakeContextCurrent(window);
-
-    // Initialize GLEW library.
-    GLenum error = glewInit();
-
-    if(error != GLEW_OK)
-    {
-        Log() << "GLEW Error: " << glewGetErrorString(error);
-        Log() << "Couldn't initialize GLEW library.";
-        return -1;
-    }
-
-    // Main application loop.
-    while(!glfwWindowShouldClose(window))
-    {
-        glClear(GL_COLOR_BUFFER_BIT);
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        window.Present();
     }
 
     return 0;
