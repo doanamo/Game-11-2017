@@ -11,7 +11,13 @@ int main(int argc, char* argv[])
 
     // Instantiate a config instance.
     System::Config config;
-    
+
+    if(!config.Initialize())
+    {
+        Log() << "Fatal error encountered! Could not initialize a config.";
+        return -1;
+    }
+
     if(!config.LoadFromFile("Game.cfg"))
     {
         Log() << "Fatal error encountered! Could not load a config file.";
