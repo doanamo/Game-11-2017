@@ -10,7 +10,7 @@
 
     Example usage:
         System::Config config;
-        config.Initialize();
+        config.LoadFromFile("Game.cfg");
     
         width = config.GetParameter<int>("Window.Width", 1024);
         height = config.GetParameter<int>("Window.Height", 576);
@@ -28,9 +28,6 @@ namespace System
 
         // Restores instance to its original state.
         void Cleanup();
-
-        // Initializes the config instance.
-        bool Initialize();
 
         // Reads parameters from a configuration file.
         bool LoadFromFile(const std::string filename = "");
@@ -74,18 +71,12 @@ namespace System
     private:
         // Map of parameters.
         ParameterMap m_parameters;
-
-        // Initialization state.
-        bool m_initialized;
     };
 
     // Template implementations.
     template<typename Type>
     void Config::SetParameter(const std::string name, const Type& value, bool create)
     {
-        if(!m_initialized)
-            return;
-
         // Find a parameter by name.
         auto it = m_parameters.find(name);
 
@@ -112,9 +103,6 @@ namespace System
     template<typename Type>
     Type Config::GetParameter(const std::string name, const Type& default, bool create)
     {
-        if(!m_initialized)
-            return Type();
-
         // Find a parameter by name.
         auto it = m_parameters.find(name);
 

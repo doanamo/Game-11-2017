@@ -8,52 +8,22 @@ namespace
     #define LogLoadError(filename) "Could not load a config from \"" << filename << "\" file! "
 }
 
-Config::Config() :
-    m_initialized(false)
+Config::Config()
 {
 }
 
 Config::~Config()
 {
-    this->Cleanup();
 }
 
 void Config::Cleanup()
 {
-    if(!m_initialized)
-        return;
-
-    // Clear the variable map.
+    // Clear the parameter map.
     Utility::ClearContainer(m_parameters);
-
-    // Initialization state.
-    m_initialized = false;
-}
-
-bool Config::Initialize()
-{
-    // Cleanup this instance.
-    this->Cleanup();
-
-    // Setup a cleanup guard.
-    SCOPE_GUARD
-    (
-        if(!m_initialized)
-        {
-            m_initialized = true;
-            this->Cleanup();
-        }
-    );
-
-    // Success!
-    return m_initialized = true;
 }
 
 bool Config::LoadFromFile(const std::string filename)
 {
-    if(!m_initialized)
-        return false;
-
     // Open the file.
     std::ifstream file(Build::GetWorkingDir() + filename);
 
@@ -62,6 +32,8 @@ bool Config::LoadFromFile(const std::string filename)
         Log() << LogLoadError(filename) << "Could not open the file.";
         return false;
     }
+
+    Log() << "Parsing parameters from \"" << filename << "\" file...";
 
     // Load parameters from the file.
     std::string section;
@@ -97,21 +69,12 @@ bool Config::LoadFromFile(const std::string filename)
 
             // Set a new parameter.
             this->SetParameter(section + "." + name, value, true);
+
+            Log() << "Parameter \"" << section << "." << name << "\" has been set to \"" << value << "\".";
         }
     }
 
-    Log() << "Loaded a config from \"" << filename << "\" file.";
-
-    // Print all read parameters.
-    if(!m_parameters.empty())
-    {
-        Log() << "Printing a list of parameters from \"" << filename << "\" file...";
-
-        for(auto parameter : m_parameters)
-        {
-            Log() << "Parameter \"" << parameter.first << "\" is set to \"" << parameter.second << "\".";
-        }
-    }
+    Log() << "Finished loading a config from \"" << filename << "\" file.";
 
     // Success!
     return true;
