@@ -1,5 +1,6 @@
 #include "Precompiled.hpp"
 #include "System/Config.hpp"
+#include "System/Timer.hpp"
 #include "System/Window.hpp"
 
 int main(int argc, char* argv[])
@@ -13,7 +14,7 @@ int main(int argc, char* argv[])
     
     if(!config.LoadFromFile("Game.cfg"))
     {
-        Log() << "Fatal error encountered! There was an error loading a config file.";
+        Log() << "Fatal error encountered! Could not load a config file.";
         return -1;
     }
 
@@ -29,16 +30,31 @@ int main(int argc, char* argv[])
 
     if(!window.Initialize(windowInfo))
     {
-        Log() << "Fatal error encountered! Could not create a window.";
+        Log() << "Fatal error encountered! Could not initialize a window.";
         return -1;
     }
+
+    // Instantiate a timer instance.
+    System::Timer timer;
+
+    if(!timer.Initialize())
+    {
+        Log() << "Fatal error encountered! Could not initialize a timer.";
+        return -1;
+    }
+
+    timer.SetMaxFrameDelta(1.0f);
 
     // Main loop processing.
     while(window.IsOpen())
     {
+        float frameDelta = timer.CalculateFrameDelta();
+
         window.ProcessEvents();
 
         window.Present();
+
+        timer.Tick();
     }
 
     return 0;

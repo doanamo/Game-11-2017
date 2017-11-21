@@ -56,6 +56,8 @@ Set(SourceFiles
 
 	"System/Config.hpp"
 	"System/Config.cpp"
+	"System/Timer.hpp"
+	"System/Timer.cpp"
 	"System/Window.hpp"
 	"System/Window.cpp"
 )
