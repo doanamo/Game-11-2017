@@ -5,6 +5,7 @@
 
 int main(int argc, char* argv[])
 {
+    // Initialize core systems.
     Build::Initialize();
     Debug::Initialize();
     Logger::Initialize();
@@ -29,7 +30,7 @@ int main(int argc, char* argv[])
     windowInfo.name = "Game";
     windowInfo.width = config.GetParameter<int>("Window.Width", 1024);
     windowInfo.height = config.GetParameter<int>("Window.Height", 576);
-    windowInfo.vsync = config.GetParameter<bool>("Window.Vsync", false);
+    windowInfo.vsync = config.GetParameter<bool>("Window.Vsync", true);
 
     // Instantiate a window instance.
     System::Window window;
@@ -51,15 +52,23 @@ int main(int argc, char* argv[])
 
     timer.SetMaxFrameDelta(1.0f);
 
-    // Main loop processing.
+    // Main loop.
     while(window.IsOpen())
     {
+        // Calculate frame delta time.
         float frameDelta = timer.CalculateFrameDelta();
 
+        // Process window evenets.
         window.ProcessEvents();
 
+        // Clear the framebuffer.
+        glClearColor(0.0f, 0.35f, 0.35f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Present to the window.
         window.Present();
 
+        // Tick the timer.
         timer.Tick();
     }
 
