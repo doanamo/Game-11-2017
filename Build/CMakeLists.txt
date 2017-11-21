@@ -54,6 +54,8 @@ Set(SourceFiles
     "Logger/Outputs/FileOutput.hpp"
     "Logger/Outputs/FileOutput.cpp"
 
+	"System/Context.hpp"
+	"System/Context.cpp"
 	"System/Config.hpp"
 	"System/Config.cpp"
 	"System/Timer.hpp"

@@ -1,7 +1,14 @@
 #include "Precompiled.hpp"
+#include "System/Context.hpp"
 #include "System/Config.hpp"
 #include "System/Timer.hpp"
 #include "System/Window.hpp"
+
+namespace
+{
+    // Log error messages.
+    #define LogFatalError() "Fatal error has been encountered! "
+}
 
 int main(int argc, char* argv[])
 {
@@ -10,12 +17,21 @@ int main(int argc, char* argv[])
     Debug::Initialize();
     Logger::Initialize();
 
+    // Initialize platform context.
+    System::Context context;
+
+    if(!context.Initialize())
+    {
+        Log() << LogFatalError() << "Could not initialize a context.";
+        return -1;
+    }
+
     // Instantiate a config instance.
     System::Config config;
 
     if(!config.LoadFromFile("Game.cfg"))
     {
-        Log() << "Fatal error encountered! Could not load a config file.";
+        Log() << LogFatalError() << "Could not load a config file.";
         return -1;
     }
 
@@ -31,7 +47,7 @@ int main(int argc, char* argv[])
 
     if(!window.Open(windowInfo))
     {
-        Log() << "Fatal error encountered! Could not open a window.";
+        Log() << LogFatalError() << "Could not open a window.";
         return -1;
     }
 
@@ -40,7 +56,7 @@ int main(int argc, char* argv[])
 
     if(!timer.Initialize())
     {
-        Log() << "Fatal error encountered! Could not initialize a timer.";
+        Log() << LogFatalError() << "Could not initialize a timer.";
         return -1;
     }
 

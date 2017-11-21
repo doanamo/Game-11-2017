@@ -8,16 +8,7 @@ namespace
     // Log message strings.
     #define LogOpenError() "Failed to open a window! "
 
-    // Instance counter for GLFW library.
-    bool LibraryInitialized = false;
-    int InstanceCount = 0;
-
     // Window callbacks.
-    void ErrorCallback(int error, const char* description)
-    {
-        Log() << "GLFW Error: " << description;
-    }
-
     void MoveCallback(GLFWwindow* window, int x, int y)
     {
         Assert(window != nullptr);
@@ -187,27 +178,11 @@ WindowInfo::WindowInfo() :
 Window::Window() :
     m_window(nullptr)
 {
-    // Increase instance count.
-    ++InstanceCount;
 }
 
 Window::~Window()
 {
-    // Cleanup instance.
     this->Cleanup();
-
-    // Decrease instance count.
-    --InstanceCount;
-
-    // Shutdown GLFW library.
-    if(InstanceCount == 0)
-    {
-        if(LibraryInitialized)
-        {
-            glfwTerminate();
-            LibraryInitialized = false;
-        }
-    }
 }
 
 void Window::Cleanup()
@@ -241,20 +216,6 @@ bool Window::Open(const WindowInfo& info)
     bool initialized = false;
 
     SCOPE_GUARD_IF(!initialized, this->Cleanup());
-
-    // Initialize GLFW library.
-    if(!LibraryInitialized)
-    {
-        glfwSetErrorCallback(ErrorCallback);
-
-        if(!glfwInit())
-        {
-            Log() << LogOpenError() << "Could not initialize GLFW library.";
-            return false;
-        }
-
-        LibraryInitialized = true;
-    }
 
     // Create the window.
     glfwWindowHint(GLFW_RED_BITS, 8);
