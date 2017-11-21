@@ -29,9 +29,9 @@ int main(int argc, char* argv[])
     // Instantiate a window instance.
     System::Window window;
 
-    if(!window.Initialize(windowInfo))
+    if(!window.Open(windowInfo))
     {
-        Log() << "Fatal error encountered! Could not initialize a window.";
+        Log() << "Fatal error encountered! Could not open a window.";
         return -1;
     }
 

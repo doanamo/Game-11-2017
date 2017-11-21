@@ -6,7 +6,7 @@ using namespace System;
 namespace
 {
     // Log message strings.
-    #define LogInitializeError() "Failed to initialize a window! "
+    #define LogOpenError() "Failed to open a window! "
 
     // Instance counter for GLFW library.
     bool LibraryInitialized = false;
@@ -185,8 +185,7 @@ WindowInfo::WindowInfo() :
 }
 
 Window::Window() :
-    m_window(nullptr),
-    m_initialized(false)
+    m_window(nullptr)
 {
     // Increase instance count.
     ++InstanceCount;
@@ -213,9 +212,6 @@ Window::~Window()
 
 void Window::Cleanup()
 {
-    if(!m_initialized)
-        return;
-
     // Cleanup event dispatchers.
     events.move.Cleanup();
     events.resize.Cleanup();
@@ -234,25 +230,17 @@ void Window::Cleanup()
         glfwDestroyWindow(m_window);
         m_window = nullptr;
     }
-
-    // Reset initialization state.
-    m_initialized = false;
 }
 
-bool Window::Initialize(const WindowInfo& info)
+bool Window::Open(const WindowInfo& info)
 {
     // Cleanup this instance.
     this->Cleanup();
 
     // Setup a cleanup guard.
-    SCOPE_GUARD
-    (
-        if(!m_initialized)
-        {
-            m_initialized = true;
-            this->Cleanup();
-        }
-    );
+    bool initialized = false;
+
+    SCOPE_GUARD_IF(!initialized, this->Cleanup());
 
     // Initialize GLFW library.
     if(!LibraryInitialized)
@@ -261,7 +249,7 @@ bool Window::Initialize(const WindowInfo& info)
 
         if(!glfwInit())
         {
-            Log() << LogInitializeError() << "Couldn't initialize GLFW library.";
+            Log() << LogOpenError() << "Could not initialize GLFW library.";
             return false;
         }
 
@@ -285,7 +273,7 @@ bool Window::Initialize(const WindowInfo& info)
 
     if(m_window == nullptr)
     {
-        Log() << LogInitializeError() << "Couldn't create the window.";
+        Log() << LogOpenError() << "Couldn't create the window.";
         return false;
     }
 
@@ -316,7 +304,7 @@ bool Window::Initialize(const WindowInfo& info)
     if(error != GLEW_OK)
     {
         Log() << "GLEW Error: " << glewGetErrorString(error);
-        Log() << LogInitializeError() << "Could not initialize GLEW library.";
+        Log() << LogOpenError() << "Could not initialize GLEW library.";
         return false;
     }
 
@@ -333,12 +321,12 @@ bool Window::Initialize(const WindowInfo& info)
     glfwGetFramebufferSize(m_window, &windowWidth, &windowHeight);
     Log() << "Create a window with " << windowWidth << "x" << windowHeight << " size.";
 
-    return m_initialized = true;
+    return initialized = true;
 }
 
 void Window::MakeContextCurrent()
 {
-    if(!m_initialized)
+    if(m_window == nullptr)
         return;
 
     glfwMakeContextCurrent(m_window);
@@ -346,7 +334,7 @@ void Window::MakeContextCurrent()
 
 void Window::ProcessEvents()
 {
-    if(!m_initialized)
+    if(m_window == nullptr)
         return;
 
     glfwPollEvents();
@@ -354,7 +342,7 @@ void Window::ProcessEvents()
 
 void Window::Present()
 {
-    if(!m_initialized)
+    if(m_window == nullptr)
         return;
 
     glfwSwapBuffers(m_window);
@@ -365,7 +353,7 @@ void Window::Present()
 
 void Window::Close()
 {
-    if(!m_initialized)
+    if(m_window == nullptr)
         return;
 
     glfwSetWindowShouldClose(m_window, GL_TRUE);
@@ -373,7 +361,7 @@ void Window::Close()
 
 bool Window::IsOpen() const
 {
-    if(!m_initialized)
+    if(m_window == nullptr)
         return false;
 
     return glfwWindowShouldClose(m_window) == 0;
@@ -381,7 +369,7 @@ bool Window::IsOpen() const
 
 bool Window::IsFocused() const
 {
-    if(!m_initialized)
+    if(m_window == nullptr)
         return false;
 
     return glfwGetWindowAttrib(m_window, GLFW_FOCUSED) > 0;
@@ -389,7 +377,7 @@ bool Window::IsFocused() const
 
 int Window::GetWidth() const
 {
-    if(!m_initialized)
+    if(m_window == nullptr)
         return 0;
 
     int width = 0;
@@ -399,7 +387,7 @@ int Window::GetWidth() const
 
 int Window::GetHeight() const
 {
-    if(!m_initialized)
+    if(m_window == nullptr)
         return 0;
 
     int height = 0;
@@ -407,7 +395,7 @@ int Window::GetHeight() const
     return height;
 }
 
-GLFWwindow* Window::GetPrivate()
+GLFWwindow* Window::GetPrivatePointer()
 {
     return m_window;
 }

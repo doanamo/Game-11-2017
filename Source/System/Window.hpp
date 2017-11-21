@@ -10,7 +10,7 @@
 
     Example usage:
         System::Window window;
-        window.Initialize();
+        window.Open();
     
         while(window.IsOpen())
         {
@@ -53,8 +53,8 @@ namespace System
         // Restores instance to its original state.
         void Cleanup();
 
-        // Initializes the window instance.
-        bool Initialize(const WindowInfo& info = WindowInfo());
+        // Open the window.
+        bool Open(const WindowInfo& info = WindowInfo());
 
         // Makes window's context current.
         void MakeContextCurrent();
@@ -81,7 +81,7 @@ namespace System
         int GetHeight() const;
 
         // Gets the window's private implementation.
-        GLFWwindow* GetPrivate();
+        GLFWwindow* GetPrivatePointer();
 
     public:
         // Window events.
@@ -178,8 +178,5 @@ namespace System
     private:
         // Window implementation.
         GLFWwindow* m_window;
-
-        // Initialization state.
-        bool m_initialized;
     };
 }
