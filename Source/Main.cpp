@@ -10,7 +10,12 @@ int main(int argc, char* argv[])
 
     // Instantiate a config instance.
     System::Config config;
-    config.Initialize("Game.cfg");
+    
+    if(!config.LoadFromFile("Game.cfg"))
+    {
+        Log() << "Fatal error encountered! There was an error loading a config file.";
+        return -1;
+    }
 
     // Preare window initialization structure.
     System::WindowInfo windowInfo;

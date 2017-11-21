@@ -5,48 +5,30 @@ using namespace System;
 namespace
 {
     // Log message strings.
-    #define LogInitializeError(filename) "Could not read a config from \"" << filename << "\" file! "
+    #define LogInitializeError(filename) "Could not load a config from \"" << filename << "\" file! "
 }
 
-Config::Config() :
-    m_initialized(false)
+Config::Config()
 {
 }
 
 Config::~Config()
 {
-    this->Cleanup();
 }
 
 void Config::Cleanup()
 {
-    if(!m_initialized)
-        return;
-
     // Clear the variable map.
     Utility::ClearContainer(m_parameters);
-
-    // Initialization state.
-    m_initialized = false;
 }
 
-bool Config::Initialize(const std::string filename)
+bool Config::LoadFromFile(const std::string filename, bool cleanup)
 {
-    // Cleanup this instance.
-    this->Cleanup();
-
-    // Setup a cleanup guard.
-    SCOPE_GUARD
-    (
-        if(!m_initialized)
-        {
-            m_initialized = true;
-            this->Cleanup();
-        }
-    );
-
-    // Set as already initialized.
-    m_initialized = true;
+    // Cleanup this instance if requested.
+    if(cleanup)
+    {
+        this->Cleanup();
+    }
 
     // Load parameters from a file.
     std::ifstream file(Build::GetWorkingDir() + filename);
@@ -108,6 +90,5 @@ bool Config::Initialize(const std::string filename)
         }
     }
 
-    // Success!
-    return m_initialized;
+    return true;
 }
