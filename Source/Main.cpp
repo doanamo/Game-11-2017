@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
     if(!context.Initialize())
     {
-        Log() << LogFatalError() << "Could not initialize a context.";
+        Log() << LogFatalError() << "Could not initialize the context.";
         return -1;
     }
 
