@@ -176,7 +176,7 @@ namespace System
         } events;
 
     private:
-        // Window implementation.
+        // Window handle.
         GLFWwindow* m_window;
     };
 }

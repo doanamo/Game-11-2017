@@ -213,13 +213,15 @@ void Window::Cleanup()
 
 bool Window::Open(const WindowInfo& info)
 {
-    // Cleanup this instance.
-    this->Cleanup();
+    // Check if the window is already open.
+    if(m_window != nullptr)
+    {
+        Log() << LogOpenError() << "Window instance is already open.";
+        return false;
+    }
 
     // Setup a cleanup guard.
-    bool initialized = false;
-
-    SCOPE_GUARD_IF(!initialized, this->Cleanup());
+    SCOPE_GUARD_CLEANUP(initialized, this->Cleanup());
 
     // Create the window.
     glfwWindowHint(GLFW_RED_BITS, 8);
@@ -281,11 +283,12 @@ bool Window::Open(const WindowInfo& info)
 
     Log() << "Created OpenGL " << glMajor << "." << glMinor << " context.";
 
-    // Success!
+    // Log created window info.
     int windowWidth, windowHeight;
     glfwGetFramebufferSize(m_window, &windowWidth, &windowHeight);
-    Log() << "Create a window with " << windowWidth << "x" << windowHeight << " size.";
+    Log() << "Created a window with " << windowWidth << "x" << windowHeight << " size.";
 
+    // Success!
     return initialized = true;
 }
 
