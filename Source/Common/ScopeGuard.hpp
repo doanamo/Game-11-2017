@@ -106,7 +106,5 @@ ScopeGuard<Type> MakeScopeGuard(Type function)
 #define SCOPE_GUARD_IF(condition, code) auto SCOPE_GUARD_NAME(__LINE__) = SCOPE_GUARD_IF_MAKE(condition, code)
 #define SCOPE_GUARD_IF_MAKE(condition, code) MakeScopeGuard([&]() { if(condition) { code; } })
 
-#define SCOPE_GUARD_CLEANUP(boolean, function) bool boolean = false; SCOPE_GUARD_IF(!boolean, function);
-
 #define SCOPE_GUARD_NAME(line) SCOPE_GUARD_STRING(line)
 #define SCOPE_GUARD_STRING(line) scopeguardLine ## line
