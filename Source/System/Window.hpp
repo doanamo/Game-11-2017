@@ -80,8 +80,8 @@ namespace System
         // Gets the window's height.
         int GetHeight() const;
 
-        // Gets the window's private implementation.
-        GLFWwindow* GetPrivatePointer();
+        // Gets the window's private handle.
+        GLFWwindow* GetPrivateHandle();
 
     public:
         // Window events.
@@ -174,6 +174,13 @@ namespace System
 
             Dispatcher<void(const CursorEnter&)> cursorEnter;
         } events;
+
+    private:
+        // Destroy the window immediately.
+        void DestroyWindow();
+
+        // Resets all event dispatchers.
+        void ResetDispatchers();
 
     private:
         // Window handle.

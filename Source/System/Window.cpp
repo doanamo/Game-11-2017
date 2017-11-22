@@ -182,14 +182,26 @@ Window::Window() :
 
 Window::~Window()
 {
+    this->DestroyWindow();
+}
+
+void Window::Cleanup()
+{
+    this->DestroyWindow();
+    this->ResetDispatchers();
+}
+
+void Window::DestroyWindow()
+{
     // Destroy the window.
     if(m_window != nullptr)
     {
         glfwDestroyWindow(m_window);
+        m_window = nullptr;
     }
 }
 
-void Window::Cleanup()
+void Window::ResetDispatchers()
 {
     // Cleanup event dispatchers.
     events.move.Cleanup();
@@ -202,13 +214,6 @@ void Window::Cleanup()
     events.mouseScroll.Cleanup();
     events.cursorPosition.Cleanup();
     events.cursorEnter.Cleanup();
-
-    // Destroy the window.
-    if(m_window != nullptr)
-    {
-        glfwDestroyWindow(m_window);
-        m_window = nullptr;
-    }
 }
 
 bool Window::Open(const WindowInfo& info)
@@ -220,10 +225,10 @@ bool Window::Open(const WindowInfo& info)
         return false;
     }
 
-    // Setup a cleanup guard.
-    SCOPE_GUARD_CLEANUP(initialized, this->Cleanup());
+    // Setup a cleanup guard variable.
+    bool initialized = false;
 
-    // Create the window.
+    // Setup window hints.
     glfwWindowHint(GLFW_RED_BITS, 8);
     glfwWindowHint(GLFW_GREEN_BITS, 8);
     glfwWindowHint(GLFW_BLUE_BITS, 8);
@@ -236,11 +241,14 @@ bool Window::Open(const WindowInfo& info)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    // Create the window.
+    SCOPE_GUARD_IF(!initialized, this->DestroyWindow());
+
     m_window = glfwCreateWindow(info.width, info.height, info.name.c_str(), nullptr, nullptr);
 
     if(m_window == nullptr)
     {
-        Log() << LogOpenError() << "Couldn't create the window.";
+        Log() << LogOpenError() << "Could not create the window.";
         return false;
     }
 
@@ -265,7 +273,7 @@ bool Window::Open(const WindowInfo& info)
     // Set the swap interval.
     glfwSwapInterval((int)info.vsync);
 
-    // Initialize GLEW library.
+    // Initialize GLEW library for the current context.
     GLenum error = glewInit();
 
     if(error != GLEW_OK)
@@ -363,7 +371,7 @@ int Window::GetHeight() const
     return height;
 }
 
-GLFWwindow* Window::GetPrivatePointer()
+GLFWwindow* Window::GetPrivateHandle()
 {
     return m_window;
 }
