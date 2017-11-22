@@ -17,9 +17,11 @@ Timer::~Timer()
 
 void Timer::Cleanup()
 {
+    // Reset timer counters.
     m_currentTimeCounter = glfwGetTimerValue();
     m_previousTimeCounter = m_currentTimeCounter;
 
+    // Reset timer parameters.
     m_maxFrameDeltaSeconds = std::numeric_limits<float>::max();
 }
 
