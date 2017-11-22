@@ -75,7 +75,7 @@ float Timer::GetMaxFrameDelta() const
     return m_maxFrameDeltaSeconds;
 }
 
-bool Timer::IsValid() const
+bool Timer::IsFrequencyValid() const
 {
     return m_timerFrequency != 0;
 }

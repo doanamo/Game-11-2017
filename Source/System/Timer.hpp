@@ -48,8 +48,8 @@ namespace System
         // Gets maximum frame delta in seconds that can be returned.
         float GetMaxFrameDelta() const;
 
-        // Checks if instance is valid.
-        bool IsValid() const;
+        // Checks if timer's frequency is valid.
+        bool IsFrequencyValid() const;
 
     private:
         uint64_t m_timerFrequency;

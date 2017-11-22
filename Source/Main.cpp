@@ -28,12 +28,7 @@ int main(int argc, char* argv[])
 
     // Instantiate a config instance.
     System::Config config;
-
-    if(!config.LoadFromFile("Game.cfg"))
-    {
-        Log() << LogFatalError() << "Could not load a config file.";
-        return -1;
-    }
+    config.LoadFromFile("Game.cfg");
 
     // Preare window initialization structure.
     System::WindowInfo windowInfo;
@@ -54,7 +49,7 @@ int main(int argc, char* argv[])
     // Instantiate a timer instance.
     System::Timer timer;
 
-    if(!timer.IsValid())
+    if(!timer.IsFrequencyValid())
     {
         Log() << LogFatalError() << "Could not create a valid a timer.";
         return -1;
