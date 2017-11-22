@@ -62,6 +62,9 @@ Set(SourceFiles
 	"System/Timer.cpp"
 	"System/Window.hpp"
 	"System/Window.cpp"
+
+	"Graphics/Buffer.hpp"
+	"Graphics/Buffer.cpp"
 )
 
 # Append source directory path to each source file.
