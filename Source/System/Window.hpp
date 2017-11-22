@@ -32,7 +32,7 @@
 
 namespace System
 {
-    // Window initialization structure.
+    // Window info structure.
     struct WindowInfo
     {
         WindowInfo();

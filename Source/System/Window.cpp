@@ -182,7 +182,11 @@ Window::Window() :
 
 Window::~Window()
 {
-    this->Cleanup();
+    // Destroy the window.
+    if(m_window != nullptr)
+    {
+        glfwDestroyWindow(m_window);
+    }
 }
 
 void Window::Cleanup()
