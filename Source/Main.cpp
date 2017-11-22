@@ -54,9 +54,9 @@ int main(int argc, char* argv[])
     // Instantiate a timer instance.
     System::Timer timer;
 
-    if(!timer.Initialize())
+    if(!timer.IsValid())
     {
-        Log() << LogFatalError() << "Could not initialize a timer.";
+        Log() << LogFatalError() << "Could not create a valid a timer.";
         return -1;
     }
 

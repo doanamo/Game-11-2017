@@ -10,7 +10,6 @@
 
     Exmaple usage:
         System::Timer timer;
-        timer.Initialize();
 
         while(true)
         {
@@ -34,9 +33,6 @@ namespace System
         // Restores class instance to its original state.
         void Cleanup();
 
-        // Initializes the timer.
-        bool Initialize();
-
         // Resets the timer.
         void Reset();
 
@@ -52,14 +48,14 @@ namespace System
         // Gets maximum frame delta in seconds that can be returned.
         float GetMaxFrameDelta() const;
 
-    private:
-        double m_secondsPerCounter;
+        // Checks if instance is valid.
+        bool IsValid() const;
 
+    private:
+        uint64_t m_timerFrequency;
         uint64_t m_currentTimeCounter;
         uint64_t m_previousTimeCounter;
 
         float m_maxFrameDeltaSeconds;
-
-        bool m_initialized;
     };
 }
