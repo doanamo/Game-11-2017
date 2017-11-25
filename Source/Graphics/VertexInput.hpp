@@ -14,9 +14,13 @@
             { &vertexBuffer, Graphics::VertexAttributeTypes::Float2 }, // Texture
             { &vertexBuffer, Graphics::VertexAttributeTypes::Float4 }, // Color
         };
+
+        Graphics::VertexInputInfo vertexInputInfo;
+        vertexInputInfo.attributeCount = Utility::ArraySize(vertexAttributes);
+        vertexInputInfo.attributes = &vertexAttributes[0];
     
         Graphics::VertexInput vertexInput;
-        vertexInput.Initialize(Utility::ArraySize(vertexAttributes), &vertexAttributes[0]);
+        vertexInput.Create(vertexInputInfo);
     
         glBindVertexArray(vertexInput.GetHandle());
 */
