@@ -48,7 +48,7 @@ namespace Logger
 }
 
 /*
-    Scoped Logger Message Class
+    Scoped Logger Message
 
     Logger message object that writes to a sink at the end of its lifetime.
 */
