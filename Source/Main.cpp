@@ -30,16 +30,14 @@ int main(int argc, char* argv[])
     System::Config config;
     config.LoadFromFile("Game.cfg");
 
-    // Preare window initialization structure.
+    // Instantiate a window instance.
     System::WindowInfo windowInfo;
     windowInfo.name = "Game";
     windowInfo.width = config.GetParameter<int>("Window.Width", 1024);
     windowInfo.height = config.GetParameter<int>("Window.Height", 576);
     windowInfo.vsync = config.GetParameter<bool>("Window.Vsync", true);
 
-    // Instantiate a window instance.
     System::Window window;
-
     if(!window.Open(windowInfo))
     {
         Log() << LogFatalError() << "Could not open a window.";
@@ -48,7 +46,6 @@ int main(int argc, char* argv[])
 
     // Instantiate a timer instance.
     System::Timer timer;
-
     if(!timer.IsFrequencyValid())
     {
         Log() << LogFatalError() << "Could not create a valid a timer.";
