@@ -324,7 +324,14 @@ void Window::Present()
     glfwSwapBuffers(m_window);
 
     // Check if there are any uncaught OpenGL errors.
-    Assert(glGetError() == GL_NO_ERROR, "Found uncaught OpenGL error(s) in the last frame!");
+    GLenum error;
+    while((error = glGetError()) != GL_NO_ERROR)
+    {
+        std::stringstream stream;
+        stream << std::hex << std::setfill('0') << std::setw(4) << error;
+
+        Log() << "Found an uncaught OpenGL error in the last frame (code 0x" << stream.str() << ")!";
+    }
 }
 
 void Window::Close()
