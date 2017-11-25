@@ -46,7 +46,7 @@ void Logger::Write(const Logger::Message& message)
     sink.Write(message);
 }
 
-Logger::Sink* Logger::GetGlobal()
+Logger::Sink* Logger::GetGlobalSink()
 {
     return &sink;
 }

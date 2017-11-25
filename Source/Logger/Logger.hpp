@@ -26,7 +26,7 @@ namespace Logger
     void Write(const Logger::Message& message);
     
     // Gets the global logger sink.
-    Sink* GetGlobal();
+    Sink* GetGlobalSink();
 }
 
 //
@@ -34,7 +34,7 @@ namespace Logger
 //
 
 #ifndef NDEBUG
-    #define Log() Logger::ScopedMessage(Logger::GetGlobal()).SetSource(__FILE__).SetLine(__LINE__)
+    #define Log() Logger::ScopedMessage(Logger::GetGlobalSink()).SetSource(__FILE__).SetLine(__LINE__)
 #else
-    #define Log() Logger::ScopedMessage(Logger::GetGlobal())
+    #define Log() Logger::ScopedMessage(Logger::GetGlobalSink())
 #endif
