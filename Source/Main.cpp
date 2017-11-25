@@ -4,6 +4,8 @@
 #include "System/Timer.hpp"
 #include "System/Window.hpp"
 
+#include "Graphics/Buffer.hpp"
+
 namespace
 {
     // Log error messages.
@@ -54,6 +56,34 @@ int main(int argc, char* argv[])
 
     timer.SetMaxFrameDelta(1.0f);
 
+    // Create a vertex buffer
+    struct Vertex
+    {
+        glm::vec3 position;
+    };
+
+    const Vertex vertices[] =
+    {
+        { glm::vec3(-1.0f, -1.0f, 0.0f) },
+        { glm::vec3( 1.0f, -1.0f, 0.0f) },
+        { glm::vec3( 0.0f,  1.0f, 0.0f) },
+    };
+
+    Graphics::BufferInfo bufferInfo;
+    bufferInfo.elementSize = sizeof(Vertex);
+    bufferInfo.elementCount = Utility::ArraySize(vertices);
+    bufferInfo.data = &vertices[0];
+
+    Graphics::VertexBuffer vertexBuffer;
+    if(!vertexBuffer.Create(bufferInfo))
+    {
+        return -1;
+    }
+
+    GLuint vertexArray;
+    glGenVertexArrays(1, &vertexArray);
+    glBindVertexArray(vertexArray);
+
     // Main loop.
     while(window.IsOpen())
     {
@@ -66,6 +96,15 @@ int main(int argc, char* argv[])
         // Clear the framebuffer.
         glClearColor(0.0f, 0.35f, 0.35f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        // Draw a triangle.
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.GetHandle());
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glDisableVertexAttribArray(0);
 
         // Present to the window.
         window.Present();
