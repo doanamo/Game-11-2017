@@ -5,7 +5,7 @@
 #include "Logger/Sink.hpp"
 
 /*
-    Logger Namespace
+    Logger
 
     Writes log messages to multiple outputs for debugging purposes.
     

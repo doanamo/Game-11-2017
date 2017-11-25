@@ -3,7 +3,7 @@
 #include "Precompiled.hpp"
 
 /*
-    Logger Message Class
+    Logger Message
 
     Object that holds a messages along with its metadata.
 */

@@ -4,7 +4,7 @@
 #include "Logger/Output.hpp"
 
 /*
-    Logger Debugger Output Class
+    Logger Debugger Output
 
     Writes log messages to the debugger's window.
 */

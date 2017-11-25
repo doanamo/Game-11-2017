@@ -3,7 +3,7 @@
 #include "Precompiled.hpp"
 
 /*
-    Logger Output Interface
+    Logger Output
     
     Base class for output implementations.
 */

@@ -4,7 +4,7 @@
 #include "Logger/Output.hpp"
 
 /*
-    Logger Console Output Class
+    Logger Console Output
 
     Writes log messsages to the console's window.
 */

@@ -4,7 +4,7 @@
 #include "Logger/Output.hpp"
 
 /*
-    Logger File Output Class
+    Logger File Output
 
     Writes log messages to a file.
 */

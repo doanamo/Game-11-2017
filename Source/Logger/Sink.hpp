@@ -3,7 +3,7 @@
 #include "Precompiled.hpp"
 
 /*
-    Logger Sink Class
+    Logger Sink
 
     Writes messages to multiple outputs.
 */
