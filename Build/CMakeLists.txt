@@ -54,19 +54,19 @@ Set(SourceFiles
     "Logger/Outputs/FileOutput.hpp"
     "Logger/Outputs/FileOutput.cpp"
 
-	"System/Context.hpp"
-	"System/Context.cpp"
-	"System/Config.hpp"
-	"System/Config.cpp"
-	"System/Timer.hpp"
-	"System/Timer.cpp"
-	"System/Window.hpp"
-	"System/Window.cpp"
+    "System/Context.hpp"
+    "System/Context.cpp"
+    "System/Config.hpp"
+    "System/Config.cpp"
+    "System/Timer.hpp"
+    "System/Timer.cpp"
+    "System/Window.hpp"
+    "System/Window.cpp"
 
-	"Graphics/Buffer.hpp"
-	"Graphics/Buffer.cpp"
-	"Graphics/VertexInput.hpp"
-	"Graphics/VertexInput.cpp"
+    "Graphics/Buffer.hpp"
+    "Graphics/Buffer.cpp"
+    "Graphics/VertexInput.hpp"
+    "Graphics/VertexInput.cpp"
 )
 
 # Append source directory path to each source file.
