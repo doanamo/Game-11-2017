@@ -107,7 +107,7 @@ namespace Graphics
         virtual const char* GetName() const = 0;
 
     private:
-        // Destroy the buffer's handle.
+        // Destroys the internal handle.
         void DestroyHandle();
 
     protected:

@@ -55,7 +55,7 @@ void Buffer::DestroyHandle()
 
 bool Buffer::Create(const BufferInfo& info)
 {
-    // Check if buffer has been already created.
+    // Check if handle has been already created.
     if(m_handle != InvalidHandle)
     {
         Log() << LogCreateError() << "Buffer instance has been already initialized.";
