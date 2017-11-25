@@ -1,5 +1,6 @@
 #include "Precompiled.hpp"
 #include "FileOutput.hpp"
+#include "Logger/Sink.hpp"
 using namespace Logger;
 
 FileOutput::FileOutput() :
@@ -84,7 +85,7 @@ bool FileOutput::Initialize(std::string filename)
     return m_initialized = true;
 }
 
-void FileOutput::Write(const Logger::Message& message)
+void FileOutput::Write(const Message& message, const SinkContext& context)
 {
     if(!m_initialized)
         return;
@@ -98,6 +99,14 @@ void FileOutput::Write(const Logger::Message& message)
     m_file << std::setw(2) << timeInfo->tm_hour << ":";
     m_file << std::setw(2) << timeInfo->tm_min  << ":";
     m_file << std::setw(2) << timeInfo->tm_sec;
+    m_file << std::setfill(' ') << std::setw(0);
+    m_file << "]";
+
+    // Write frame reference.
+    m_file << "[";
+    m_file << std::setfill('0') << std::setw(3);
+    m_file << context.referenceFrame % 1000;
+    m_file << std::setfill(' ') << std::setw(0);
     m_file << "] ";
 
     // Write message text.

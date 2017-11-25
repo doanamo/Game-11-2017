@@ -87,6 +87,9 @@ int main(int argc, char* argv[])
     // Main loop.
     while(window.IsOpen())
     {
+        // Advance logger's frame of reference.
+        Logger::AdvanceFrameReference();
+
         // Calculate frame delta time.
         float frameDelta = timer.CalculateFrameDelta();
 

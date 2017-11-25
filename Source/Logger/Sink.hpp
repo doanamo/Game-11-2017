@@ -14,6 +14,20 @@ namespace Logger
     class Output;
     class Message;
 
+    // Sink context structure.
+    struct SinkContext
+    {
+        SinkContext() :
+            referenceFrame(0),
+            messageWritten(false)
+        {
+        }
+
+        std::string name;
+        int referenceFrame;
+        bool messageWritten;
+    };
+
     // Sink class.
     class Sink : private NonCopyable
     {
@@ -25,6 +39,9 @@ namespace Logger
         Sink();
         ~Sink();
 
+        // Sets the output name.
+        void SetName(std::string name);
+
         // Adds an output.
         void AddOutput(Logger::Output* output);
 
@@ -34,7 +51,16 @@ namespace Logger
         // Writes a log message.
         void Write(const Logger::Message& message);
 
+        // Advance frame of reference.
+        int AdvanceFrameReference();
+
+        // Gets the context.
+        const SinkContext& GetContext() const;
+
     private:
+        // Sink's context.
+        SinkContext m_context;
+
         // List of outputs.
         OutputList m_outputs;
     };

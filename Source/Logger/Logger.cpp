@@ -46,6 +46,11 @@ void Logger::Write(const Logger::Message& message)
     sink.Write(message);
 }
 
+int Logger::AdvanceFrameReference()
+{
+    return sink.AdvanceFrameReference();
+}
+
 Logger::Sink* Logger::GetGlobalSink()
 {
     return &sink;

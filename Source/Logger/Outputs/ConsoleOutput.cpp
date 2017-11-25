@@ -1,5 +1,6 @@
 #include "Precompiled.hpp"
 #include "ConsoleOutput.hpp"
+#include "Logger/Sink.hpp"
 using namespace Logger;
 
 ConsoleOutput::ConsoleOutput()
@@ -10,7 +11,7 @@ ConsoleOutput::~ConsoleOutput()
 {
 }
 
-void ConsoleOutput::Write(const Logger::Message& message)
+void ConsoleOutput::Write(const Message& message, const SinkContext& context)
 {
     // Write message prefix.
     time_t timeData = time(nullptr);
@@ -21,6 +22,14 @@ void ConsoleOutput::Write(const Logger::Message& message)
     std::cout << std::setw(2) << timeInfo->tm_hour << ":";
     std::cout << std::setw(2) << timeInfo->tm_min  << ":";
     std::cout << std::setw(2) << timeInfo->tm_sec;
+    std::cout << std::setfill(' ') << std::setw(0);
+    std::cout << "]";
+
+    // Write frame reference.
+    std::cout << "[";
+    std::cout << std::setfill('0') << std::setw(3);
+    std::cout << context.referenceFrame % 1000;
+    std::cout << std::setfill(' ') << std::setw(0);
     std::cout << "] ";
 
     // Write message text.

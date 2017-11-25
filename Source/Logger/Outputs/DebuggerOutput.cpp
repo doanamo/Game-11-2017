@@ -1,5 +1,6 @@
 #include "Precompiled.hpp"
 #include "DebuggerOutput.hpp"
+#include "Logger/Sink.hpp"
 using namespace Logger;
 
 DebuggerOutput::DebuggerOutput()
@@ -10,7 +11,7 @@ DebuggerOutput::~DebuggerOutput()
 {
 }
 
-void DebuggerOutput::Write(const Logger::Message& message)
+void DebuggerOutput::Write(const Message& message, const SinkContext& context)
 {
     // Check if debugger is attached.
     if(!IsDebuggerPresent())
@@ -28,6 +29,14 @@ void DebuggerOutput::Write(const Logger::Message& message)
     m_stream << std::setw(2) << timeInfo->tm_hour << ":";
     m_stream << std::setw(2) << timeInfo->tm_min  << ":";
     m_stream << std::setw(2) << timeInfo->tm_sec;
+    m_stream << std::setfill(' ') << std::setw(0);
+    m_stream << "] ";
+
+    // Write frame reference.
+    m_stream << "[";
+    m_stream << std::setfill('0') << std::setw(3);
+    m_stream << context.referenceFrame % 1000;
+    m_stream << std::setfill(' ') << std::setw(0);
     m_stream << "] ";
 
     // Write message text.

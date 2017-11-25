@@ -11,14 +11,14 @@
 
 namespace Logger
 {
-    class DebuggerOutput : public Logger::Output
+    class DebuggerOutput : public Output
     {
     public:
         DebuggerOutput();
         ~DebuggerOutput();
 
         // Writes a message to the debugger window.
-        void Write(const Logger::Message& message);
+        void Write(const Message& message, const SinkContext& context);
 
     private:
         // Reusable string stream.

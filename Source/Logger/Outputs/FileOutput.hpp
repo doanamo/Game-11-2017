@@ -11,7 +11,7 @@
 
 namespace Logger
 {
-    class FileOutput : public Logger::Output
+    class FileOutput : public Output
     {
     public:
         FileOutput();
@@ -24,7 +24,7 @@ namespace Logger
         bool Initialize(std::string filename);
 
         // Writes a message to the file.
-        void Write(const Logger::Message& message);
+        void Write(const Message& message, const SinkContext& context);
 
     private:
         // File output stream.

@@ -11,13 +11,13 @@
 
 namespace Logger
 {
-    class ConsoleOutput : public Logger::Output
+    class ConsoleOutput : public Output
     {
     public:
         ConsoleOutput();
         ~ConsoleOutput();
 
         // Writes a message to the console window.
-        void Write(const Logger::Message& message);
+        void Write(const Message& message, const SinkContext& context);
     };
 }

@@ -24,6 +24,9 @@ namespace Logger
 
     // Writes to the global logger sink.
     void Write(const Logger::Message& message);
+
+    // Advance frame of reference.
+    int AdvanceFrameReference();
     
     // Gets the global logger sink.
     Sink* GetGlobalSink();
