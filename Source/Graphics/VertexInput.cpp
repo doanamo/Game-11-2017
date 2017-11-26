@@ -271,6 +271,8 @@ bool VertexInput::Create(const VertexInputInfo& info)
     }
 
     // Success!
+    Log() << "Created a vertex input.";
+
     return initialized = true;
 }
 

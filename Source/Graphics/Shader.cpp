@@ -243,6 +243,8 @@ bool Shader::Create(std::string shaderCode)
     }
 
     // Success!
+    Log() << "Created a shader.";
+
     return initialized = true;
 }
 

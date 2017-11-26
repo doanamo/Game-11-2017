@@ -7,6 +7,7 @@
 #include "Graphics/Buffer.hpp"
 #include "Graphics/VertexInput.hpp"
 #include "Graphics/Shader.hpp"
+#include "Graphics/Sampler.hpp"
 
 namespace
 {
@@ -66,9 +67,13 @@ int main(int argc, char* argv[])
 
     const Vertex vertices[] =
     {
-        { glm::vec3(-1.0f, -1.0f, 0.0f) },
-        { glm::vec3( 1.0f, -1.0f, 0.0f) },
-        { glm::vec3( 0.0f,  1.0f, 0.0f) },
+        { glm::vec3(-0.6f, -0.6f, 0.0f) },
+        { glm::vec3(-0.6f,  0.6f, 0.0f) },
+        { glm::vec3( 0.6f,  0.6f, 0.0f) },
+
+        { glm::vec3( 0.6f,  0.6f, 0.0f) },
+        { glm::vec3( 0.6f, -0.6f, 0.0f) },
+        { glm::vec3(-0.6f, -0.6f, 0.0f) },
     };
 
     Graphics::BufferInfo bufferInfo;
@@ -105,6 +110,15 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+    // Create a texture sampler.
+    Graphics::SamplerInfo samplerInfo;
+
+    Graphics::Sampler sampler;
+    if(!sampler.Create(samplerInfo))
+    {
+        return -1;
+    }
+
     // Main loop.
     while(window.IsOpen())
     {
@@ -127,7 +141,7 @@ int main(int argc, char* argv[])
 
         glBindVertexArray(vertexInput.GetHandle());
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, vertexBuffer.GetElementCount());
 
         glBindVertexArray(0);
 
