@@ -6,6 +6,7 @@
 
 #include "Graphics/Buffer.hpp"
 #include "Graphics/VertexInput.hpp"
+#include "Graphics/Shader.hpp"
 
 namespace
 {
@@ -97,6 +98,13 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+    // Create a shader.
+    Graphics::Shader shader;
+    if(!shader.Load("Data/Shaders/Basic.shader"))
+    {
+        return -1;
+    }
+
     // Main loop.
     while(window.IsOpen())
     {
@@ -114,11 +122,16 @@ int main(int argc, char* argv[])
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Draw a triangle.
+        glUseProgram(shader.GetHandle());
+        glUniformMatrix4fv(shader.GetUniform("vertexTransform"), 1, GL_FALSE, glm::value_ptr(glm::mat4()));
+
         glBindVertexArray(vertexInput.GetHandle());
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glBindVertexArray(0);
+
+        glUseProgram(0);
 
         // Present to the window.
         window.Present();

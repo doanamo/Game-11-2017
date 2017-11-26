@@ -67,6 +67,8 @@ Set(SourceFiles
     "Graphics/Buffer.cpp"
     "Graphics/VertexInput.hpp"
     "Graphics/VertexInput.cpp"
+    "Graphics/Shader.hpp"
+    "Graphics/Shader.cpp"
 )
 
 # Append source directory path to each source file.
