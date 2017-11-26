@@ -72,9 +72,6 @@ namespace Graphics
         VertexInput();
         ~VertexInput();
 
-        // Restores instance to it's original state.
-        void Cleanup();
-
         // Initializes the vertex input instance.
         bool Create(const VertexInputInfo& info);
 

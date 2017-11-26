@@ -47,9 +47,6 @@ namespace Graphics
         Shader();
         ~Shader();
 
-        // Restores instance to its original state.
-        void Cleanup();
-
         // Loads the shader from a file.
         bool Load(std::string filename);
 

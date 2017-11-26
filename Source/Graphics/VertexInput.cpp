@@ -137,11 +137,6 @@ VertexInput::~VertexInput()
     this->DestroyHandle();
 }
 
-void VertexInput::Cleanup()
-{
-    this->DestroyHandle();
-}
-
 void VertexInput::DestroyHandle()
 {
     // Release the vertex array handle.

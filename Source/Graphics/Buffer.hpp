@@ -51,9 +51,6 @@ namespace Graphics
         virtual ~Buffer();
 
     public:
-        // Restores instance to its original state.
-        void Cleanup();
-
         // Creates the buffer instance.
         bool Create(const BufferInfo& info);
 

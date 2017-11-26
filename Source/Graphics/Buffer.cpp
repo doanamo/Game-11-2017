@@ -33,16 +33,6 @@ Buffer::~Buffer()
     this->DestroyHandle();
 }
 
-void Buffer::Cleanup()
-{
-    // Destroy buffer's handle.
-    this->DestroyHandle();
-
-    // Reset buffer's parameters.
-    m_elementSize = 0;
-    m_elementCount = 0;
-}
-
 void Buffer::DestroyHandle()
 {
     // Release the buffer's handle.

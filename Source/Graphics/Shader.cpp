@@ -39,11 +39,6 @@ Shader::~Shader()
     this->DestroyHandle();
 }
 
-void Shader::Cleanup()
-{
-    this->DestroyHandle();
-}
-
 void Shader::DestroyHandle()
 {
     // Release the program handle.
