@@ -48,6 +48,7 @@ bool Context::Initialize()
     // Success!
     int major, minor, revision;
     glfwGetVersion(&major, &minor, &revision);
+
     Log() << "Initialized platform context for GLFW " << major << "." << minor << "." << revision << " host.";
 
     return m_initialized = true;

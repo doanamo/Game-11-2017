@@ -41,6 +41,9 @@
 // GLFW
 #include <glfw/glfw3.h>
 
+// ZLib
+#include <zlib.h>
+
 /*
     Project
 */

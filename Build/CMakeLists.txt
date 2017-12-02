@@ -256,3 +256,30 @@ Set_Property(TARGET "glfw" PROPERTY FOLDER "External")
 # Link library target.
 Add_Dependencies(${TargetName} "glfw")
 Target_Link_Libraries(${TargetName} "glfw")
+
+#
+# ZLib
+#
+
+# Set build options.
+Set(SKIP_INSTALL_ALL ON)
+
+# Add library directory.
+Add_Subdirectory("../External/ZLib-1.2.11" "ZLib" EXCLUDE_FROM_ALL)
+
+# Add include directory.
+Include_Directories("../External/ZLib-1.2.11")
+Include_Directories("${CMAKE_BINARY_DIR}/ZLib")
+
+# Move library target to dependencies.
+Set_Property(TARGET "zlibstatic" PROPERTY PROJECT_LABEL "ZLib")
+Set_Property(TARGET "zlibstatic" PROPERTY FOLDER "External")
+
+# Link library target.
+Add_Dependencies(${TargetName} "zlibstatic")
+Target_Link_Libraries(${TargetName} "zlibstatic")
+
+# Help dependencies find this library.
+Set(ZLIB_ROOT "../External/ZLib-1.2.11")
+Set(ZLIB_INCLUDE_DIR "../External/ZLib-1.2.11")
+Set(ZLIB_LIBRARY "zlibstatic")
