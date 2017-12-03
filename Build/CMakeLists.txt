@@ -157,7 +157,7 @@ File(WRITE "${CMAKE_BINARY_DIR}/SourceDir.txt" "${SourceDirPath}/")
 # Platform
 #
 
-# Visual C++ compiler.
+# MSVC compiler.
 If("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     # Show or hide the console window.
     If(ShowConsole)
@@ -283,3 +283,31 @@ Target_Link_Libraries(${TargetName} "zlibstatic")
 Set(ZLIB_ROOT "../External/ZLib-1.2.11")
 Set(ZLIB_INCLUDE_DIR "../External/ZLib-1.2.11")
 Set(ZLIB_LIBRARY "zlibstatic")
+
+#
+# PNG
+#
+
+# Set build options.
+Set(PNG_SHARED OFF)
+Set(PNG_STATIC ON)
+Set(PNG_TESTS OFF)
+Set(SKIP_INSTALL_ALL ON)
+
+# Add library directory.
+Add_Subdirectory("../External/PNG-1.6.34" "PNG" EXCLUDE_FROM_ALL)
+
+# Add include directory.
+Include_Directories("../External/PNG-1.6.34")
+Include_Directories("${CMAKE_BINARY_DIR}/PNG")
+
+# Move library target to dependencies.
+Set_Property(TARGET "png_static" PROPERTY PROJECT_LABEL "PNG")
+Set_Property(TARGET "png_static" PROPERTY FOLDER "External")
+
+Set_Property(TARGET "genfiles" PROPERTY PROJECT_LABEL "PNG_Config")
+Set_Property(TARGET "genfiles" PROPERTY FOLDER "External")
+
+# Link library target.
+Add_Dependencies(${TargetName} "png_static")
+Target_Link_Libraries(${TargetName} "png_static")

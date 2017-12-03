@@ -44,6 +44,9 @@
 // ZLib
 #include <zlib.h>
 
+// PNG
+#include <png.h>
+
 /*
     Project
 */
