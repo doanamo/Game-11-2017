@@ -8,6 +8,7 @@
 #include "Graphics/VertexInput.hpp"
 #include "Graphics/Shader.hpp"
 #include "Graphics/Sampler.hpp"
+#include "Graphics/Texture.hpp"
 
 namespace
 {
@@ -24,7 +25,6 @@ int main(int argc, char* argv[])
 
     // Initialize platform context.
     System::Context context;
-
     if(!context.Initialize())
     {
         Log() << LogFatalError() << "Could not initialize the context.";
@@ -110,11 +110,18 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    // Create a texture sampler.
+    // Create a sampler.
     Graphics::SamplerInfo samplerInfo;
 
     Graphics::Sampler sampler;
     if(!sampler.Create(samplerInfo))
+    {
+        return -1;
+    }
+
+    // Create a texture.
+    Graphics::Texture texture;
+    if(!texture.Load("Data/Textures/ColorCheckerboard.png"))
     {
         return -1;
     }

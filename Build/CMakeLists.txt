@@ -71,6 +71,8 @@ Set(SourceFiles
     "Graphics/Shader.cpp"
     "Graphics/Sampler.hpp"
     "Graphics/Sampler.cpp"
+    "Graphics/Texture.hpp"
+    "Graphics/Texture.cpp"
 )
 
 # Append source directory path to each source file.
