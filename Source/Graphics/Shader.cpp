@@ -51,6 +51,13 @@ void Shader::DestroyHandle()
 
 bool Shader::Load(std::string filename)
 {
+    // Check if handle has been already created.
+    if(m_handle != InvalidHandle)
+    {
+        Log() << LogLoadError(filename) << "Instance has been already initialized.";
+        return false;
+    }
+
     // Load the shader code from a file.
     std::string shaderCode = Utility::GetTextFileContent(Build::GetWorkingDir() + filename);
 
@@ -78,7 +85,7 @@ bool Shader::Create(std::string shaderCode)
     // Check if handle has been already created.
     if(m_handle != InvalidHandle)
     {
-        Log() << LogCreateError() << "Shader instance has been already initialized.";
+        Log() << LogCreateError() << "Instance has been already initialized.";
         return false;
     }
 
