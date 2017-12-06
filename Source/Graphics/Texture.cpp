@@ -205,8 +205,13 @@ bool Texture::Load(std::string filename)
 
     for(png_uint_32 i = 0; i < height; ++i)
     {
+        // Reverse the order of rows to flip the image.
+        // This is done because OpenGL's texture coordinates are also flipped.
+        png_uint_32 png_row_index = height - i - 1;
+
+        // Assemble an array of row pointers.
         png_uint_32 png_offset = i * png_stride;
-        png_row_ptrs[i] = png_data_ptr + png_offset;
+        png_row_ptrs[png_row_index] = png_data_ptr + png_offset;
     }
 
     // Read image data.
