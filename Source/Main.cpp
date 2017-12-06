@@ -63,17 +63,18 @@ int main(int argc, char* argv[])
     struct Vertex
     {
         glm::vec3 position;
+        glm::vec2 texture;
     };
 
     const Vertex vertices[] =
     {
-        { glm::vec3(-0.6f, -0.6f, 0.0f) },
-        { glm::vec3(-0.6f,  0.6f, 0.0f) },
-        { glm::vec3( 0.6f,  0.6f, 0.0f) },
+        { glm::vec3(-0.6f, -0.6f, 0.0f), glm::vec2(0.0, 0.0f) },
+        { glm::vec3(-0.6f,  0.6f, 0.0f), glm::vec2(0.0, 1.0f) },
+        { glm::vec3( 0.6f,  0.6f, 0.0f), glm::vec2(1.0, 1.0f) },
 
-        { glm::vec3( 0.6f,  0.6f, 0.0f) },
-        { glm::vec3( 0.6f, -0.6f, 0.0f) },
-        { glm::vec3(-0.6f, -0.6f, 0.0f) },
+        { glm::vec3( 0.6f,  0.6f, 0.0f), glm::vec2(1.0, 1.0f) },
+        { glm::vec3( 0.6f, -0.6f, 0.0f), glm::vec2(1.0, 0.0f) },
+        { glm::vec3(-0.6f, -0.6f, 0.0f), glm::vec2(0.0, 0.0f) },
     };
 
     Graphics::BufferInfo bufferInfo;
@@ -91,6 +92,7 @@ int main(int argc, char* argv[])
     const Graphics::VertexAttribute vertexAttributes[] =
     {
         { &vertexBuffer, Graphics::VertexAttributeTypes::Float3 }, // Position
+        { &vertexBuffer, Graphics::VertexAttributeTypes::Float2 }, // Texture
     };
 
     Graphics::VertexInputInfo vertexInputInfo;
@@ -143,8 +145,12 @@ int main(int argc, char* argv[])
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Draw a triangle.
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture.GetHandle());
+
         glUseProgram(shader.GetHandle());
         glUniformMatrix4fv(shader.GetUniform("vertexTransform"), 1, GL_FALSE, glm::value_ptr(glm::mat4()));
+        glUniform1i(shader.GetUniform("textureDiffuse"), 0);
 
         glBindVertexArray(vertexInput.GetHandle());
 
@@ -153,6 +159,8 @@ int main(int argc, char* argv[])
         glBindVertexArray(0);
 
         glUseProgram(0);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         // Present to the window.
         window.Present();
