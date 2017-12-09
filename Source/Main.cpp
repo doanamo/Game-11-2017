@@ -9,6 +9,7 @@
 #include "Graphics/Shader.hpp"
 #include "Graphics/Sampler.hpp"
 #include "Graphics/Texture.hpp"
+#include "Graphics/ScreenSpace.hpp"
 
 namespace
 {
@@ -68,13 +69,13 @@ int main(int argc, char* argv[])
 
     const Vertex vertices[] =
     {
-        { glm::vec3(-0.6f, -0.6f, 0.0f), glm::vec2(0.0, 0.0f) },
-        { glm::vec3(-0.6f,  0.6f, 0.0f), glm::vec2(0.0, 1.0f) },
-        { glm::vec3( 0.6f,  0.6f, 0.0f), glm::vec2(1.0, 1.0f) },
+        { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0, 0.0f) },
+        { glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0, 1.0f) },
+        { glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(1.0, 1.0f) },
 
-        { glm::vec3( 0.6f,  0.6f, 0.0f), glm::vec2(1.0, 1.0f) },
-        { glm::vec3( 0.6f, -0.6f, 0.0f), glm::vec2(1.0, 0.0f) },
-        { glm::vec3(-0.6f, -0.6f, 0.0f), glm::vec2(0.0, 0.0f) },
+        { glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(1.0, 1.0f) },
+        { glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0, 0.0f) },
+        { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0, 0.0f) },
     };
 
     Graphics::BufferInfo bufferInfo;
@@ -128,6 +129,10 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+    // Create a screen space coordinates.
+    Graphics::ScreenSpace screenSpace;
+    screenSpace.SetSourceSize(1.0f, 1.0f);
+
     // Main loop.
     while(window.IsOpen())
     {
@@ -140,6 +145,12 @@ int main(int argc, char* argv[])
         // Process window evenets.
         window.ProcessEvents();
 
+        // Setup viewport size.;
+        glViewport(0, 0, window.GetWidth(), window.GetHeight());
+
+        // Update screen space coordinates.
+        screenSpace.SetTargetSize(window.GetWidth(), window.GetHeight());
+
         // Clear the framebuffer.
         glClearColor(0.0f, 0.35f, 0.35f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -149,7 +160,7 @@ int main(int argc, char* argv[])
         glBindTexture(GL_TEXTURE_2D, texture.GetHandle());
 
         glUseProgram(shader.GetHandle());
-        glUniformMatrix4fv(shader.GetUniform("vertexTransform"), 1, GL_FALSE, glm::value_ptr(glm::mat4()));
+        glUniformMatrix4fv(shader.GetUniform("vertexTransform"), 1, GL_FALSE, glm::value_ptr(screenSpace.GetTransform()));
         glUniform1i(shader.GetUniform("textureDiffuse"), 0);
 
         glBindVertexArray(vertexInput.GetHandle());
