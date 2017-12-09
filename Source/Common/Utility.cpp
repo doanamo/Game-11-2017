@@ -60,3 +60,31 @@ std::vector<char> Utility::GetBinaryFileContent(std::string filename)
 
     return content;
 }
+
+std::vector<std::string> Utility::TokenizeString(std::string text, char character)
+{
+    std::vector<std::string> result;
+
+    auto begin = text.begin();
+    auto it = text.begin();
+
+    while(it != text.end())
+    {
+        if(*it == character)
+        {
+            result.push_back(std::string(begin, it));
+            begin = ++it;
+        }
+        else
+        {
+            ++it;
+        }
+
+        if(it == text.end())
+        {
+            result.push_back(std::string(begin, it));
+        }
+    }
+
+    return result;
+}
