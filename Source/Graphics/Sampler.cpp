@@ -5,7 +5,7 @@ using namespace Graphics;
 namespace
 {
     // Log error messages.
-    #define LogCreateError() "Failed to create a sampler! "
+    #define LogCreateError() "Failed to create a texture sampler! "
 
     // Invalid types.
     const GLuint InvalidHandle = 0;

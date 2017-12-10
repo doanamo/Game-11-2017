@@ -250,7 +250,7 @@ bool Shader::Create(std::string shaderCode)
     }
 
     // Success!
-    Log() << "Created a shader.";
+    Log() << "Created a shader (" << shaderCode.length() << " characters).";
 
     return initialized = true;
 }
