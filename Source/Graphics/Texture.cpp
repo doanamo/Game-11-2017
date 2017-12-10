@@ -6,7 +6,7 @@ namespace
 {
     // Log error messages.
     #define LogLoadError(filename) "Failed to load a texture from \"" << filename << "\" file! "
-    #define LogInitializeError() "Failed to initialize a texture! "
+    #define LogCreateError() "Failed to create a texture! "
 
     // Invalid types.
     const GLuint InvalidHandle = 0;
@@ -244,9 +244,9 @@ bool Texture::Load(std::string filename)
     }
 
     // Call the initialization method.
-    if(!this->Initialize(width, height, textureFormat, png_data_ptr))
+    if(!this->Create(width, height, textureFormat, png_data_ptr))
     {
-        Log() << LogLoadError(filename) << "Initialization failed.";
+        Log() << LogLoadError(filename) << "Texture could not be created.";
         return false;
     }
 
@@ -256,12 +256,12 @@ bool Texture::Load(std::string filename)
     return true;
 }
 
-bool Texture::Initialize(int width, int height, GLenum format, const void* data)
+bool Texture::Create(int width, int height, GLenum format, const void* data)
 {
     // Check if handle has been already created.
     if(m_handle != InvalidHandle)
     {
-        Log() << LogInitializeError() << "Instance has been already initialized.";
+        Log() << LogCreateError() << "Instance has been already initialized.";
         return false;
     }
 
@@ -271,13 +271,13 @@ bool Texture::Initialize(int width, int height, GLenum format, const void* data)
     // Validate arguments.
     if(width <= 0)
     {
-        Log() << LogInitializeError() << "Invalid argument - \"width\" is invalid.";
+        Log() << LogCreateError() << "Invalid argument - \"width\" is invalid.";
         return false;
     }
 
     if(height <= 0)
     {
-        Log() << LogInitializeError() << "Invalid argument - \"height\" is invalid.";
+        Log() << LogCreateError() << "Invalid argument - \"height\" is invalid.";
         return false;
     }
 
@@ -286,7 +286,7 @@ bool Texture::Initialize(int width, int height, GLenum format, const void* data)
 
     if(m_handle == InvalidHandle)
     {
-        Log() << LogInitializeError() << "Couldn't create a texture.";
+        Log() << LogCreateError() << "Could not create a texture.";
         return false;
     }
 
@@ -318,6 +318,8 @@ bool Texture::Initialize(int width, int height, GLenum format, const void* data)
     m_format = format;
 
     // Success!
+    Log() << "Created a texture (" << width << "x" << height << " size).";
+
     return initialized = true;
 }
 

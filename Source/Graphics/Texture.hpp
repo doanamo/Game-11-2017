@@ -28,7 +28,7 @@ namespace Graphics
         bool Load(std::string filename);
 
         // Initializes the texture instance.
-        bool Initialize(int width, int height, GLenum format, const void* data);
+        bool Create(int width, int height, GLenum format, const void* data);
 
         // Updates the texture data.
         void Update(const void* data);
