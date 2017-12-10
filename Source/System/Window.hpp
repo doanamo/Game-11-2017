@@ -176,6 +176,37 @@ namespace System
         } events;
 
     private:
+        // Called when the window gets moved.
+        static void MoveCallback(GLFWwindow* window, int x, int y);
+
+        // Called when the window gets resized.
+        static void ResizeCallback(GLFWwindow* window, int width, int height);
+
+        // Called when the window gets focused.
+        static void FocusCallback(GLFWwindow* window, int focused);
+
+        // Called when the window gets closed.
+        static void CloseCallback(GLFWwindow* window);
+
+        // Called when a keyboard key state changes.
+        static void KeyboardKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+        // Called when a text character is entered.
+        static void TextInputCallback(GLFWwindow* window, unsigned int character);
+
+        // Called when a mouse button state changes.
+        static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+
+        // Called when the mouse scroll moves.
+        static void MouseScrollCallback(GLFWwindow* window, double offsetx, double offsety);
+
+        // Called when the mouss cursor moves.
+        static void CursorPositionCallback(GLFWwindow* window, double x, double y);
+
+        // Called when the mouse cursor enters or leaves the window.
+        static void CursorEnterCallback(GLFWwindow* window, int entered);
+
+    private:
         // Destroy the window immediately.
         void DestroyWindow();
 
@@ -185,5 +216,8 @@ namespace System
     private:
         // Window handle.
         GLFWwindow* m_window;
+
+        // Intermediate state.
+        bool m_sizeChanged;
     };
 }
