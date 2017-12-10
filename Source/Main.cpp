@@ -3,7 +3,7 @@
 #include "System/Config.hpp"
 #include "System/Timer.hpp"
 #include "System/Window.hpp"
-
+#include "System/ResourceManager.hpp"
 #include "Graphics/Buffer.hpp"
 #include "Graphics/VertexInput.hpp"
 #include "Graphics/Shader.hpp"
@@ -32,11 +32,11 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    // Instantiate a config instance.
+    // Create a config.
     System::Config config;
     config.LoadFromFile("Game.cfg");
 
-    // Instantiate a window instance.
+    // Create a window.
     System::WindowInfo windowInfo;
     windowInfo.name = "Game";
     windowInfo.width = config.GetParameter<int>("Window.Width", 1024);
@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    // Instantiate a timer instance.
+    // Create a timer.
     System::Timer timer;
     if(!timer.IsFrequencyValid())
     {
@@ -59,6 +59,18 @@ int main(int argc, char* argv[])
     }
 
     timer.SetMaxFrameDelta(1.0f);
+
+    // Create a resource manager.
+    System::ResourceManager resourceManager;
+
+    // Create a sampler.
+    Graphics::SamplerInfo samplerInfo;
+
+    Graphics::Sampler sampler;
+    if(!sampler.Create(samplerInfo))
+    {
+        return -1;
+    }
 
     // Create a vertex buffer.
     struct Vertex
@@ -107,27 +119,10 @@ int main(int argc, char* argv[])
     }
 
     // Create a shader.
-    Graphics::Shader shader;
-    if(!shader.Load("Data/Shaders/Basic.shader"))
-    {
-        return -1;
-    }
-
-    // Create a sampler.
-    Graphics::SamplerInfo samplerInfo;
-
-    Graphics::Sampler sampler;
-    if(!sampler.Create(samplerInfo))
-    {
-        return -1;
-    }
+    auto shader = resourceManager.Load<Graphics::Shader>("Data/Shaders/Basic.shader");
 
     // Create a texture.
-    Graphics::Texture texture;
-    if(!texture.Load("Data/Textures/ColorCheckerboard.png"))
-    {
-        return -1;
-    }
+    auto texture = resourceManager.Load<Graphics::Texture>("Data/Textures/ColorCheckerboard.png");
 
     // Create a screen space coordinates.
     Graphics::ScreenSpace screenSpace;
@@ -157,11 +152,11 @@ int main(int argc, char* argv[])
 
         // Draw a triangle.
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture.GetHandle());
+        glBindTexture(GL_TEXTURE_2D, texture->GetHandle());
 
-        glUseProgram(shader.GetHandle());
-        glUniformMatrix4fv(shader.GetUniform("vertexTransform"), 1, GL_FALSE, glm::value_ptr(screenSpace.GetTransform()));
-        glUniform1i(shader.GetUniform("textureDiffuse"), 0);
+        glUseProgram(shader->GetHandle());
+        glUniformMatrix4fv(shader->GetUniform("vertexTransform"), 1, GL_FALSE, glm::value_ptr(screenSpace.GetTransform()));
+        glUniform1i(shader->GetUniform("textureDiffuse"), 0);
 
         glBindVertexArray(vertexInput.GetHandle());
 

@@ -62,6 +62,9 @@ Set(SourceFiles
     "System/Timer.cpp"
     "System/Window.hpp"
     "System/Window.cpp"
+    "System/ResourcePool.hpp"
+    "System/ResourceManager.hpp"
+    "System/ResourceManager.cpp"
 
     "Graphics/Buffer.hpp"
     "Graphics/Buffer.cpp"
