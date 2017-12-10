@@ -54,9 +54,9 @@ public:
     }
 
     // Subscribes to a dispatcher.
-    bool Subscribe(Dispatcher<ReturnType(Arguments...)>& dispatcher)
+    bool Subscribe(Dispatcher<ReturnType(Arguments...)>& dispatcher, bool replace = true)
     {
-        return dispatcher.Subscribe(*this);
+        return dispatcher.Subscribe(*this, replace);
     }
 
     // Unsubscribes from the current dispatcher.

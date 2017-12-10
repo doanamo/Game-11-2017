@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
     System::InputState inputState;
     if(!inputState.Subscribe(window))
     {
-        Log() << LogFatalError() << "Could not subscribe input state.";
+        Log() << LogFatalError() << "Could not subscribe an input state.";
         return -1;
     }
 

@@ -53,7 +53,7 @@ protected:
 
 public:
     // Subscribes a receiver.
-    bool Subscribe(Receiver<ReturnType(Arguments...)>& receiver);
+    bool Subscribe(Receiver<ReturnType(Arguments...)>& receiver, bool replace = false);
 
     // Unsubscribes a receiver.
     void Unsubscribe(Receiver<ReturnType(Arguments...)>& receiver);
@@ -173,11 +173,22 @@ void DispatcherBase<ReturnType(Arguments...)>::Cleanup()
 }
 
 template<typename ReturnType, typename... Arguments>
-bool DispatcherBase<ReturnType(Arguments...)>::Subscribe(Receiver<ReturnType(Arguments...)>& receiver)
+bool DispatcherBase<ReturnType(Arguments...)>::Subscribe(Receiver<ReturnType(Arguments...)>& receiver, bool replace)
 {
     // Check if receiver is already subscribed somewhere else.
     if(receiver.m_dispatcher != nullptr)
-        return false;
+    {
+        // Check if receiver is already subscribed to this dispatcher.
+        if(receiver.m_dispatcher == this)
+            return true;
+
+        // Check if we want to replace receiver's dispatcher.
+        if(!replace)
+            return false;
+        
+        // Unsubscribe first and then continue.
+        receiver.Unsubscribe();
+    }
 
     Assert(receiver.m_previous == nullptr, "Receiver's previous list element is not nullptr!");
     Assert(receiver.m_next == nullptr, "Receiver's next list element is not nullptr!");
