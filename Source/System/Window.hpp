@@ -41,6 +41,11 @@ namespace System
         int width;
         int height;
         bool vsync;
+
+        int minWidth;
+        int minHeight;
+        int maxWidth;
+        int maxHeight;
     };
 
     // Window class.

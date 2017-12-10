@@ -13,7 +13,11 @@ WindowInfo::WindowInfo() :
     name("Window"),
     width(1024),
     height(576),
-    vsync(true)
+    vsync(true),
+    minWidth(1024),
+    minHeight(576),
+    maxWidth(GLFW_DONT_CARE),
+    maxHeight(GLFW_DONT_CARE)
 {
 }
 
@@ -254,6 +258,9 @@ bool Window::Open(const WindowInfo& info)
         Log() << LogOpenError() << "Could not create the window.";
         return false;
     }
+
+    // Set window size limits.
+    glfwSetWindowSizeLimits(m_window, info.minWidth, info.minHeight, info.maxWidth, info.maxHeight);
 
     // Set window user data.
     glfwSetWindowUserPointer(m_window, this);
