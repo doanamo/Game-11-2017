@@ -58,7 +58,7 @@ float Timer::CalculateFrameDelta()
     frameDeltaSeconds = std::max(0.0f, frameDeltaSeconds);
     frameDeltaSeconds = std::min(frameDeltaSeconds, m_maxFrameDeltaSeconds);
 
-    // Return calculated value.
+    // Return calculated delta value.
     return frameDeltaSeconds;
 }
 
