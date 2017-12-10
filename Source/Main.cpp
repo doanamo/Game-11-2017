@@ -3,6 +3,7 @@
 #include "System/Config.hpp"
 #include "System/Timer.hpp"
 #include "System/Window.hpp"
+#include "System/InputState.hpp"
 #include "System/ResourceManager.hpp"
 #include "Graphics/Buffer.hpp"
 #include "Graphics/VertexInput.hpp"
@@ -47,6 +48,14 @@ int main(int argc, char* argv[])
     if(!window.Open(windowInfo))
     {
         Log() << LogFatalError() << "Could not open a window.";
+        return -1;
+    }
+
+    // Create an input state.
+    System::InputState inputState;
+    if(!inputState.Subscribe(window))
+    {
+        Log() << LogFatalError() << "Could not subscribe input state.";
         return -1;
     }
 
@@ -136,6 +145,9 @@ int main(int argc, char* argv[])
 
         // Calculate frame delta time.
         float frameDelta = timer.CalculateFrameDelta();
+
+        // Update input state.
+        inputState.Update();
 
         // Process window evenets.
         window.ProcessEvents();

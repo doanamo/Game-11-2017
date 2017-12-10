@@ -62,6 +62,8 @@ Set(SourceFiles
     "System/Timer.cpp"
     "System/Window.hpp"
     "System/Window.cpp"
+    "System/InputState.hpp"
+    "System/InputState.cpp"
     "System/ResourcePool.hpp"
     "System/ResourceManager.hpp"
     "System/ResourceManager.cpp"
