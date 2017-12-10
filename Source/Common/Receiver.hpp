@@ -53,6 +53,12 @@ public:
         Delegate<ReturnType(Arguments...)>::Cleanup();
     }
 
+    // Subscribes to a dispatcher.
+    bool Subscribe(Dispatcher<ReturnType(Arguments...)>& dispatcher)
+    {
+        return dispatcher.Subscribe(*this);
+    }
+
     // Unsubscribes from the current dispatcher.
     void Unsubscribe()
     {
