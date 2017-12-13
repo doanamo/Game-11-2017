@@ -79,17 +79,14 @@ bool Buffer::Create(const BufferInfo& info)
         return false;
     }
 
-    // Copy data to the buffer.
+    // Allocate buffer memory.
     unsigned int bufferSize = info.elementSize * info.elementCount;
 
-    if(info.data != nullptr)
-    {
-        glBindBuffer(m_type, m_handle);
-        glBufferData(m_type, bufferSize, info.data, info.usage);
-        glBindBuffer(m_type, 0);
-    }
+    glBindBuffer(m_type, m_handle);
+    glBufferData(m_type, bufferSize, info.data, info.usage);
+    glBindBuffer(m_type, 0);
 
-    // Save buffer's parameters.
+    // Save buffer parameters.
     m_elementSize = info.elementSize;
     m_elementCount = info.elementCount;
 
