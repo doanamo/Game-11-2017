@@ -80,6 +80,8 @@ Set(SourceFiles
     "Graphics/Texture.cpp"
     "Graphics/ScreenSpace.hpp"
     "Graphics/ScreenSpace.cpp"
+    "Graphics/BasicRenderer.hpp"
+    "Graphics/BasicRenderer.cpp"
 )
 
 # Append source directory path to each source file.
