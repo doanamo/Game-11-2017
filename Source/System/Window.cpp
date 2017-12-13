@@ -14,8 +14,8 @@ WindowInfo::WindowInfo() :
     width(1024),
     height(576),
     vsync(true),
-    minWidth(1024),
-    minHeight(576),
+    minWidth(GLFW_DONT_CARE),
+    minHeight(GLFW_DONT_CARE),
     maxWidth(GLFW_DONT_CARE),
     maxHeight(GLFW_DONT_CARE)
 {
