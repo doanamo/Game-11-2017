@@ -170,6 +170,11 @@ File(WRITE "${CMAKE_BINARY_DIR}/SourceDir.txt" "${SourceDirPath}/")
 # Platform
 #
 
+# Enable C++17 for all supported compilers.
+Set(CMAKE_CXX_STANDARD 17)
+Set(CMAKE_CXX_STANDARD_REQUIRED ON)
+Set(CMAKE_CXX_EXTENSIONS OFF)
+
 # MSVC compiler.
 If("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     # Show or hide the console window.
@@ -181,6 +186,10 @@ If("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     
     # Restore default main() entry instead of WinMain().
     Set_Property(TARGET ${TargetName} APPEND_STRING PROPERTY LINK_FLAGS "/ENTRY:mainCRTStartup ")
+
+    # Enable C++17 support by default.
+    # CMake flags for C++17 do not work with MSVC compiler as of now.
+    Set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
     
     # Disable Standard C++ Library warnings.
     Set_Property(TARGET ${TargetName} APPEND_STRING PROPERTY COMPILE_DEFINITIONS "_CRT_SECURE_NO_WARNINGS")
@@ -204,8 +213,8 @@ EndIf()
 
 # GCC compiler.
 If("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    # Enable C++11 support by default.
-    List(APPEND CMAKE_CXX_FLAGS "-std=c++11")
+    # Enable C++17 support by default.
+    # List(APPEND CMAKE_CXX_FLAGS "-std=c++17")
 EndIf()
 
 #
