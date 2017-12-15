@@ -49,6 +49,9 @@
 // PNG
 #include <png.h>
 
+// Lua
+#include <lua.hpp>
+
 /*
     Project
 */

@@ -333,3 +333,21 @@ Set_Property(TARGET "genfiles" PROPERTY FOLDER "External")
 # Link library target.
 Add_Dependencies(${TargetName} "png_static")
 Target_Link_Libraries(${TargetName} "png_static")
+
+#
+# Lua
+#
+
+# Add library directory.
+Add_Subdirectory("../External/Lua-5.3.4" "Lua" EXCLUDE_FROM_ALL)
+
+# Add include directory.
+Include_Directories("../External/Lua-5.3.4/src")
+
+# Move library target to dependencies.
+Set_Property(TARGET "lua_static" PROPERTY PROJECT_LABEL "Lua")
+Set_Property(TARGET "lua_static" PROPERTY FOLDER "External")
+
+# Link library target.
+Add_Dependencies(${TargetName} "lua_static")
+Target_Link_Libraries(${TargetName} "lua_static")
