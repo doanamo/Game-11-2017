@@ -17,30 +17,6 @@ namespace
     };
 }
 
-BasicRenderer::Sprite::Info::Info() :
-    texture(nullptr),
-    transparent(false),
-    filter(true)
-{
-}
-
-bool BasicRenderer::Sprite::Info::operator==(const Info& other) const
-{
-    return texture == other.texture && transparent == other.transparent && filter == other.filter;
-}
-
-bool BasicRenderer::Sprite::Info::operator!=(const Info& other) const
-{
-    return !this->operator==(other);
-}
-
-BasicRenderer::Sprite::Data::Data() :
-    transform(1.0f),
-    rectangle(0.0f, 0.0f, 1.0f, 1.0f),
-    color(1.0f, 1.0f, 1.0f, 1.0f)
-{
-}
-
 BasicRenderer::BasicRenderer() :
     m_initialized(false)
 {

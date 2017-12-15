@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
     // Create an example sprite.
     auto texture = resourceManager.Load<Graphics::Texture>("Data/Textures/ColorCheckerboard.png");
 
-    Graphics::BasicRenderer::Sprite sprite;
+    Graphics::Sprite sprite;
     sprite.data.transform = glm::mat4(1.0f);
     sprite.data.rectangle = glm::vec4(0.0f, 0.0f, 128.0f, 128.0f);
     sprite.data.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);

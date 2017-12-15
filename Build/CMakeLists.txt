@@ -80,6 +80,8 @@ Set(SourceFiles
     "Graphics/Texture.cpp"
     "Graphics/ScreenSpace.hpp"
     "Graphics/ScreenSpace.cpp"
+    "Graphics/Sprite.hpp"
+    "Graphics/Sprite.cpp"
     "Graphics/BasicRenderer.hpp"
     "Graphics/BasicRenderer.cpp"
 )

@@ -5,6 +5,7 @@
 #include "Buffer.hpp"
 #include "Sampler.hpp"
 #include "Shader.hpp"
+#include "Sprite.hpp"
 
 // Forward declarations.
 namespace System
@@ -40,33 +41,6 @@ namespace Graphics
     class BasicRenderer
     {
     public:
-        // Sprite structure.
-        struct Sprite
-        {
-            // Info structure shared per batch.
-            struct Info
-            {
-                Info();
-
-                bool operator==(const Info& other) const;
-                bool operator!=(const Info& other) const;
-
-                const Texture* texture;
-                bool transparent;
-                bool filter;
-            } info;
-
-            // Data structure of each sprite.
-            struct Data
-            {
-                Data();
-
-                glm::mat4 transform;
-                glm::vec4 rectangle;
-                glm::vec4 color;
-            } data;
-        };
-
         // Type declarations.
         typedef std::shared_ptr<const Shader> ShaderPtr;
         typedef std::vector<Sprite::Info> SpriteInfoList;
