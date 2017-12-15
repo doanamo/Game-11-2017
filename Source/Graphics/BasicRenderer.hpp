@@ -24,17 +24,12 @@ namespace Graphics
     // Forward declarations.
     class Texture;
 
-    // Clear flags.
-    struct ClearFlags
+    // Clear values structure.
+    struct ClearValues
     {
-        enum Type
-        {
-            None = 0,
-            Color = 1 << 0,
-            Depth = 1 << 1,
-            Stencil = 1 << 2,
-            All = ~0,
-        };
+        std::optional<glm::vec4> color;
+        std::optional<float> depth;
+        std::optional<int> stencil;
     };
 
     // Basic renderer class.
@@ -56,17 +51,8 @@ namespace Graphics
         // Initializes the basic renderer.
         bool Initialize(System::ResourceManager& resourceManager);
 
-        // Sets the clear color.
-        void SetClearColor(const glm::vec4& color);
-
-        // Sets the clear depth.
-        void SetClearDepth(float depth);
-
-        // Sets the clear stencil.
-        void SetClearStencil(int stencil);
-
         // Clears the frame buffer.
-        void Clear(uint32_t flags = ClearFlags::All);
+        void Clear(const ClearValues& values);
 
         // Draws a single sprite.
         void DrawSprite(const Sprite& sprite, const glm::mat4& transform);

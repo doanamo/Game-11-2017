@@ -138,31 +138,7 @@ bool BasicRenderer::Initialize(System::ResourceManager& resourceManager)
     return m_initialized = true;
 }
 
-void BasicRenderer::SetClearColor(const glm::vec4& color)
-{
-    if(!m_initialized)
-        return;
-
-    glClearColor(color.r, color.g, color.b, color.a);
-}
-
-void BasicRenderer::SetClearDepth(float depth)
-{
-    if(!m_initialized)
-        return;
-
-    glClearDepth(depth);
-}
-
-void BasicRenderer::SetClearStencil(int stencil)
-{
-    if(!m_initialized)
-        return;
-
-    glClearStencil(stencil);
-}
-
-void BasicRenderer::Clear(uint32_t flags)
+void BasicRenderer::Clear(const ClearValues& values)
 {
     if(!m_initialized)
         return;
@@ -170,9 +146,24 @@ void BasicRenderer::Clear(uint32_t flags)
     // Clear the frame buffer.
     GLbitfield mask = GL_NONE;
 
-    if(flags & ClearFlags::Color)   mask |= GL_COLOR_BUFFER_BIT;
-    if(flags & ClearFlags::Depth)   mask |= GL_DEPTH_BUFFER_BIT;
-    if(flags & ClearFlags::Stencil) mask |= GL_STENCIL_BUFFER_BIT;
+    if(values.color.has_value())
+    {
+        const glm::vec4& color = values.color.value();
+        glClearColor(color.r, color.g, color.b, color.a);
+        mask |= GL_COLOR_BUFFER_BIT;
+    }
+
+    if(values.depth.has_value())
+    {
+        glClearDepth(values.depth.value());
+        mask |= GL_DEPTH_BUFFER_BIT;
+    }
+
+    if(values.stencil.has_value())
+    {
+        glClearStencil(values.stencil.value());
+        mask |= GL_STENCIL_BUFFER_BIT;
+    }
 
     glClear(mask);
 }

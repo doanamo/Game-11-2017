@@ -117,9 +117,11 @@ int main(int argc, char* argv[])
         screenSpace.SetTargetSize(window.GetWidth(), window.GetHeight());
 
         // Clear the framebuffer.
-        basicRenderer.SetClearDepth(1.0f);
-        basicRenderer.SetClearColor(glm::vec4(0.0f, 0.35f, 0.35f, 1.0f));
-        basicRenderer.Clear(Graphics::ClearFlags::Depth | Graphics::ClearFlags::Color);
+        Graphics::ClearValues clearValues;
+        clearValues.color = glm::vec4(0.0f, 0.35f, 0.35f, 1.0f);
+        clearValues.depth = 1.0f;
+
+        basicRenderer.Clear(clearValues);
 
         // Draw the scene.
         basicRenderer.DrawSprite(sprite, screenSpace.GetTransform());
