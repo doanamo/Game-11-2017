@@ -106,6 +106,12 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+    if(!state.Load("Data/Scripts/Main.lua"))
+    {
+        Log() << LogFatalError() << "Could not load the main script entry.";
+        return -1;
+    }
+
     // Main loop.
     while(window.IsOpen())
     {

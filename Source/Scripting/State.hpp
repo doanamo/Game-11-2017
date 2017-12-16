@@ -21,6 +21,12 @@ namespace Scripting
         // Initializes the scripting state.
         bool Initialize();
 
+        // Loads a script from a file.
+        bool Load(std::string filename);
+
+        // Parses a script from a string.
+        bool Parse(std::string script);
+
         // Prints an error on the stack and pops it.
         void PrintError();
 

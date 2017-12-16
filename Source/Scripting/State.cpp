@@ -97,6 +97,44 @@ bool State::Initialize()
     return initialized = true;
 }
 
+bool State::Load(std::string filename)
+{
+    // Initialize if needed.
+    if(m_luaState == nullptr)
+    {
+        if(!this->Initialize())
+            return false;
+    }
+
+    // Parse the file.
+    if(luaL_dofile(m_luaState, (Build::GetWorkingDir() + filename).c_str()) != 0)
+    {
+        this->PrintError();
+        return false;
+    }
+
+    return true;
+}
+
+bool State::Parse(std::string text)
+{
+    // Initialize if needed.
+    if(m_luaState == nullptr)
+    {
+        if(!this->Initialize())
+            return false;
+    }
+
+    // Parse the string.
+    if(luaL_dostring(m_luaState, text.c_str()) != 0)
+    {
+        this->PrintError();
+        return false;
+    }
+
+    return true;
+}
+
 void State::PrintError()
 {
     if(m_luaState == nullptr)
