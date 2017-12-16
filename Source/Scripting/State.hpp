@@ -33,6 +33,12 @@ namespace Scripting
         // Prints the entire stack for debugging.
         void PrintStack() const;
 
+        // Collects all memory garbage.
+        void CollectGarbage();
+
+        // Collects memory garbage for a specified time.
+        void CollectGarbage(float maxTime);
+
         // Checks if the instance is valid.
         bool IsValid() const;
 

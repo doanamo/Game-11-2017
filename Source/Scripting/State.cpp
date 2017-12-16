@@ -190,6 +190,34 @@ void State::PrintStack() const
     }
 }
 
+void State::CollectGarbage()
+{
+    if(m_luaState == nullptr)
+        return;
+
+    // Collect all garbage at once.
+    lua_gc(m_luaState, LUA_GCCOLLECT, 0);
+}
+
+void State::CollectGarbage(float maxTime)
+{
+    if(m_luaState == nullptr)
+        return;
+
+    if(maxTime <= 0.0f)
+        return;
+
+    // Run the garbage collector for a specified time.
+    double startTime = glfwGetTime();
+
+    do
+    {
+        if(lua_gc(m_luaState, LUA_GCSTEP, 0))
+            break;
+    }
+    while((glfwGetTime() - startTime) < maxTime);
+}
+
 bool State::IsValid() const
 {
     return m_luaState != nullptr;

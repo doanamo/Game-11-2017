@@ -99,14 +99,14 @@ int main(int argc, char* argv[])
     sprite.info.filter = false;
 
     // Create a scripting state.
-    Scripting::State state;
-    if(!state.Initialize())
+    Scripting::State scriptingState;
+    if(!scriptingState.Initialize())
     {
         Log() << LogFatalError() << "Could not initialize a scripting state.";
         return -1;
     }
 
-    if(!state.Load("Data/Scripts/Main.lua"))
+    if(!scriptingState.Load("Data/Scripts/Main.lua"))
     {
         Log() << LogFatalError() << "Could not load the main script entry.";
         return -1;
@@ -120,6 +120,9 @@ int main(int argc, char* argv[])
 
         // Calculate frame delta time.
         float frameDelta = timer.CalculateFrameDelta();
+
+        // Collect scripting garbage.
+        scriptingState.CollectGarbage(0.01f);
 
         // Update input state.
         inputState.Update();
