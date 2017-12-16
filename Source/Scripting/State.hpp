@@ -30,6 +30,9 @@ namespace Scripting
         // Prints an error on the stack and pops it.
         void PrintError();
 
+        // Prints the entire stack for debugging.
+        void PrintStack() const;
+
         // Checks if the instance is valid.
         bool IsValid() const;
 

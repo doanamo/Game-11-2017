@@ -148,6 +148,48 @@ void State::PrintError()
     lua_pop(m_luaState, 1);
 }
 
+void State::PrintStack() const
+{
+    if(m_luaState == nullptr)
+        return;
+
+    Log() << "Lua stack:";
+
+    // Get the index of the top element.
+    int top = lua_gettop(m_luaState);
+
+    if(top == 0)
+    {
+        Log() << "  0: Empty";
+        return;
+    }
+
+    // Print every stack element.
+    for(int i = 1; i <= top; ++i)
+    {
+        int type = lua_type(m_luaState, i);
+
+        switch(type)
+        {
+        case LUA_TSTRING:
+            Log() << "  " << i << ": \"" << lua_tostring(m_luaState, i) << "\" (" << lua_typename(m_luaState, type) << ")";
+            break;
+
+        case LUA_TBOOLEAN:
+            Log() << "  " << i << ": " << (lua_toboolean(m_luaState, i) ? "true" : "false") << " (" << lua_typename(m_luaState, type) << ")";
+            break;
+
+        case LUA_TNUMBER:
+            Log() << "  " << i << ": " << lua_tonumber(m_luaState, i) << " (" << lua_typename(m_luaState, type) << ")";
+            break;
+
+        default:
+            Log() << "  " << i << ": ??? (" << lua_typename(m_luaState, type) << ")";
+            break;
+        }
+    }
+}
+
 bool State::IsValid() const
 {
     return m_luaState != nullptr;
