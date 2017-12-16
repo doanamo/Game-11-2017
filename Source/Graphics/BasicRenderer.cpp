@@ -124,7 +124,7 @@ bool BasicRenderer::Initialize(System::ResourceManager& resourceManager)
     SCOPE_GUARD_IF(!m_initialized, m_linearSampler = Sampler());
 
     // Load the sprite shader.
-    m_shader = resourceManager.Load<Shader>("Data/Shaders/Sprite.shader");
+    m_shader = resourceManager.Load<Shader>("Data/Shaders/Sprite.glsl");
 
     if(!m_shader->IsValid())
     {
