@@ -12,6 +12,7 @@
 #include "Graphics/Texture.hpp"
 #include "Graphics/ScreenSpace.hpp"
 #include "Graphics/BasicRenderer.hpp"
+#include "Scripting/State.hpp"
 
 namespace
 {
@@ -96,6 +97,14 @@ int main(int argc, char* argv[])
     sprite.info.texture = texture.get();
     sprite.info.transparent = false;
     sprite.info.filter = false;
+
+    // Create a scripting state.
+    Scripting::State state;
+    if(!state.Initialize())
+    {
+        Log() << LogFatalError() << "Could not initialize a scripting state.";
+        return -1;
+    }
 
     // Main loop.
     while(window.IsOpen())

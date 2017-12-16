@@ -84,6 +84,9 @@ Set(SourceFiles
     "Graphics/Sprite.cpp"
     "Graphics/BasicRenderer.hpp"
     "Graphics/BasicRenderer.cpp"
+
+    "Scripting/State.hpp"
+    "Scripting/State.cpp"
 )
 
 # Append source directory path to each source file.
