@@ -13,6 +13,7 @@
 #include "Graphics/ScreenSpace.hpp"
 #include "Graphics/BasicRenderer.hpp"
 #include "Scripting/State.hpp"
+#include "Game/ComponentSystem.hpp"
 
 namespace
 {
@@ -111,6 +112,9 @@ int main(int argc, char* argv[])
         Log() << LogFatalError() << "Could not load the main script entry.";
         return -1;
     }
+
+    // Create a component system.
+    Game::ComponentSystem componentSystem;
 
     // Main loop.
     while(window.IsOpen())

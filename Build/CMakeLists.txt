@@ -91,6 +91,8 @@ Set(SourceFiles
     "Game/EntityHandle.hpp"
     "Game/Component.hpp"
     "Game/ComponentPool.hpp"
+    "Game/ComponentSystem.hpp"
+    "Game/ComponentSystem.cpp"
 )
 
 # Append source directory path to each source file.
