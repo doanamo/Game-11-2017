@@ -87,6 +87,8 @@ Set(SourceFiles
 
     "Scripting/State.hpp"
     "Scripting/State.cpp"
+
+    "Game/EntityHandle.hpp"
 )
 
 # Append source directory path to each source file.
