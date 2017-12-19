@@ -3,9 +3,6 @@
 #include "Precompiled.hpp"
 #include "EntityHandle.hpp"
 
-// Forward declarations.
-struct Context;
-
 /*
     Component
     
@@ -27,10 +24,15 @@ namespace Game
         {
         }
 
-        // Called when entity containing this component has been finalized.
-        virtual bool OnFinalize(EntityHandle self, const Context& context)
+        // Called when the component needs to be finalized.
+        virtual bool OnFinalize(EntityHandle self)
         {
             return true;
+        }
+
+        // Called when the component is about to be destroyed.
+        virtual void OnDestroy(EntityHandle self)
+        {
         }
     };
 }
