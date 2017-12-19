@@ -1,0 +1,36 @@
+#pragma once
+
+#include "Precompiled.hpp"
+#include "EntityHandle.hpp"
+
+// Forward declarations.
+struct Context;
+
+/*
+    Component
+    
+    Base class for component types.
+*/
+
+namespace Game
+{
+    // Component base class.
+    class Component : private NonCopyable
+    {
+    protected:
+        Component()
+        {
+        }
+
+    public:
+        virtual ~Component()
+        {
+        }
+
+        // Called when entity containing this component has been finalized.
+        virtual bool OnFinalize(EntityHandle self, const Context& context)
+        {
+            return true;
+        }
+    };
+}
