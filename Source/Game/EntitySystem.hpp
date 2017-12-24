@@ -72,7 +72,7 @@ namespace Game
         {
             enum Type
             {
-                // Entity handle entry has been allocated and is free to use.
+                // Entity handle has been allocated and is free to use.
                 Unused = 0,
 
                 // Entity handle has been created and can be used.
