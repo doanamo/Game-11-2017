@@ -14,6 +14,7 @@
 #include "Graphics/BasicRenderer.hpp"
 #include "Scripting/State.hpp"
 #include "Game/ComponentSystem.hpp"
+#include "Game/EntitySystem.hpp"
 
 namespace
 {
@@ -115,6 +116,10 @@ int main(int argc, char* argv[])
 
     // Create a component system.
     Game::ComponentSystem componentSystem;
+    Game::EntitySystem entitySystem;
+
+    componentSystem.eventReceivers.entityDestroy.Subscribe(entitySystem.eventDispatchers.entityDestroy);
+    componentSystem.eventReceivers.entityFinalize.Subscribe(entitySystem.eventDispatchers.entityFinalize);
 
     // Main loop.
     while(window.IsOpen())

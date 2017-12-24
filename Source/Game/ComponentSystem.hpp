@@ -47,12 +47,16 @@ namespace Game
         typedef ComponentPoolList::value_type                         ComponentPoolPair;
 
     public:
+        // Following event receivers must be subscribed to the entity system.
+        struct EventReceivers
+        {
+            Receiver<bool(EntityHandle)> entityFinalize;
+            Receiver<void(EntityHandle)> entityDestroy;
+        } eventReceivers;
+
+    public:
         ComponentSystem();
         ~ComponentSystem();
-
-        // Event receivers.
-        Receiver<bool(EntityHandle)> entityFinalize;
-        Receiver<void(EntityHandle)> entityDestroy;
 
         // Creates a component.
         template<typename Type>

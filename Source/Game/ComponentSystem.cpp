@@ -5,8 +5,8 @@ using namespace Game;
 ComponentSystem::ComponentSystem()
 {
     // Bind event receivers.
-    entityFinalize.Bind<ComponentSystem, &ComponentSystem::OnEntityFinalize>(this);
-    entityDestroy.Bind<ComponentSystem, &ComponentSystem::OnEntityDestroy>(this);
+    this->eventReceivers.entityFinalize.Bind<ComponentSystem, &ComponentSystem::OnEntityFinalize>(this);
+    this->eventReceivers.entityDestroy.Bind<ComponentSystem, &ComponentSystem::OnEntityDestroy>(this);
 }
 
 ComponentSystem::~ComponentSystem()
