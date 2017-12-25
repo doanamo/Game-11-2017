@@ -97,6 +97,8 @@ Set(SourceFiles
     "Game/EntitySystem.cpp"
     "Game/TransformComponent.hpp"
     "Game/TransformComponent.cpp"
+    "Game/RenderComponent.hpp"
+    "Game/RenderComponent.cpp"
 )
 
 # Append source directory path to each source file.

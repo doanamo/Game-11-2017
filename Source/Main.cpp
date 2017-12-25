@@ -16,6 +16,7 @@
 #include "Game/ComponentSystem.hpp"
 #include "Game/EntitySystem.hpp"
 #include "Game/TransformComponent.hpp"
+#include "Game/RenderComponent.hpp"
 
 namespace
 {
@@ -128,6 +129,10 @@ int main(int argc, char* argv[])
         using namespace Game::Components;
 
         auto* transform = componentSystem.Create<Transform>(entity);
+        transform->SetPosition(0.0f, 0.0f, 0.0f);
+
+        auto* render = componentSystem.Create<Render>(entity);
+        render->SetDiffuseColor(1.0f, 0.0f, 0.0f);
     }
 
     // Main loop.
