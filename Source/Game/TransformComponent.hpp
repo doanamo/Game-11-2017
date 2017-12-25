@@ -19,61 +19,25 @@ namespace Game
             ~Transform();
 
             // Sets the position.
-            void SetPosition(const glm::vec3& position)
-            {
-                m_position = position;
-            }
-
-            void SetPosition(float x, float y, float z = 0.0f)
-            {
-                m_position.x = x;
-                m_position.y = y;
-                m_position.z = z;
-            }
+            void SetPosition(const glm::vec3& position);
+            void SetPosition(float x, float y, float z = 0.0f);
 
             // Sets the rotation.
-            void SetRotation(const glm::vec3& rotation)
-            {
-                m_rotation = rotation;
-            }
-
-            void SetRotation(float x, float y, float z)
-            {
-                m_rotation.x = x;
-                m_rotation.y = y;
-                m_rotation.z = z;
-            }
+            void SetRotation(const glm::vec3& rotation);
+            void SetRotation(float x, float y, float z);
 
             // Sets the scale.
-            void SetScale(const glm::vec3& scale)
-            {
-                m_scale = scale;
-            }
-
-            void SetScale(float x, float y, float z = 1.0f)
-            {
-                m_scale.x = x;
-                m_scale.y = y;
-                m_scale.z = z;
-            }
+            void SetScale(const glm::vec3& scale);
+            void SetScale(float x, float y, float z = 1.0f);
 
             // Gets the position.
-            const glm::vec3& GetPosition() const
-            {
-                return m_position;
-            }
+            const glm::vec3& GetPosition() const;
 
             // Gets the rotation.
-            const glm::vec3& GetRotation() const
-            {
-                return m_rotation;
-            }
+            const glm::vec3& GetRotation() const;
 
             // Gets the scale.
-            const glm::vec3& GetScale() const
-            {
-                return m_scale;
-            }
+            const glm::vec3& GetScale() const;
 
         private:
             // Transform data.
