@@ -9,9 +9,9 @@ namespace Graphics
     class Texture;
 }
 
-//
-// Render Component
-//
+/*
+    Render Component
+*/
 
 namespace Game
 {

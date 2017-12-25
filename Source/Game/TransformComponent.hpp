@@ -3,9 +3,9 @@
 #include "Precompiled.hpp"
 #include "Component.hpp"
 
-//
-// Transform Component
-//
+/*
+    Transform Component
+*/
 
 namespace Game
 {
