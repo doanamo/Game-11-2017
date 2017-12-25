@@ -15,6 +15,7 @@
 #include "Scripting/State.hpp"
 #include "Game/ComponentSystem.hpp"
 #include "Game/EntitySystem.hpp"
+#include "Game/TransformComponent.hpp"
 
 namespace
 {
@@ -120,6 +121,14 @@ int main(int argc, char* argv[])
 
     componentSystem.eventReceivers.entityDestroy.Subscribe(entitySystem.eventDispatchers.entityDestroy);
     componentSystem.eventReceivers.entityFinalize.Subscribe(entitySystem.eventDispatchers.entityFinalize);
+
+    Game::EntityHandle entity = entitySystem.CreateEntity();
+
+    {
+        using namespace Game::Components;
+
+        auto* transform = componentSystem.Create<Transform>(entity);
+    }
 
     // Main loop.
     while(window.IsOpen())
