@@ -37,6 +37,9 @@
 
 namespace Game
 {
+    // Forward declarations.
+    class EntitySystem;
+
     // Component system class.
     class ComponentSystem
     {
@@ -57,6 +60,9 @@ namespace Game
     public:
         ComponentSystem();
         ~ComponentSystem();
+
+        // Subscribes to events dispatched by the entity system.
+        bool Subscribe(EntitySystem& entitySystem);
 
         // Creates a component.
         template<typename Type>

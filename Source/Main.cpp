@@ -116,13 +116,18 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    // Create a component system.
-    Game::ComponentSystem componentSystem;
+    // Create an entity system.
     Game::EntitySystem entitySystem;
 
-    componentSystem.eventReceivers.entityDestroy.Subscribe(entitySystem.eventDispatchers.entityDestroy);
-    componentSystem.eventReceivers.entityFinalize.Subscribe(entitySystem.eventDispatchers.entityFinalize);
-
+    // Create a component system.
+    Game::ComponentSystem componentSystem;
+    if(!componentSystem.Subscribe(entitySystem))
+    {
+        Log() << LogFatalError() << "Could not subscribe a component system.";
+        return -1;
+    }
+    
+    // Create an example entity.
     Game::EntityHandle entity = entitySystem.CreateEntity();
 
     {

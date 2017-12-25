@@ -3,12 +3,6 @@
 #include "Window.hpp"
 using namespace System;
 
-namespace
-{
-    // Log message strings.
-    #define LogSubscribeError() "Failed to subscribe an input state! "
-}
-
 InputState::InputState()
 {
     // Set initial input states.
@@ -28,11 +22,10 @@ bool InputState::Subscribe(Window& window)
     // Subscribe event receivers.
     if(!m_keyboardKey.Subscribe(window.events.keyboardKey) || !m_windowFocus.Subscribe(window.events.focus))
     {
-        Log() << LogSubscribeError() << "Could not subscribe to window event receivers!";
+        Log() << "Failed to subscribe an input state! Could not subscribe to window event receivers.";
         return false;
     }
 
-    // Success!
     return true;
 }
 
