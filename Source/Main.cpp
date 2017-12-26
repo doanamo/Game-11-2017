@@ -69,8 +69,12 @@ int main(int argc, char* argv[])
     System::ResourceManager resourceManager;
 
     // Create a basic renderer.
+    Graphics::BasicRendererInfo basicRendererInfo;
+    basicRendererInfo.resourceManager = &resourceManager;
+    basicRendererInfo.spriteBatchSize = 128;
+
     Graphics::BasicRenderer basicRenderer;
-    if(!basicRenderer.Initialize(resourceManager))
+    if(!basicRenderer.Initialize(basicRendererInfo))
     {
         Log() << LogFatalError() << "Could not initialize a basic renderer.";
         return -1;

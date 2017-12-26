@@ -17,25 +17,48 @@ namespace
     };
 }
 
+BasicRendererInfo::BasicRendererInfo() :
+    resourceManager(nullptr),
+    spriteBatchSize(128)
+{
+}
+
 BasicRenderer::BasicRenderer() :
+    m_spriteBatchSize(0),
     m_initialized(false)
 {
-    // Make sure we have a valid sprite batch size.
-    static_assert(SpriteBatchSize >= 1, "Invalid sprite batch size.");
 }
 
 BasicRenderer::~BasicRenderer()
 {
 }
 
-bool BasicRenderer::Initialize(System::ResourceManager& resourceManager)
+bool BasicRenderer::Initialize(const BasicRendererInfo& info)
 {
     // Check if handle has been already created.
     if(m_initialized)
     {
-        Log() << LogInitializeError() << "Instance has been already initialized.";
+        Log() << LogInitializeError() << "Instance is already initialized.";
         return false;
     }
+
+    // Validate arguments.
+    if(info.resourceManager == nullptr)
+    {
+        Log() << LogInitializeError() << "Invalid argument - \"resourceManager\" is null.";
+        return false;
+    }
+
+    if(info.spriteBatchSize <= 0)
+    {
+        Log() << LogInitializeError() << "Invalid argument - \"spriteBatchSize\" is invalid.";
+        return false;
+    }
+
+    // Remember the sprite batch size.
+    m_spriteBatchSize = info.spriteBatchSize;
+
+    SCOPE_GUARD_IF(!m_initialized, m_spriteBatchSize = 0);
 
     // Create a vertex buffer.
     const Vertex vertices[4] =
@@ -64,7 +87,7 @@ bool BasicRenderer::Initialize(System::ResourceManager& resourceManager)
     BufferInfo instanceBufferInfo;
     instanceBufferInfo.usage = GL_DYNAMIC_DRAW;
     instanceBufferInfo.elementSize = sizeof(Sprite::Data);
-    instanceBufferInfo.elementCount = SpriteBatchSize;
+    instanceBufferInfo.elementCount = m_spriteBatchSize;
     instanceBufferInfo.data = nullptr;
 
     if(!m_instanceBuffer.Create(instanceBufferInfo))
@@ -124,7 +147,7 @@ bool BasicRenderer::Initialize(System::ResourceManager& resourceManager)
     SCOPE_GUARD_IF(!m_initialized, m_linearSampler = Sampler());
 
     // Load the sprite shader.
-    m_shader = resourceManager.Load<Shader>("Data/Shaders/Sprite.glsl");
+    m_shader = info.resourceManager->Load<Shader>("Data/Shaders/Sprite.glsl");
 
     if(!m_shader->IsValid())
     {
@@ -266,7 +289,7 @@ void BasicRenderer::DrawSprites(const SpriteInfoList& spriteInfo, const SpriteDa
     // Make sure both lists have the same size.
     if(spriteInfo.size() != spriteData.size())
     {
-        Log() << "Invalid arguments passed - sprite structures have different sizes!";
+        Log() << "Invalid arguments passed - sprite lists have different sizes!";
         return;
     }
 
@@ -334,7 +357,7 @@ void BasicRenderer::DrawSprites(const SpriteInfoList& spriteInfo, const SpriteDa
         while(true)
         {
             // Check if we have reached the maximum batch size.
-            if(spritesBatched == SpriteBatchSize)
+            if(spritesBatched == m_spriteBatchSize)
                 break;
 
             // Get the index of the next sprite.

@@ -32,6 +32,15 @@ namespace Graphics
         std::optional<int> stencil;
     };
 
+    // Basic renderer info struct.
+    struct BasicRendererInfo
+    {
+        BasicRendererInfo();
+
+        System::ResourceManager* resourceManager;
+        int spriteBatchSize;
+    };
+
     // Basic renderer class.
     class BasicRenderer
     {
@@ -41,15 +50,12 @@ namespace Graphics
         typedef std::vector<Sprite::Info> SpriteInfoList;
         typedef std::vector<Sprite::Data> SpriteDataList;
 
-        // Constant variables.
-        static const int SpriteBatchSize = 128;
-
     public:
         BasicRenderer();
         ~BasicRenderer();
 
         // Initializes the basic renderer.
-        bool Initialize(System::ResourceManager& resourceManager);
+        bool Initialize(const BasicRendererInfo& info);
 
         // Clears the frame buffer.
         void Clear(const ClearValues& values);
@@ -69,6 +75,9 @@ namespace Graphics
         Sampler        m_nearestSampler;
         Sampler        m_linearSampler;
         ShaderPtr      m_shader;
+
+        // Sprite batch size.
+        int m_spriteBatchSize;
 
         // Initialization state.
         bool m_initialized;
