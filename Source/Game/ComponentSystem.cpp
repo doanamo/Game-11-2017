@@ -26,7 +26,7 @@ bool ComponentSystem::Subscribe(EntitySystem& entitySystem)
 
 void ComponentSystem::OnEntityDestroy(EntityHandle handle)
 {
-    // Remove entity components from every pool.
+    // Remove all components of an entity from every pool.
     for(auto& pair : m_pools)
     {
         auto& pool = pair.second;
