@@ -41,13 +41,6 @@ int main(int argc, char* argv[])
 
     // Create a timer.
     System::Timer timer;
-
-    if(!timer.IsFrequencyValid())
-    {
-        Log() << LogFatalError() << "Could not create a valid a timer.";
-        return -1;
-    }
-
     timer.SetMaxFrameDelta(1.0f);
 
     // Create a window.

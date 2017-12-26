@@ -30,9 +30,6 @@ namespace System
         Timer();
         ~Timer();
 
-        // Restores class instance to its original state.
-        void Cleanup();
-
         // Resets the timer.
         void Reset();
 
@@ -47,9 +44,6 @@ namespace System
 
         // Gets maximum frame delta in seconds that can be returned.
         float GetMaxFrameDelta() const;
-
-        // Checks if timer's frequency is valid.
-        bool IsFrequencyValid() const;
 
     private:
         uint64_t m_timerFrequency;

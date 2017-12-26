@@ -8,27 +8,18 @@ Timer::Timer() :
     m_previousTimeCounter(m_currentTimeCounter),
     m_maxFrameDeltaSeconds(std::numeric_limits<float>::max())
 {
-    Assert(m_timerFrequency != 0, "Failed to retrieve a valid timer frequency!");
+    // Check if timer's frequency is valid.
+    // Assertion's failure here may indicate improperly initialized platform code.
+    Verify(m_timerFrequency != 0, "Failed to retrieve a valid timer frequency!");
 }
 
 Timer::~Timer()
 {
 }
 
-void Timer::Cleanup()
-{
-    // Reset timer counters.
-    m_currentTimeCounter = glfwGetTimerValue();
-    m_previousTimeCounter = m_currentTimeCounter;
-
-    // Reset timer parameters.
-    m_maxFrameDeltaSeconds = std::numeric_limits<float>::max();
-}
-
 void Timer::Reset()
 {
-    if(m_timerFrequency == 0)
-        return;
+    Assert(m_timerFrequency != 0);
 
     m_currentTimeCounter = glfwGetTimerValue();
     m_previousTimeCounter = m_currentTimeCounter;
@@ -36,8 +27,7 @@ void Timer::Reset()
 
 void Timer::Tick()
 {
-    if(m_timerFrequency == 0)
-        return;
+    Assert(m_timerFrequency != 0);
 
     m_previousTimeCounter = m_currentTimeCounter;
     m_currentTimeCounter = glfwGetTimerValue();
@@ -45,8 +35,7 @@ void Timer::Tick()
 
 float Timer::CalculateFrameDelta()
 {
-    if(m_timerFrequency == 0)
-        return 0.0f;
+    Assert(m_timerFrequency != 0);
 
     // Calculate elapsed time since the last frame.
     uint64_t elapsedTimeCounter = m_currentTimeCounter - m_previousTimeCounter;
@@ -64,18 +53,10 @@ float Timer::CalculateFrameDelta()
 
 void Timer::SetMaxFrameDelta(float value)
 {
-    if(m_timerFrequency == 0)
-        return;
-
     m_maxFrameDeltaSeconds = value;
 }
 
 float Timer::GetMaxFrameDelta() const
 {
     return m_maxFrameDeltaSeconds;
-}
-
-bool Timer::IsFrequencyValid() const
-{
-    return m_timerFrequency != 0;
 }
