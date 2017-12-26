@@ -16,7 +16,7 @@ Config::~Config()
 {
 }
 
-bool Config::LoadFromFile(const std::string filename)
+bool Config::Load(const std::string filename)
 {
     // Open the file.
     std::ifstream file(Build::GetWorkingDir() + filename);

@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 
     // Create a config.
     System::Config config;
-    config.LoadFromFile("Game.cfg");
+    config.Load("Game.cfg");
 
     // Create a timer.
     System::Timer timer;
