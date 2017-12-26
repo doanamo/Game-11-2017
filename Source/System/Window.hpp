@@ -55,9 +55,6 @@ namespace System
         Window();
         ~Window();
 
-        // Restores instance to its original state.
-        void Cleanup();
-
         // Open the window.
         bool Open(const WindowInfo& info = WindowInfo());
 

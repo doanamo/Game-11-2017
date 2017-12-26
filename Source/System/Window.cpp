@@ -5,7 +5,7 @@ using namespace System;
 
 namespace
 {
-    // Log message strings.
+    // Error log messages.
     #define LogOpenError() "Failed to open a window! "
 }
 
@@ -30,12 +30,6 @@ Window::Window() :
 Window::~Window()
 {
     this->DestroyWindow();
-}
-
-void Window::Cleanup()
-{
-    this->DestroyWindow();
-    this->ResetDispatchers();
 }
 
 void Window::DestroyWindow()
@@ -249,8 +243,6 @@ bool Window::Open(const WindowInfo& info)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Create the window.
-    SCOPE_GUARD_IF(!initialized, this->DestroyWindow());
-
     m_window = glfwCreateWindow(info.width, info.height, info.name.c_str(), nullptr, nullptr);
 
     if(m_window == nullptr)
@@ -258,6 +250,8 @@ bool Window::Open(const WindowInfo& info)
         Log() << LogOpenError() << "Could not create the window.";
         return false;
     }
+
+    SCOPE_GUARD_IF(!initialized, this->DestroyWindow());
 
     // Set window size limits.
     glfwSetWindowSizeLimits(m_window, info.minWidth, info.minHeight, info.maxWidth, info.maxHeight);
