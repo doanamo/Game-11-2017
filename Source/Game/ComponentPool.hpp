@@ -2,6 +2,7 @@
 
 #include "Precompiled.hpp"
 #include "EntityHandle.hpp"
+#include "Component.hpp"
 
 /*
     Component Pool
