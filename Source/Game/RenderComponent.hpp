@@ -9,6 +9,11 @@ namespace Graphics
     class Texture;
 }
 
+namespace Game
+{
+    class RenderSystem;
+}
+
 /*
     Render Component
 */
@@ -27,6 +32,9 @@ namespace Game
             // Type declarations.
             typedef std::shared_ptr<const Graphics::Texture> TexturePtr;
 
+            // Friend declarations.
+            friend RenderSystem;
+
         public:
             Render();
             ~Render();
@@ -35,7 +43,7 @@ namespace Game
             glm::vec4 CalculateColor() const;
 
             // Sets the texture.
-            void SetTexture(TexturePtr texture);
+            void SetTexture(TexturePtr texture, std::optional<std::reference_wrapper<glm::vec4>> rectangle = std::nullopt);
 
             // Sets the texture rectangle.
             void SetRectangle(const glm::vec4& rectangle);

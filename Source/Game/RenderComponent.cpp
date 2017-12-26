@@ -23,13 +23,21 @@ glm::vec4 Render::CalculateColor() const
     return glm::mix(m_diffuseColor, m_emissiveColor, m_emissivePower);
 }
 
-void Render::SetTexture(TexturePtr texture)
+void Render::SetTexture(TexturePtr texture, std::optional<std::reference_wrapper<glm::vec4>> rectangle)
 {
     if(texture == nullptr)
         return;
 
     m_texture = texture;
-    m_rectangle = glm::vec4(0.0f, 0.0f, texture->GetWidth(), texture->GetHeight());
+
+    if(rectangle.has_value())
+    {
+        m_rectangle = rectangle.value();
+    }
+    else
+    {
+        m_rectangle = glm::vec4(0.0f, 0.0f, texture->GetWidth(), texture->GetHeight());
+    }
 }
 
 void Render::SetRectangle(const glm::vec4& rectangle)

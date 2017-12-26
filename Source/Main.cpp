@@ -17,6 +17,7 @@
 #include "Game/EntitySystem.hpp"
 #include "Game/TransformComponent.hpp"
 #include "Game/RenderComponent.hpp"
+#include "Game/RenderSystem.hpp"
 
 namespace
 {
@@ -126,6 +127,14 @@ int main(int argc, char* argv[])
         Log() << LogFatalError() << "Could not subscribe a component system.";
         return -1;
     }
+
+    // Create a render system.
+    Game::RenderSystem renderSystem;
+    if(!renderSystem.Initialize(&window, &basicRenderer, &entitySystem, &componentSystem))
+    {
+        Log() << LogFatalError() << "Could not initialize a render system.";
+        return -1;
+    }
     
     // Create an example entity.
     Game::EntityHandle entity = entitySystem.CreateEntity();
@@ -137,7 +146,7 @@ int main(int argc, char* argv[])
         transform->SetPosition(0.0f, 0.0f, 0.0f);
 
         auto* render = componentSystem.Create<Render>(entity);
-        render->SetDiffuseColor(1.0f, 0.0f, 0.0f);
+        render->SetTexture(resourceManager.Load<Graphics::Texture>("Data/Textures/ColorCheckerboard.png"));
     }
 
     // Main loop.
@@ -158,19 +167,15 @@ int main(int argc, char* argv[])
         // Process window evenets.
         window.ProcessEvents();
 
+        // Process entity commands.
+        entitySystem.ProcessCommands();
+
         // Update screen space coordinates.
         glViewport(0, 0, window.GetWidth(), window.GetHeight());
         screenSpace.SetTargetSize(window.GetWidth(), window.GetHeight());
 
-        // Clear the framebuffer.
-        Graphics::ClearValues clearValues;
-        clearValues.color = glm::vec4(0.0f, 0.35f, 0.35f, 1.0f);
-        clearValues.depth = 1.0f;
-
-        basicRenderer.Clear(clearValues);
-
         // Draw the scene.
-        basicRenderer.DrawSprite(sprite, screenSpace.GetTransform());
+        renderSystem.Draw();
 
         // Present to the window.
         window.Present();
