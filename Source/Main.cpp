@@ -5,19 +5,14 @@
 #include "System/Window.hpp"
 #include "System/InputState.hpp"
 #include "System/ResourceManager.hpp"
-#include "Graphics/Buffer.hpp"
-#include "Graphics/VertexInput.hpp"
-#include "Graphics/Shader.hpp"
-#include "Graphics/Sampler.hpp"
 #include "Graphics/Texture.hpp"
-#include "Graphics/ScreenSpace.hpp"
 #include "Graphics/BasicRenderer.hpp"
 #include "Scripting/State.hpp"
-#include "Game/ComponentSystem.hpp"
 #include "Game/EntitySystem.hpp"
+#include "Game/ComponentSystem.hpp"
+#include "Game/RenderSystem.hpp"
 #include "Game/TransformComponent.hpp"
 #include "Game/RenderComponent.hpp"
-#include "Game/RenderSystem.hpp"
 
 namespace
 {
@@ -80,10 +75,6 @@ int main(int argc, char* argv[])
     // Create a resource manager.
     System::ResourceManager resourceManager;
 
-    // Create screen space coordinates.
-    Graphics::ScreenSpace screenSpace;
-    screenSpace.SetSourceSize(128.0f, 128.0f);
-
     // Create a basic renderer.
     Graphics::BasicRenderer basicRenderer;
     if(!basicRenderer.Initialize(resourceManager))
@@ -91,17 +82,6 @@ int main(int argc, char* argv[])
         Log() << LogFatalError() << "Could not initialize a basic renderer.";
         return -1;
     }
-
-    // Create an example sprite.
-    auto texture = resourceManager.Load<Graphics::Texture>("Data/Textures/ColorCheckerboard.png");
-
-    Graphics::Sprite sprite;
-    sprite.data.transform = glm::mat4(1.0f);
-    sprite.data.rectangle = glm::vec4(0.0f, 0.0f, 128.0f, 128.0f);
-    sprite.data.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    sprite.info.texture = texture.get();
-    sprite.info.transparent = false;
-    sprite.info.filter = false;
 
     // Create a scripting state.
     Scripting::State scriptingState;
@@ -169,10 +149,6 @@ int main(int argc, char* argv[])
 
         // Process entity commands.
         entitySystem.ProcessCommands();
-
-        // Update screen space coordinates.
-        glViewport(0, 0, window.GetWidth(), window.GetHeight());
-        screenSpace.SetTargetSize(window.GetWidth(), window.GetHeight());
 
         // Draw the scene.
         renderSystem.Draw();
