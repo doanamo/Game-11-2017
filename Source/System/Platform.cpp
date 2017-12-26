@@ -1,9 +1,12 @@
 #include "Precompiled.hpp"
-#include "Context.hpp"
+#include "Platform.hpp"
 using namespace System;
 
 namespace
 {
+    // Log messages.
+    #define LogInitializeError() "Failed to initialize the platform! "
+
     // Callback functions.
     void ErrorCallback(int error, const char* description)
     {
@@ -11,29 +14,28 @@ namespace
     }
 }
 
-Context::Context() :
+Platform::Platform() :
     m_initialized(false)
 {
 }
 
-Context::~Context()
+Platform::~Platform()
 {
-    this->Cleanup();
-}
-
-void Context::Cleanup()
-{
+    // Release GLFW library.
     if(m_initialized)
     {
         glfwTerminate();
-        m_initialized = false;
     }
 }
 
-bool Context::Initialize()
+bool Platform::Initialize()
 {
+    // Check if instance has been already initialized.
     if(m_initialized)
-        return true;
+    {
+        Log() << LogInitializeError() << "Instance is already initialized.";
+        return false;
+    }
 
     // Set a callback function for future GLFW errors.
     glfwSetErrorCallback(ErrorCallback);
@@ -41,7 +43,7 @@ bool Context::Initialize()
     // Initialize GLFW library.
     if(!glfwInit())
     {
-        Log() << "Failed to initialize GLFW library for host platform!";
+        Log() << LogInitializeError() << "Could not initialize GLFW library.";
         return false;
     }
 
@@ -49,7 +51,7 @@ bool Context::Initialize()
     int major, minor, revision;
     glfwGetVersion(&major, &minor, &revision);
 
-    Log() << "Initialized platform context for GLFW " << major << "." << minor << "." << revision << " host.";
+    Log() << "Initialized the platform with GLFW " << major << "." << minor << "." << revision << " library.";
 
     return m_initialized = true;
 }

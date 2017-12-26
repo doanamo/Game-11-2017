@@ -1,5 +1,5 @@
 #include "Precompiled.hpp"
-#include "System/Context.hpp"
+#include "System/Platform.hpp"
 #include "System/Config.hpp"
 #include "System/Timer.hpp"
 #include "System/Window.hpp"
@@ -27,11 +27,11 @@ int main(int argc, char* argv[])
     Debug::Initialize();
     Logger::Initialize();
 
-    // Initialize platform context.
-    System::Context context;
-    if(!context.Initialize())
+    // Initialize the platform.
+    System::Platform platform;
+    if(!platform.Initialize())
     {
-        Log() << LogFatalError() << "Could not initialize the context.";
+        Log() << LogFatalError() << "Could not initialize the platform.";
         return -1;
     }
 
