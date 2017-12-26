@@ -42,7 +42,7 @@ bool Config::LoadFromFile(const std::string filename)
     while(std::getline(file, line))
     {
         if(line.empty())
-            break;
+            continue;
 
         if(line.front() == '[' && line.back() == ']')
         {
