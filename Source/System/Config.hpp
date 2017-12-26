@@ -26,9 +26,6 @@ namespace System
         Config();
         ~Config();
 
-        // Restores instance to its original state.
-        void Cleanup();
-
         // Reads parameters from a configuration file.
         bool LoadFromFile(const std::string filename = "");
 

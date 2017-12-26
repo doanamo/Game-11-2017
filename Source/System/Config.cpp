@@ -16,12 +16,6 @@ Config::~Config()
 {
 }
 
-void Config::Cleanup()
-{
-    // Clear the parameter map.
-    Utility::ClearContainer(m_parameters);
-}
-
 bool Config::LoadFromFile(const std::string filename)
 {
     // Open the file.
@@ -41,40 +35,70 @@ bool Config::LoadFromFile(const std::string filename)
 
     while(std::getline(file, line))
     {
+        // Check if the line is empty.
         if(line.empty())
             continue;
 
+        // Check if the line contains a section specifier.
         if(line.front() == '[' && line.back() == ']')
         {
             // Read the current section.
             section = std::string(line.begin() + 1, line.end() - 1);
+
+            // Move to the next line.
+            continue;
         }
-        else
+
+        // Parse a config parameter.
         {
             // Find the assignment delimeter.
             std::size_t delimeterPosition = line.find('=');
 
-            if(delimeterPosition == 0 || delimeterPosition == line.length() - 1 || delimeterPosition == std::string::npos)
+            // Check if the assignment delimeter has a correct position.
+            bool incorrectlyFormatted = false;
+
+            incorrectlyFormatted |= delimeterPosition == 0;                 // Delimeter cannot be the first character.
+            incorrectlyFormatted |= delimeterPosition == line.length() - 1; // Delimeter cannot be the last character.
+            incorrectlyFormatted |= delimeterPosition == std::string::npos; // Delimeter must be present.
+
+            if(incorrectlyFormatted)
             {
-                Log() << "Ignored an incorrectly formatted config line: \"" << line << "\".";
+                Log() << "Ignoring a config line with incorrectly formatted delimeter: \"" << line << "\".";
+                break;
             }
 
-            // Read the parameter name and value.
-            std::string name = line.substr(0, delimeterPosition);
-            std::string value = line.substr(delimeterPosition + 1, std::string::npos);
+            // Read the parameter's name and trim whitespaces.
+            std::string name = Utility::StringTrim(line.substr(0, delimeterPosition));
 
-            // Remove leading and trailing spaces.
-            name = Utility::StringTrim(name);
-            value = Utility::StringTrim(value);
+            if(name.empty())
+            {
+                Log() << "Ignoring a config line with an empty parameter name: \"" << line << "\".";
+                break;
+            }
 
-            // Set a new parameter.
-            this->SetParameter(section + "." + name, value, true);
+            // Read the parameter's value and trim whitespaces.
+            std::string value = Utility::StringTrim(line.substr(delimeterPosition + 1, std::string::npos));
 
-            Log() << "Parameter \"" << section << "." << name << "\" has been set to \"" << value << "\".";
+            if(value.empty())
+            {
+                Log() << "Ignoring a config line with an empty parameter value: \"" << line << "\".";
+                break;
+            }
+
+            // Append current section to the parameter's name.
+            if(!section.empty())
+            {
+                name = section + "." + name;
+            }
+
+            // Set a new config parameter.
+            this->SetParameter(name, value, true);
+
+            Log() << "Parsed parameter \"" << name << "\" has been set to \"" << value << "\".";
         }
     }
 
-    Log() << "Finished loading a config from \"" << filename << "\" file.";
+    Log() << "Finished parsing a config from \"" << filename << "\" file.";
 
     // Success!
     return true;
