@@ -25,7 +25,6 @@ namespace Game
         {
         }
 
-        virtual bool Finalize(EntityHandle handle) = 0;
         virtual bool Destroy(EntityHandle handle) = 0;
     };
 
@@ -46,14 +45,12 @@ namespace Game
         ~ComponentPool();
 
         // Creates a component.
+        // Returns nullptr if component could not be created.
         Type* Create(EntityHandle handle);
 
         // Lookups a component.
+        // Returns nullptr if component could not be found.
         Type* Lookup(EntityHandle handle);
-
-        // Finalizes a component.
-        // Return true if component was found and has been finalized.
-        bool Finalize(EntityHandle handle) override;
 
         // Destroys a component.
         // Returns true if component was found and destroyed.
@@ -108,29 +105,12 @@ namespace Game
     }
 
     template<typename Type>
-    bool ComponentPool<Type>::Finalize(EntityHandle handle)
-    {
-        // Find the component.
-        auto it = m_components.find(handle);
-        if(it == m_components.end())
-            return false;
-
-        // Notify the component about being finalized.
-        Type* component = &it->second;
-        return component->OnFinalize(handle);
-    }
-
-    template<typename Type>
     bool ComponentPool<Type>::Destroy(EntityHandle handle)
     {
         // Find the component.
         auto it = m_components.find(handle);
         if(it == m_components.end())
             return false;
-
-        // Notify the component about being destroyed.
-        Type* component = &it->second;
-        component->OnDestroy(handle);
 
         // Destroy the associated component.
         m_components.erase(it);

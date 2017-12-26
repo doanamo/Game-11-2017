@@ -53,7 +53,6 @@ namespace Game
         // Following event receivers must be subscribed to the entity system.
         struct EventReceivers
         {
-            Receiver<bool(EntityHandle)> entityFinalize;
             Receiver<void(EntityHandle)> entityDestroy;
         } eventReceivers;
 
@@ -94,9 +93,6 @@ namespace Game
         ComponentPool<Type>* CreatePool();
 
     private:
-        // Called when an entity needs to be finalized.
-        bool OnEntityFinalize(EntityHandle handle);
-
         // Called when an entity is about to be destroyed.
         void OnEntityDestroy(EntityHandle handle);
 

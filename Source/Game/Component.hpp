@@ -23,16 +23,5 @@ namespace Game
         virtual ~Component()
         {
         }
-
-        // Called when the component needs to be finalized.
-        virtual bool OnFinalize(EntityHandle self)
-        {
-            return true;
-        }
-
-        // Called when the component is about to be destroyed.
-        virtual void OnDestroy(EntityHandle self)
-        {
-        }
     };
 }
