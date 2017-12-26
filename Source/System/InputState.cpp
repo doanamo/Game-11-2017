@@ -19,10 +19,15 @@ InputState::~InputState()
 
 bool InputState::Subscribe(Window& window)
 {
-    // Subscribe event receivers.
-    if(!m_keyboardKey.Subscribe(window.events.keyboardKey) || !m_windowFocus.Subscribe(window.events.focus))
+    // Subscribe to window's event receivers.
+    bool subscribedSuccessfully = true;
+
+    subscribedSuccessfully &= m_keyboardKey.Subscribe(window.events.keyboardKey);
+    subscribedSuccessfully &= m_windowFocus.Subscribe(window.events.focus);
+
+    if(!subscribedSuccessfully)
     {
-        Log() << "Failed to subscribe an input state! Could not subscribe to window event receivers.";
+        Log() << "Failed to subscribe an input state! Could not subscribe to window's event receivers.";
         return false;
     }
 
