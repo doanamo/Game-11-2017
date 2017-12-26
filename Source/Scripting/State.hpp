@@ -18,8 +18,8 @@ namespace Scripting
         State(State&& state);
         ~State();
 
-        // Initializes the scripting state.
-        bool Initialize();
+        // Creates a scripting state.
+        bool Create();
 
         // Loads a script from a file.
         bool Load(std::string filename);

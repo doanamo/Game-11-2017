@@ -82,12 +82,6 @@ int main(int argc, char* argv[])
 
     // Create a scripting state.
     Scripting::State scriptingState;
-    if(!scriptingState.Initialize())
-    {
-        Log() << LogFatalError() << "Could not initialize a scripting state.";
-        return -1;
-    }
-
     if(!scriptingState.Load("Data/Scripts/Main.lua"))
     {
         Log() << LogFatalError() << "Could not load the main script entry.";

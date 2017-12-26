@@ -5,7 +5,7 @@ using namespace Scripting;
 namespace
 {
     // Log error messages.
-    #define LogInitializeError() "Failed to initialize a scripting state! "
+    #define LogCreateError() "Failed to create a scripting state! "
 }
 
 extern "C"
@@ -50,12 +50,12 @@ void State::DestroyState()
     }
 }
 
-bool State::Initialize()
+bool State::Create()
 {
     // Check if the instance has been already initialized.
     if(m_luaState != nullptr)
     {
-        Log() << LogInitializeError() << "Instance has been already initialized.";
+        Log() << LogCreateError() << "Instance has been already initialized.";
         return false;
     }
 
@@ -67,7 +67,7 @@ bool State::Initialize()
 
     if(m_luaState == nullptr)
     {
-        Log() << LogInitializeError() << "Could not create a state for Lua virtual machine.";
+        Log() << LogCreateError() << "Could not create a state for Lua virtual machine.";
         return false;
     }
 
@@ -79,7 +79,7 @@ bool State::Initialize()
 
     if(lua_pcall(m_luaState, 1, 0, 0) != 0)
     {
-        Log() << LogInitializeError() << "Could not load the base library.";
+        Log() << LogCreateError() << "Could not load the base library.";
         this->PrintError();
         return false;
     }
@@ -99,10 +99,10 @@ bool State::Initialize()
 
 bool State::Load(std::string filename)
 {
-    // Initialize if needed.
+    // Create the state if needed.
     if(m_luaState == nullptr)
     {
-        if(!this->Initialize())
+        if(!this->Create())
             return false;
     }
 
@@ -118,10 +118,10 @@ bool State::Load(std::string filename)
 
 bool State::Parse(std::string text)
 {
-    // Initialize if needed.
+    // Create the state if needed.
     if(m_luaState == nullptr)
     {
-        if(!this->Initialize())
+        if(!this->Create())
             return false;
     }
 
