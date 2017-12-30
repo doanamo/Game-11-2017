@@ -117,7 +117,7 @@ namespace System
         auto it = m_resources.begin();
         while(it != m_resources.end())
         {
-            if(it->second.unique())
+            if(it->second.use_count() == 1)
             {
                 // Save the filename to print it later.
                 std::string filename = std::move(it->first);
