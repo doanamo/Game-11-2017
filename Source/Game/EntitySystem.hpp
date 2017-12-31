@@ -3,30 +3,28 @@
 #include "Precompiled.hpp"
 #include "EntityHandle.hpp"
 
-//
-// Entity System
-//
-//  Manages unique identities of each existing entity. Gives means to identify
-//  different entities and takes care of their creation/destruction.
-//
-//  Example usage:
-//      Game::EntitySystem entitySystem;
-//      
-//      EntityHandle entity = entitySystem.CreateEntity();
-//      /*
-//          Add components here!
-//          Entity remains inactive until
-//          the next ProcessCommands() call.
-//      */
-//      entitySystem.ProcessCommands();
-//      
-//      entitySystem.DestroyEntity(entity);
-//      /*
-//          Entity remains active until
-//          the next ProcessCommands() call.
-//      */
-//      entitySystem.ProcessCommands();
-//
+/*
+    Entity System
+
+    Manages unique identities of each existing entity. Gives means to identify
+    different entities and takes care of their creation/destruction.
+
+    Example usage:
+        Game::EntitySystem entitySystem;
+    
+        EntityHandle entity = entitySystem.CreateEntity();
+        {
+            // Add components here!
+            // Entity remains inactive until the next ProcessCommands() call.
+        }
+        entitySystem.ProcessCommands();
+    
+        entitySystem.DestroyEntity(entity);
+        {
+            // Entity can be referenced until the next ProcessCommands() call.
+        }
+        entitySystem.ProcessCommands();
+*/
 
 namespace Game
 {
