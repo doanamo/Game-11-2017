@@ -142,7 +142,7 @@ bool RenderSystem::Initialize(const RenderSystemInfo& info)
 
 bool RenderSystem::FinalizeComponent(EntityHandle entity)
 {
-    Assert(m_initialized);
+    Verify(m_initialized);
 
     // Get the transform component.
     auto transformComponent = m_transformComponents->Lookup(entity);
