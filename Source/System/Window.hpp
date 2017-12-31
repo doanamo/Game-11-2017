@@ -212,9 +212,6 @@ namespace System
         // Destroy the window immediately.
         void DestroyWindow();
 
-        // Resets all event dispatchers.
-        void ResetDispatchers();
-
     private:
         // Window handle.
         GLFWwindow* m_window;

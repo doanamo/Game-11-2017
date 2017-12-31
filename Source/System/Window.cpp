@@ -42,21 +42,6 @@ void Window::DestroyWindow()
     }
 }
 
-void Window::ResetDispatchers()
-{
-    // Cleanup event dispatchers.
-    events.move.Cleanup();
-    events.resize.Cleanup();
-    events.focus.Cleanup();
-    events.close.Cleanup();
-    events.keyboardKey.Cleanup();
-    events.textInput.Cleanup();
-    events.mouseButton.Cleanup();
-    events.mouseScroll.Cleanup();
-    events.cursorPosition.Cleanup();
-    events.cursorEnter.Cleanup();
-}
-
 void Window::MoveCallback(GLFWwindow* window, int x, int y)
 {
     Assert(window != nullptr);

@@ -48,15 +48,15 @@ protected:
     DispatcherBase();
     virtual ~DispatcherBase();
 
-    // Restores instance to its original state.
-    void Cleanup();
-
 public:
     // Subscribes a receiver.
     bool Subscribe(Receiver<ReturnType(Arguments...)>& receiver, bool replace = false);
 
     // Unsubscribes a receiver.
     void Unsubscribe(Receiver<ReturnType(Arguments...)>& receiver);
+
+    // Unsubscribe all receivers.
+    void UnsubscribeAll();
 
     // Checks if dispatcher has any subscribers.
     bool HasSubscribers() const;
@@ -80,9 +80,6 @@ template<typename Collector, typename ReturnType, typename... Arguments>
 class Dispatcher<ReturnType(Arguments...), Collector> : public DispatcherBase<ReturnType(Arguments...)>
 {
 public:
-    // Restores instance to its original state.
-    void Cleanup();
-
     // Invokes receivers with following arguments.
     ReturnType Dispatch(Arguments... arguments);
 
@@ -144,11 +141,11 @@ DispatcherBase<ReturnType(Arguments...)>::DispatcherBase() :
 template<typename ReturnType, typename... Arguments>
 DispatcherBase<ReturnType(Arguments...)>::~DispatcherBase()
 {
-    this->Cleanup();
+    this->UnsubscribeAll();
 }
 
 template<typename ReturnType, typename... Arguments>
-void DispatcherBase<ReturnType(Arguments...)>::Cleanup()
+void DispatcherBase<ReturnType(Arguments...)>::UnsubscribeAll()
 {
     // Unsubscribe all receivers.
     Receiver<ReturnType(Arguments...)>* iterator = m_begin;
@@ -298,12 +295,6 @@ template<typename ReturnType, typename... Arguments>
 bool DispatcherBase<ReturnType(Arguments...)>::HasSubscribers() const
 {
     return m_begin != nullptr;
-}
-
-template<typename Collector, typename ReturnType, typename... Arguments>
-void Dispatcher<ReturnType(Arguments...), Collector>::Cleanup()
-{
-    DispatcherBase<ReturnType(Arguments...)>::Cleanup();
 }
 
 template<typename Collector, typename ReturnType, typename... Arguments>
