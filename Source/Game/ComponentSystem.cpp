@@ -6,7 +6,7 @@ using namespace Game;
 ComponentSystem::ComponentSystem()
 {
     // Bind event receiver.
-    this->eventReceivers.entityDestroy.Bind<ComponentSystem, &ComponentSystem::OnEntityDestroy>(this);
+    m_entityDestroy.Bind<ComponentSystem, &ComponentSystem::OnEntityDestroy>(this);
 }
 
 ComponentSystem::~ComponentSystem()
@@ -15,7 +15,8 @@ ComponentSystem::~ComponentSystem()
 
 bool ComponentSystem::Subscribe(EntitySystem& entitySystem)
 {   
-    if(!this->eventReceivers.entityDestroy.Subscribe(entitySystem.eventDispatchers.entityDestroy))
+    // Receive events about destroyed entities.
+    if(!m_entityDestroy.Subscribe(entitySystem.eventDispatchers.entityDestroy))
     {
         Log() << "Failed to subscribe a component system! Could not subscribe to dispatchers of an entity system.";
         return false;
