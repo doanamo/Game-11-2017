@@ -124,6 +124,7 @@ int main(int argc, char* argv[])
 
         auto* render = componentSystem.Create<Render>(entity);
         render->SetTexture(resourceManager.Load<Graphics::Texture>("Data/Textures/ColorCheckerboard.png"));
+        render->SetRectangleFromTexture();
     }
 
     // Main loop.

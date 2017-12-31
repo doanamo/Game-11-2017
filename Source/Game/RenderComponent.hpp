@@ -43,11 +43,12 @@ namespace Game
             glm::vec4 CalculateColor() const;
 
             // Sets the texture.
-            void SetTexture(TexturePtr texture, std::optional<std::reference_wrapper<glm::vec4>> rectangle = std::nullopt);
+            void SetTexture(TexturePtr texture);
 
-            // Sets the texture rectangle.
+            // Sets the rectangle.
             void SetRectangle(const glm::vec4& rectangle);
             void SetRectangle(float x, float y, float width, float height);
+            void SetRectangleFromTexture();
 
             // Set the diffuse color.
             void SetDiffuseColor(const glm::vec3& color);
