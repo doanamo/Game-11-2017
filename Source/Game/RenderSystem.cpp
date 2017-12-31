@@ -17,6 +17,14 @@ namespace
     const glm::vec3 RenderScale(1.0f / 128.0f, 1.0f / 128.0f, 1.0f);
 }
 
+RenderSystemInfo::RenderSystemInfo() :
+    window(nullptr),
+    basicRenderer(nullptr),
+    entitySystem(nullptr),
+    componentSystem(nullptr)
+{
+}
+
 RenderSystem::RenderSystem() :
     m_window(nullptr),
     m_basicRenderer(nullptr),
@@ -32,7 +40,7 @@ RenderSystem::~RenderSystem()
 {
 }
 
-bool RenderSystem::Initialize(System::Window* window, Graphics::BasicRenderer* basicRenderer, EntitySystem* entitySystem, ComponentSystem* componentSystem)
+bool RenderSystem::Initialize(const RenderSystemInfo& info)
 {
     // Check if instance has been already initialized.
     if(m_initialized)
@@ -42,33 +50,33 @@ bool RenderSystem::Initialize(System::Window* window, Graphics::BasicRenderer* b
     }
 
     // Validate arguments.
-    if(window == nullptr)
+    if(info.window == nullptr)
     {
-        Log() << LogInitializeError() << "Invalid argument - \"window\" is null.";
+        Log() << LogInitializeError() << "Invalid argument - \"info.window\" is null.";
         return false;
     }
 
-    if(basicRenderer == nullptr)
+    if(info.basicRenderer == nullptr)
     {
-        Log() << LogInitializeError() << "Invalid argument - \"basicRenderer\" is null.";
+        Log() << LogInitializeError() << "Invalid argument - \"info.basicRenderer\" is null.";
         return false;
     }
 
-    if(entitySystem == nullptr)
+    if(info.entitySystem == nullptr)
     {
-        Log() << LogInitializeError() << "Invalid argument - \"entitySystem\" is null.";
+        Log() << LogInitializeError() << "Invalid argument - \"info.entitySystem\" is null.";
         return false;
     }
 
-    if(componentSystem == nullptr)
+    if(info.componentSystem == nullptr)
     {
-        Log() << LogInitializeError() << "Invalid argument - \"componentSystem\" is null.";
+        Log() << LogInitializeError() << "Invalid argument - \"info.componentSystem\" is null.";
         return false;
     }
 
     // Save instance references.
-    m_window = window;
-    m_basicRenderer = basicRenderer;
+    m_window = info.window;
+    m_basicRenderer = info.basicRenderer;
 
     SCOPE_GUARD_BEGIN(!m_initialized);
     {
@@ -78,8 +86,8 @@ bool RenderSystem::Initialize(System::Window* window, Graphics::BasicRenderer* b
     SCOPE_GUARD_END();
 
     // Retrieve component pools.
-    m_transformComponents = componentSystem->GetPool<Components::Transform>();
-    m_renderComponents = componentSystem->GetPool<Components::Render>();
+    m_transformComponents = info.componentSystem->GetPool<Components::Transform>();
+    m_renderComponents = info.componentSystem->GetPool<Components::Render>();
 
     SCOPE_GUARD_BEGIN(!m_initialized);
     {
@@ -120,7 +128,7 @@ bool RenderSystem::Initialize(System::Window* window, Graphics::BasicRenderer* b
     SCOPE_GUARD_END();
 
     // Subscribe to the entity system.
-    if(!m_entityFinalize.Subscribe(entitySystem->eventDispatchers.entityFinalize))
+    if(!m_entityFinalize.Subscribe(info.entitySystem->eventDispatchers.entityFinalize))
     {
         Log() << LogInitializeError() << "Could not subscribe to the entity system.";
         return false;

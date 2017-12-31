@@ -100,8 +100,14 @@ int main(int argc, char* argv[])
     }
 
     // Create a render system.
+    Game::RenderSystemInfo renderSystemInfo;
+    renderSystemInfo.window = &window;
+    renderSystemInfo.basicRenderer = &basicRenderer;
+    renderSystemInfo.entitySystem = &entitySystem;
+    renderSystemInfo.componentSystem = &componentSystem;
+
     Game::RenderSystem renderSystem;
-    if(!renderSystem.Initialize(&window, &basicRenderer, &entitySystem, &componentSystem))
+    if(!renderSystem.Initialize(renderSystemInfo))
     {
         Log() << LogFatalError() << "Could not initialize a render system.";
         return -1;

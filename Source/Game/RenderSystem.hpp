@@ -28,6 +28,17 @@ namespace Game
         class Render;
     }
 
+    // Render system info structure.
+    struct RenderSystemInfo
+    {
+        RenderSystemInfo();
+
+        System::Window* window;
+        Graphics::BasicRenderer* basicRenderer;
+        EntitySystem* entitySystem;
+        ComponentSystem* componentSystem;
+    };
+
     // Render system class.
     class RenderSystem
     {
@@ -36,7 +47,7 @@ namespace Game
         ~RenderSystem();
 
         // Initializes the render system.
-        bool Initialize(System::Window* window, Graphics::BasicRenderer* basicRenderer, EntitySystem* entitySystem, ComponentSystem* componentSystem);
+        bool Initialize(const RenderSystemInfo& info);
 
         // Draws the scene.
         void Draw();
