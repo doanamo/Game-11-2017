@@ -270,3 +270,62 @@ namespace Scripting
         return lua_isstring(state, index) != 0;
     }
 }
+
+/*
+    Utility Functions
+*/
+
+namespace Scripting
+{
+    // Pushes the global table.
+    void PushGlobal(State& state);
+
+    // Calls a function in a table and returns values as a tuple.
+    template<typename... Types, typename... Arguments>
+    inline typename StackPopper<sizeof...(Types), Types...>::ReturnType Call(State& state, std::string function, const Arguments&... arguments)
+    {
+        // Create a scope guard.
+        StackGuard guard(state);
+
+        // Caulcate absolute stack indices for StackValue objects.
+        StackValue::CalculateAbsoluteIndices(state, arguments...);
+
+        // Check if we got a table.
+        if(!lua_istable(state, -1))
+        {
+            // Push nils and pop them as return values.
+            Push<sizeof...(Types)>(state, nullptr);
+            return Pop<Types...>(state);
+        }
+
+        // Get the function from the table.
+        lua_getfield(state, -1, function.c_str());
+
+        if(!lua_isfunction(state, -1))
+        {
+            // Push nils and pop them as return values.
+            Push<sizeof...(Types)>(state, nullptr);
+            return Pop<Types...>(state);
+        }
+
+        // Push function's arguments.
+        Push(state, arguments...);
+
+        // Call the function.
+        const int returnCount = (int)(sizeof...(Types));
+        const int argumentCount = (int)(sizeof...(Arguments));
+
+        if(lua_pcall(state, argumentCount, returnCount, 0) != 0)
+        {
+            // Print an error and pop it from the stack.
+            state.PrintError();
+
+            // Push nils and pop them as return values.
+            Push<sizeof...(Types)>(state, nullptr);
+            return Pop<Types...>(state);
+        }
+
+        // Return function's results.
+        return Pop<Types...>(state);
+    }
+}
