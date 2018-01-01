@@ -95,8 +95,11 @@ Set(SourceFiles
     "Game/ComponentSystem.cpp"
     "Game/EntitySystem.hpp"
     "Game/EntitySystem.cpp"
+
     "Game/TransformComponent.hpp"
     "Game/TransformComponent.cpp"
+    "Game/ScriptComponent.hpp"
+    "Game/ScriptComponent.cpp"
     "Game/RenderComponent.hpp"
     "Game/RenderComponent.cpp"
     "Game/RenderSystem.hpp"
