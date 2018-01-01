@@ -29,14 +29,13 @@ namespace Scripting
     class StackGuard : private NonCopyable
     {
     public:
-        StackGuard(lua_State* state);
         StackGuard(State& state);
         StackGuard(State* state);
         ~StackGuard();
 
     private:
         // Lua state reference.
-        lua_State* m_state;
+        State* m_state;
 
         // Captured stack size.
         int m_size;
