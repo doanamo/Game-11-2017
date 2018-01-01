@@ -87,6 +87,8 @@ Set(SourceFiles
 
     "Scripting/State.hpp"
     "Scripting/State.cpp"
+    "Scripting/Reference.hpp"
+    "Scripting/Reference.cpp"
 
     "Game/EntityHandle.hpp"
     "Game/Component.hpp"
