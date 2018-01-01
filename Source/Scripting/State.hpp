@@ -33,6 +33,10 @@ namespace Scripting
         // Prints the entire stack for debugging.
         void PrintStack() const;
 
+        // Cleans remaining objects on the stack.
+        // Prints the stack size before cleaning for debugging.
+        void CleanStack();
+
         // Collects all memory garbage.
         void CollectGarbage();
 

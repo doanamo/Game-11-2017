@@ -190,6 +190,21 @@ void State::PrintStack() const
     }
 }
 
+void State::CleanStack()
+{
+    if(m_luaState == nullptr)
+        return;
+
+    // Discard remaining objects on the Lua stack.
+    int size = lua_gettop(m_luaState);
+
+    if(size != 0)
+    {
+        Log() << "Cleaning " << size << " abanoned objects on the scripting stack...";
+        lua_settop(m_luaState, 0);
+    }
+}
+
 void State::CollectGarbage()
 {
     if(m_luaState == nullptr)

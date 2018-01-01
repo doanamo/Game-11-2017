@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
         // Calculate frame delta time.
         float frameDelta = timer.CalculateFrameDelta();
 
-        // Collect scripting garbage.
+        // Collect the scripting garbage.
         scriptingState.CollectGarbage(0.01f);
 
         // Update input state.
@@ -153,6 +153,9 @@ int main(int argc, char* argv[])
 
         // Present to the window.
         window.Present();
+
+        // Clean the scripting stack.
+        scriptingState.CleanStack();
 
         // Tick the timer.
         timer.Tick();
