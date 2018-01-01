@@ -24,7 +24,7 @@ namespace Scripting
         template<typename Type, typename... Types>
         static void CalculateAbsoluteIndices(State& state, const Type& value, const Types&... values)
         {
-            Assert(state.IsValid());
+            Assert(state.IsValid(), "Scripting state is invalid!");
 
             // Call the template function on all values.
             CalculateAbsoluteIndices(state, value);
@@ -34,7 +34,7 @@ namespace Scripting
         template<>
         static void CalculateAbsoluteIndices(State& state, const StackValue& value)
         {
-            Assert(state.IsValid());
+            Assert(state.IsValid(), "Scripting state is invalid!");
 
             // Convert relative index to an absolute position.
             if(value.m_index < 0)
