@@ -85,10 +85,12 @@ Set(SourceFiles
     "Graphics/BasicRenderer.hpp"
     "Graphics/BasicRenderer.cpp"
 
-    "Scripting/State.hpp"
-    "Scripting/State.cpp"
+    "Scripting/StackValue.hpp"
+    "Scripting/StackValue.cpp"
     "Scripting/StackGuard.hpp"
     "Scripting/StackGuard.cpp"
+    "Scripting/State.hpp"
+    "Scripting/State.cpp"
     "Scripting/Reference.hpp"
     "Scripting/Reference.cpp"
 
