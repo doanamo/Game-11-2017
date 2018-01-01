@@ -280,6 +280,9 @@ namespace Scripting
     // Pushes the global table.
     void PushGlobal(State& state);
 
+    // Pushes a nested variable from the current table.
+    void PushVariable(State& state, std::string name);
+
     // Calls a function in a table and returns values as a tuple.
     template<typename... Types, typename... Arguments>
     inline typename StackPopper<sizeof...(Types), Types...>::ReturnType Call(State& state, std::string function, const Arguments&... arguments)
