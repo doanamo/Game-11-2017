@@ -87,6 +87,8 @@ Set(SourceFiles
 
     "Scripting/State.hpp"
     "Scripting/State.cpp"
+    "Scripting/StackGuard.hpp"
+    "Scripting/StackGuard.cpp"
     "Scripting/Reference.hpp"
     "Scripting/Reference.cpp"
 
