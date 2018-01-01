@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Precompiled.hpp"
+#include "State.hpp"
 
 /*
     Stack Value
@@ -21,9 +22,9 @@ namespace Scripting
 
         // Converts relative indices of provided values on the stack to absolute indices.
         template<typename Type, typename... Types>
-        static void CalculateAbsoluteIndices(lua_State* state, const Type& value, const Types&... values)
+        static void CalculateAbsoluteIndices(State& state, const Type& value, const Types&... values)
         {
-            Assert(state != nullptr);
+            Assert(state.IsValid());
 
             // Call the template function on all values.
             CalculateAbsoluteIndices(state, value);
@@ -31,9 +32,9 @@ namespace Scripting
         }
 
         template<>
-        static void CalculateAbsoluteIndices(lua_State* state, const StackValue& value)
+        static void CalculateAbsoluteIndices(State& state, const StackValue& value)
         {
-            Assert(state != nullptr);
+            Assert(state.IsValid());
 
             // Convert relative index to an absolute position.
             if(value.m_index < 0)
@@ -43,12 +44,12 @@ namespace Scripting
         }
 
         template<typename Type>
-        static void CalculateAbsoluteIndices(lua_State* state, const Type& value)
+        static void CalculateAbsoluteIndices(State& state, const Type& value)
         {
             // Do not do anything for almost all types.
         }
 
-        static void CalculateAbsoluteIndices(lua_State* state)
+        static void CalculateAbsoluteIndices(State& state)
         {
             // Do not do anything for no arguments.
         }
