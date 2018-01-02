@@ -48,7 +48,8 @@ namespace System
         std::shared_ptr<const Type> GetDefault() const;
 
         // Loads a resource from a file.
-        std::shared_ptr<const Type> Load(std::string filename);
+        template<typename... Arguments>
+        std::shared_ptr<const Type> Load(std::string filename, Arguments... arguments);
 
         // Releases unused resources.
         void ReleaseUnused();
@@ -90,7 +91,8 @@ namespace System
     }
 
     template<typename Type>
-    std::shared_ptr<const Type> ResourcePool<Type>::Load(std::string filename)
+    template<typename... Arguments>
+    std::shared_ptr<const Type> ResourcePool<Type>::Load(std::string filename, Arguments... arguments)
     {
         // Find the resource.
         auto it = m_resources.find(filename);
@@ -99,7 +101,7 @@ namespace System
 
         // Create and load a new resource instance.
         std::shared_ptr<Type> resource = std::make_shared<Type>();
-        if(!resource->Load(filename))
+        if(!resource->Load(filename, std::forward<Arguments>(arguments)...))
             return m_default;
 
         // Add resource to the list.

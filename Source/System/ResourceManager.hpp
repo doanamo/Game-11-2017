@@ -46,8 +46,8 @@ namespace System
         std::shared_ptr<const Type> GetDefault() const;
 
         // Loads a resource.
-        template<typename Type>
-        std::shared_ptr<const Type> Load(std::string filename);
+        template<typename Type, typename... Arguments>
+        std::shared_ptr<const Type> Load(std::string filename, Arguments... arguments);
 
         // Releases unused resources.
         void ReleaseUnused();
@@ -89,15 +89,15 @@ namespace System
         return pool->GetDefault();
     }
 
-    template<typename Type>
-    std::shared_ptr<const Type> ResourceManager::Load(std::string filename)
+    template<typename Type, typename... Arguments>
+    std::shared_ptr<const Type> ResourceManager::Load(std::string filename, Arguments... arguments)
     {
         // Get the resource pool.
         ResourcePool<Type>* pool = this->GetPool<Type>();
         Assert(pool != nullptr, "Could not retrieve a resource pool!");
 
         // Delegate to the resource pool.
-        return pool->Load(filename);
+        return pool->Load(filename, std::forward<Arguments>(arguments)...);
     }
 
     template<typename Type>
