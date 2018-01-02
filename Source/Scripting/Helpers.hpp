@@ -153,6 +153,18 @@ namespace Scripting
     }
 
     template<>
+    inline void Read(State& state, const int index)
+    {
+    }
+
+    template<>
+    inline std::nullptr_t Read(State& state, const int index)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return nullptr;
+    }
+
+    template<>
     inline bool Read(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
@@ -283,9 +295,22 @@ namespace Scripting
     // Pushes a nested variable from the current table.
     void PushVariable(State& state, std::string name);
 
-    // Calls a function in a table and returns values as a tuple.
+    // Calls a function in a table and discards any of its results.
+    // Returns false if function fails to execute correctly.
+    template<typename... Arguments>
+    inline bool Call(State& state, std::string function, const Arguments&... arguments)
+    {
+        // Call the function and discard its results.
+        auto result = Call<std::nullptr_t>(state, function, std::forward(arguments)...);
+
+        // Function did not fail if there was some value returned (even if invalid).
+        return result.has_value();
+    }
+
+    // Calls a function in a table and returns its results as a tuple.
+    // Returns an empty optional value if function fails to excute correctly.
     template<typename... Types, typename... Arguments>
-    inline typename StackPopper<sizeof...(Types), Types...>::ReturnType Call(State& state, std::string function, const Arguments&... arguments)
+    inline std::optional<Types...> Call(State& state, std::string function, const Arguments&... arguments)
     {
         // Create a scope guard.
         StackGuard guard(state);
@@ -296,9 +321,8 @@ namespace Scripting
         // Check if we got a table.
         if(!lua_istable(state, -1))
         {
-            // Push nils and pop them as return values.
-            Push<sizeof...(Types)>(state, nullptr);
-            return Pop<Types...>(state);
+            // Return an empty optional value.
+            return std::nullopt;
         }
 
         // Get the function from the table.
@@ -306,9 +330,8 @@ namespace Scripting
 
         if(!lua_isfunction(state, -1))
         {
-            // Push nils and pop them as return values.
-            Push<sizeof...(Types)>(state, nullptr);
-            return Pop<Types...>(state);
+            // Return an empty optional value.
+            return std::nullopt;
         }
 
         // Push function's arguments.
@@ -323,9 +346,8 @@ namespace Scripting
             // Print an error and pop it from the stack.
             state.PrintError();
 
-            // Push nils and pop them as return values.
-            Push<sizeof...(Types)>(state, nullptr);
-            return Pop<Types...>(state);
+            // Return an empty optional value.
+            return std::nullopt;
         }
 
         // Return function's results.
