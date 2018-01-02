@@ -36,7 +36,7 @@ namespace Scripting
         void Release();
 
         // Loads the reference from a file.
-        bool Load(std::string filename);
+        bool Load(std::string filename, State* state = nullptr);
 
         // Creates a reference for an object on top of the stack.
         // Pops the referenced object from the stack in the process.

@@ -57,12 +57,18 @@ void Reference::Release()
     }
 }
 
-bool Reference::Load(std::string filename)
+bool Reference::Load(std::string filename, State* state)
 {
+    // Replace reference to scripting state if specified.
+    if(state != nullptr)
+    {
+        m_state = state;
+    }
+
     // Make sure that the scripting state is valid.
     if(m_state == nullptr || !m_state->IsValid())
     {
-        Log() << LogLoadError(filename) << "Referenced scripting state is not valid.";
+        Log() << LogLoadError(filename) << "Scripting state is not valid.";
         return false;
     }
 
