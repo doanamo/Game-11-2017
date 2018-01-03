@@ -295,22 +295,10 @@ namespace Scripting
     // Pushes a nested variable from the current table.
     void PushVariable(State& state, std::string name);
 
-    // Calls a function in a table and discards any of its results.
-    // Returns false if function fails to execute correctly.
-    template<typename... Arguments>
-    inline bool Call(State& state, std::string function, const Arguments&... arguments)
-    {
-        // Call the function and discard its results.
-        auto result = Call<std::nullptr_t>(state, function, std::forward(arguments)...);
-
-        // Function did not fail if there was some value returned (even if invalid).
-        return result.has_value();
-    }
-
     // Calls a function in a table and returns its results as a tuple.
     // Returns an empty optional value if function fails to excute correctly.
     template<typename... Types, typename... Arguments>
-    inline std::optional<Types...> Call(State& state, std::string function, const Arguments&... arguments)
+    inline std::optional<typename StackPopper<sizeof...(Types), Types...>::ReturnType> Call(State& state, std::string function, const Arguments&... arguments)
     {
         // Create a scope guard.
         StackGuard guard(state);

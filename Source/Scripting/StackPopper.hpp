@@ -71,12 +71,14 @@ namespace Scripting
     {
     public:
         // Type declarations.
-        typedef void ReturnType;
+        // This used to be of type void, but caused issues with templates.
+        typedef std::nullptr_t ReturnType;
 
     public:
         // Pops nothing from the stack and return nothing.
         static ReturnType Pop(State& state)
         {
+            return nullptr;
         }
     };
 }
