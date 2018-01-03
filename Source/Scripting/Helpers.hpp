@@ -112,8 +112,8 @@ namespace Scripting
     void Push(State& state, const Type& value, const Types&... values)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
-        Lua::Push(state, value);
-        Lua::Push(state, values...);
+        Scripting::Push(state, value);
+        Scripting::Push(state, values...);
     }
 }
 
