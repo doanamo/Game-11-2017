@@ -66,7 +66,11 @@ namespace Utility
     template<typename Type>
     void Reorder(std::vector<Type>& values, const std::vector<std::size_t>& order)
     {
-        Assert(values.size() == order.size());
+        Verify(values.size() == order.size());
+
+        // Check if values are not empty.
+        if(values.empty())
+            return;
 
         // Create an array of indices.
         std::vector<std::size_t> indices(order.size());
