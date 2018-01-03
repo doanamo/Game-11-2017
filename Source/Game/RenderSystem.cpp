@@ -142,7 +142,7 @@ bool RenderSystem::Initialize(const RenderSystemInfo& info)
 
 bool RenderSystem::FinalizeComponent(EntityHandle entity)
 {
-    Verify(m_initialized);
+    Assert(m_initialized);
 
     // Get the transform component.
     auto transformComponent = m_transformComponents->Lookup(entity);
@@ -269,21 +269,25 @@ void RenderSystem::Draw()
         return false;
     };
 
-    // Create sort permutation.
+    // Render ordered sprite batches.
     Assert(m_spriteInfo.size() == m_spriteData.size());
 
-    m_spriteSort.resize(m_spriteInfo.size());
-    std::iota(m_spriteSort.begin(), m_spriteSort.end(), 0);
-    std::sort(m_spriteSort.begin(), m_spriteSort.end(), SpriteSort);
+    if(m_spriteInfo.size() != 0)
+    {
+        // Create sort permutation.
+        m_spriteSort.resize(m_spriteInfo.size());
+        std::iota(m_spriteSort.begin(), m_spriteSort.end(), 0);
+        std::sort(m_spriteSort.begin(), m_spriteSort.end(), SpriteSort);
 
-    // Sort sprite lists.
-    Utility::Reorder(m_spriteInfo, m_spriteSort);
-    Utility::Reorder(m_spriteData, m_spriteSort);
+        // Sort sprite lists.
+        Utility::Reorder(m_spriteInfo, m_spriteSort);
+        Utility::Reorder(m_spriteData, m_spriteSort);
 
-    // Draw sprites.
-    m_basicRenderer->DrawSprites(m_spriteInfo, m_spriteData, transform);
+        // Draw sprites.
+        m_basicRenderer->DrawSprites(m_spriteInfo, m_spriteData, transform);
 
-    // Clear the sprite list.
-    m_spriteInfo.clear();
-    m_spriteData.clear();
+        // Clear the sprite list.
+        m_spriteInfo.clear();
+        m_spriteData.clear();
+    }
 }
