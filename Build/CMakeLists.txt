@@ -110,6 +110,8 @@ Set(SourceFiles
     "Game/TransformComponent.cpp"
     "Game/ScriptComponent.hpp"
     "Game/ScriptComponent.cpp"
+    "Game/ScriptSystem.hpp"
+    "Game/ScriptSystem.cpp"
     "Game/RenderComponent.hpp"
     "Game/RenderComponent.cpp"
     "Game/RenderSystem.hpp"

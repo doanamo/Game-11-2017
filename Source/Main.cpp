@@ -8,8 +8,11 @@
 #include "Graphics/Texture.hpp"
 #include "Graphics/BasicRenderer.hpp"
 #include "Scripting/State.hpp"
+#include "Scripting/Reference.hpp"
+#include "Scripting/Helpers.hpp"
 #include "Game/EntitySystem.hpp"
 #include "Game/ComponentSystem.hpp"
+#include "Game/ScriptSystem.hpp"
 #include "Game/RenderSystem.hpp"
 #include "Game/TransformComponent.hpp"
 #include "Game/RenderComponent.hpp"
@@ -99,6 +102,19 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+    // Create a script system.
+    Game::ScriptSystemInfo scriptSystemInfo;
+    scriptSystemInfo.entitySystem = &entitySystem;
+    scriptSystemInfo.componentSystem = &componentSystem;
+    scriptSystemInfo.garbageCollectionTime = 0.002f;
+
+    Game::ScriptSystem scriptSystem;
+    if(!scriptSystem.Initialize(scriptSystemInfo))
+    {
+        Log() << LogFatalError() << "Could not initialize a script system.";
+        return -1;
+    }
+
     // Create a render system.
     Game::RenderSystemInfo renderSystemInfo;
     renderSystemInfo.window = &window;
@@ -134,10 +150,7 @@ int main(int argc, char* argv[])
         Logger::AdvanceFrameReference();
 
         // Calculate frame delta time.
-        float frameDelta = timer.CalculateFrameDelta();
-
-        // Collect the scripting garbage.
-        scriptingState.CollectGarbage(0.01f);
+        float timeDelta = timer.CalculateFrameDelta();
 
         // Update input state.
         inputState.Update();
@@ -147,6 +160,9 @@ int main(int argc, char* argv[])
 
         // Process entity commands.
         entitySystem.ProcessCommands();
+
+        // Update the script system.
+        scriptSystem.Update(timeDelta);
 
         // Draw the scene.
         renderSystem.Draw();

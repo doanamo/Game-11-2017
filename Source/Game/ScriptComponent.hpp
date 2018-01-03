@@ -2,6 +2,7 @@
 
 #include "Precompiled.hpp"
 #include "Component.hpp"
+#include "Scripting/Reference.hpp"
 
 /*
     Script Component
@@ -9,13 +10,32 @@
 
 namespace Game
 {
-    // Script component class.
-    class ScriptComponent : public Component
-    {
-    public:
-        ScriptComponent();
-        ~ScriptComponent();
+    // Forward declarations.
+    class ScriptSystem;
 
-    private:
-    };
+    // Script component class.
+    namespace Components
+    {
+        class Script : public Component
+        {
+        public:
+            // Friend declaration.
+            friend ScriptSystem;
+
+        public:
+            Script();
+            ~Script();
+
+            // Add a script instance.
+            bool AddScript(std::shared_ptr<const Scripting::Reference> script);
+
+        private:
+            // Type definitions.
+            typedef std::vector<Scripting::Reference> ScriptList;
+
+        private:
+            // List of scripts.
+            ScriptList m_scripts;
+        };
+    }
 }
