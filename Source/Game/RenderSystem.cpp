@@ -10,7 +10,7 @@ using namespace Game;
 
 namespace
 {
-    // Log error messages.
+    // Error messages.
     #define LogInitializeError() "Failed to initialize the render system! "
 
     // Global render scale.

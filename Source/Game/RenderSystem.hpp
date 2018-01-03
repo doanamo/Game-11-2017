@@ -63,7 +63,7 @@ namespace Game
         bool FinalizeComponent(EntityHandle entity);
 
     private:
-        // Event receiver.
+        // Event receivers.
         Receiver<bool(EntityHandle)> m_entityFinalize;
 
         // Instance references.
