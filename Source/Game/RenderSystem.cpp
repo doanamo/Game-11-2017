@@ -144,16 +144,18 @@ bool RenderSystem::FinalizeComponent(EntityHandle entity)
 {
     Assert(m_initialized);
 
-    // Get the transform component.
-    auto transformComponent = m_transformComponents->Lookup(entity);
-    if(transformComponent == nullptr) return false;
-
-    // Get the render component.
+    // Finalize a render component.
     auto renderComponent = m_renderComponents->Lookup(entity);
-    if(renderComponent == nullptr) return false;
 
-    // Set the reference for transform component.
-    renderComponent->m_transform = transformComponent;
+    if(renderComponent != nullptr)
+    {
+        // Get the transform component.
+        auto transformComponent = m_transformComponents->Lookup(entity);
+        if(transformComponent == nullptr) return false;
+
+        // Set the reference for transform component.
+        renderComponent->m_transform = transformComponent;
+    }
 
     return true;
 }
