@@ -35,6 +35,14 @@ State::State(State&& other)
     other.m_luaState = nullptr;
 }
 
+State& State::operator=(State&& other)
+{
+    m_luaState = other.m_luaState;
+    other.m_luaState = nullptr;
+
+    return *this;
+}
+
 State::~State()
 {
     this->DestroyState();

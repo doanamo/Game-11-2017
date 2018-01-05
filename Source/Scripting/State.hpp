@@ -16,6 +16,7 @@ namespace Scripting
     public:
         State();
         State(State&& state);
+        State& operator=(State&& other);
         ~State();
 
         // Creates a scripting state.
