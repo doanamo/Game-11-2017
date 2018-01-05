@@ -21,14 +21,16 @@ namespace Scripting
         StackValue(int index);
 
         // Converts relative indices of provided values on the stack to absolute indices.
-        template<typename Type, typename... Types>
-        static void CalculateAbsoluteIndices(State& state, const Type& value, const Types&... values)
+        // Declarations of following template functions matters, so do not reorder them!
+        static void CalculateAbsoluteIndices(State& state)
         {
-            Assert(state.IsValid(), "Scripting state is invalid!");
+            // Do not do anything for no arguments.
+        }
 
-            // Call the template function on all values.
-            CalculateAbsoluteIndices(state, value);
-            CalculateAbsoluteIndices(state, values...);
+        template<typename Type>
+        static void CalculateAbsoluteIndices(State& state, const Type& value)
+        {
+            // Do not do anything for almost all types.
         }
 
         template<>
@@ -43,15 +45,14 @@ namespace Scripting
             }
         }
 
-        template<typename Type>
-        static void CalculateAbsoluteIndices(State& state, const Type& value)
+        template<typename Type, typename... Types>
+        static void CalculateAbsoluteIndices(State& state, const Type& value, const Types&... values)
         {
-            // Do not do anything for almost all types.
-        }
+            Assert(state.IsValid(), "Scripting state is invalid!");
 
-        static void CalculateAbsoluteIndices(State& state)
-        {
-            // Do not do anything for no arguments.
+            // Call the template function on all values.
+            CalculateAbsoluteIndices(state, value);
+            CalculateAbsoluteIndices(state, values...);
         }
 
         // Returns the referenced index.
