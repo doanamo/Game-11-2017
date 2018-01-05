@@ -112,6 +112,8 @@ Set(SourceFiles
     "Game/ScriptComponent.cpp"
     "Game/ScriptSystem.hpp"
     "Game/ScriptSystem.cpp"
+    "Game/ScriptBindings.hpp"
+    "Game/ScriptBindings.cpp"
     "Game/RenderComponent.hpp"
     "Game/RenderComponent.cpp"
     "Game/RenderSystem.hpp"

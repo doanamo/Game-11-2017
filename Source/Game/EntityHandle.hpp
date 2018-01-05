@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Precompiled.hpp"
+#include "ScriptBindings.hpp"
+#include "Scripting/Helpers.hpp"
 
 /*
     Entity Handle
@@ -15,6 +17,9 @@ namespace Game
     // Entity handle structure.
     struct EntityHandle
     {
+        // Type declarations.
+        typedef int ValueType;
+
         // Constructor.
         EntityHandle() :
             identifier(0),
@@ -46,8 +51,8 @@ namespace Game
         }
 
         // Handle data.
-        int identifier;
-        int version;
+        ValueType identifier;
+        ValueType version;
     };
 }
 
@@ -76,4 +81,17 @@ namespace std
             return pair.first.identifier * std::numeric_limits<int>::max() + pair.second.identifier;
         }
     };
+}
+
+namespace Scripting
+{
+    // Entity handle push function.
+    template<>
+    inline void Push(Scripting::State& state, const Game::EntityHandle& handle)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+
+        // Push a copy of the handle onto the stack.
+        Game::ScriptBindings::EntityHandle::Push(state, handle);
+    }
 }

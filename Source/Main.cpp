@@ -13,6 +13,7 @@
 #include "Game/EntitySystem.hpp"
 #include "Game/ComponentSystem.hpp"
 #include "Game/ScriptSystem.hpp"
+#include "Game/ScriptBindings.hpp"
 #include "Game/RenderSystem.hpp"
 #include "Game/TransformComponent.hpp"
 #include "Game/RenderComponent.hpp"
@@ -112,6 +113,13 @@ int main(int argc, char* argv[])
     if(!scriptSystem.Initialize(scriptSystemInfo))
     {
         Log() << LogFatalError() << "Could not initialize a script system.";
+        return -1;
+    }
+
+    Game::ScriptBindings::References scriptBindingsReferences;
+    if(!Game::ScriptBindings::Register(scriptSystem.GetState(), scriptBindingsReferences))
+    {
+        Log() << LogFatalError() << "Could not register script bindings.";
         return -1;
     }
 

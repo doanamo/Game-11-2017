@@ -111,7 +111,6 @@ bool ScriptSystem::FinalizeComponent(EntityHandle entity)
         // Call finalize function on all scripts in a component.
         for(auto& script : scriptComponent->m_scripts)
         {
-            /*
             // Setups a stack guard
             Scripting::StackGuard guard(m_state);
 
@@ -123,7 +122,6 @@ bool ScriptSystem::FinalizeComponent(EntityHandle entity)
 
             if(!result.has_value() || !result.value())
                 return false;
-            */
         }
     }
 
@@ -150,7 +148,6 @@ void ScriptSystem::Update(float timeDelta)
         // Call update on every script contained in a component.
         for(auto& script : scriptComponent.m_scripts)
         {
-            /*
             // Setups a stack guard
             Scripting::StackGuard guard(m_state);
 
@@ -159,7 +156,6 @@ void ScriptSystem::Update(float timeDelta)
 
             // Call the script finalize method.
             Scripting::Call(m_state, "Update", Scripting::StackValue(-1), entity, timeDelta);
-            */
         }
     }
 
