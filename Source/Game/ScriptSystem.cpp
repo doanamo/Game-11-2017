@@ -83,6 +83,15 @@ bool ScriptSystem::Initialize(const ScriptSystemInfo& info)
 
     SCOPE_GUARD_IF(!m_initialized, m_entityFinalize.Unsubscribe());
 
+    // Initialize the scripting state.
+    if(!m_state.Create())
+    {
+        Log() << LogInitializeError() << "Could not initialize a scripting state.";
+        return false;
+    }
+
+    SCOPE_GUARD_IF(!m_initialized, m_state = Scripting::State());
+
     // Save initilization parameters.
     m_garbageCollectionTime = info.garbageCollectionTime;
 
