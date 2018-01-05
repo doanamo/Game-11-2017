@@ -13,13 +13,14 @@ namespace
 }
 
 ScriptSystemInfo::ScriptSystemInfo() :
+    scriptingState(nullptr),
     entitySystem(nullptr),
-    componentSystem(nullptr),
-    garbageCollectionTime(0.002f)
+    componentSystem(nullptr)
 {
 }
 
 ScriptSystem::ScriptSystem() :
+    m_scriptingState(nullptr),
     m_scriptComponents(nullptr),
     m_initialized(false)
 {
@@ -41,6 +42,18 @@ bool ScriptSystem::Initialize(const ScriptSystemInfo& info)
     }
 
     // Validate arguments.
+    if(info.scriptingState == nullptr)
+    {
+        Log() << LogInitializeError() << "Invalid argument - \"info.scriptingState\" is null.";
+        return false;
+    }
+
+    if(!info.scriptingState->IsValid())
+    {
+        Log() << LogInitializeError() << "Invalid argument - \"info.scriptingState\" is not valid.";
+        return false;
+    }
+
     if(info.entitySystem == nullptr)
     {
         Log() << LogInitializeError() << "Invalid argument - \"info.entitySystem\" is null.";
@@ -53,11 +66,10 @@ bool ScriptSystem::Initialize(const ScriptSystemInfo& info)
         return false;
     }
 
-    if(info.garbageCollectionTime <= 0.0f)
-    {
-        Log() << LogInitializeError() << "Invalid argument - \"info.garbageCollectionTime\" is invalid.";
-        return false;
-    }
+    // Save reference to the scripting state.
+    m_scriptingState = info.scriptingState;
+
+    SCOPE_GUARD_IF(!m_initialized, m_scriptingState = nullptr);
 
     // Retrieve component pools.
     m_scriptComponents = info.componentSystem->GetPool<Components::Script>();
@@ -83,18 +95,6 @@ bool ScriptSystem::Initialize(const ScriptSystemInfo& info)
 
     SCOPE_GUARD_IF(!m_initialized, m_entityFinalize.Unsubscribe());
 
-    // Initialize the scripting state.
-    if(!m_state.Create())
-    {
-        Log() << LogInitializeError() << "Could not initialize a scripting state.";
-        return false;
-    }
-
-    SCOPE_GUARD_IF(!m_initialized, m_state = Scripting::State());
-
-    // Save initilization parameters.
-    m_garbageCollectionTime = info.garbageCollectionTime;
-
     // Success!
     return m_initialized = true;
 }
@@ -112,13 +112,13 @@ bool ScriptSystem::FinalizeComponent(EntityHandle entity)
         for(auto& script : scriptComponent->m_scripts)
         {
             // Setups a stack guard
-            Scripting::StackGuard guard(m_state);
+            Scripting::StackGuard guard(m_scriptingState);
 
             // Push a script instance on the stack.
-            Scripting::Push(m_state, script);
+            Scripting::Push(*m_scriptingState, script);
 
             // Call the script finalize method.
-            auto result = Scripting::Call<bool>(m_state, "Finalize", Scripting::StackValue(-1), entity);
+            auto result = Scripting::Call<bool>(*m_scriptingState, "Finalize", Scripting::StackValue(-1), entity);
 
             if(!result.has_value() || !result.value())
                 return false;
@@ -149,21 +149,18 @@ void ScriptSystem::Update(float timeDelta)
         for(auto& script : scriptComponent.m_scripts)
         {
             // Setups a stack guard
-            Scripting::StackGuard guard(m_state);
+            Scripting::StackGuard guard(m_scriptingState);
 
             // Push a script instance on the stack.
-            Scripting::Push(m_state, script);
+            Scripting::Push(*m_scriptingState, script);
 
             // Call the script finalize method.
-            Scripting::Call(m_state, "Update", Scripting::StackValue(-1), entity, timeDelta);
+            Scripting::Call(*m_scriptingState, "Update", Scripting::StackValue(-1), entity, timeDelta);
         }
     }
-
-    // Collect scripting garbage.
-    m_state.CollectGarbage(m_garbageCollectionTime);
 }
 
-Scripting::State* ScriptSystem::GetState()
+Scripting::State* ScriptSystem::GetScriptingState()
 {
-    return &m_state;
+    return m_scriptingState;
 }

@@ -25,9 +25,9 @@ namespace Game
     {
         ScriptSystemInfo();
 
+        Scripting::State* scriptingState;
         EntitySystem* entitySystem;
         ComponentSystem* componentSystem;
-        float garbageCollectionTime;
     };
 
     // Script system class.
@@ -44,22 +44,21 @@ namespace Game
         void Update(float timeDelta);
 
         // Returns the scripting state.
-        Scripting::State* GetState();
+        Scripting::State* GetScriptingState();
 
     private:
         // Finalizes a script component.
         bool FinalizeComponent(EntityHandle entity);
 
     private:
-        // Event receivers.
-        Receiver<bool(EntityHandle)> m_entityFinalize;
+        // Scripting state.
+        Scripting::State* m_scriptingState;
 
         // Component pools.
         ComponentPool<Components::Script>* m_scriptComponents;
 
-        // Scripting state.
-        Scripting::State m_state;
-        float m_garbageCollectionTime;
+        // Event receivers.
+        Receiver<bool(EntityHandle)> m_entityFinalize;
 
         // Initialization state.
         bool m_initialized;

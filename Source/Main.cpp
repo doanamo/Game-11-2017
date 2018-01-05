@@ -40,6 +40,14 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+    // Create a scripting state.
+    Scripting::State scriptingState;
+    if(!scriptingState.Load("Data/Scripts/Main.lua"))
+    {
+        Log() << LogFatalError() << "Could not load the main script entry.";
+        return -1;
+    }
+
     // Create a config.
     System::Config config;
     config.Load("Game.cfg");
@@ -85,14 +93,6 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    // Create a scripting state.
-    Scripting::State scriptingState;
-    if(!scriptingState.Load("Data/Scripts/Main.lua"))
-    {
-        Log() << LogFatalError() << "Could not load the main script entry.";
-        return -1;
-    }
-
     // Create an entity system.
     Game::EntitySystem entitySystem;
 
@@ -106,9 +106,9 @@ int main(int argc, char* argv[])
 
     // Create a script system.
     Game::ScriptSystemInfo scriptSystemInfo;
+    scriptSystemInfo.scriptingState = &scriptingState;
     scriptSystemInfo.entitySystem = &entitySystem;
     scriptSystemInfo.componentSystem = &componentSystem;
-    scriptSystemInfo.garbageCollectionTime = 0.002f;
 
     Game::ScriptSystem scriptSystem;
     if(!scriptSystem.Initialize(scriptSystemInfo))
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
     }
 
     Game::ScriptBindings::References scriptBindingsReferences;
-    if(!Game::ScriptBindings::Register(scriptSystem.GetState(), scriptBindingsReferences))
+    if(!Game::ScriptBindings::Register(&scriptingState, scriptBindingsReferences))
     {
         Log() << LogFatalError() << "Could not register script bindings.";
         return -1;
@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
         transform->SetPosition(0.0f, 0.0f, 0.0f);
 
         auto* script = componentSystem.Create<Script>(entity);
-        script->AddScript(resourceManager.Load<Scripting::Reference>("Data/Scripts/Player.lua", scriptSystem.GetState()));
+        script->AddScript(resourceManager.Load<Scripting::Reference>("Data/Scripts/Player.lua", &scriptingState));
 
         auto* render = componentSystem.Create<Render>(entity);
         render->SetTexture(resourceManager.Load<Graphics::Texture>("Data/Textures/ColorCheckerboard.png"));
@@ -182,8 +182,12 @@ int main(int argc, char* argv[])
         // Present to the window.
         window.Present();
 
-        // Clean the scripting stack.
+        // Clean the scripting state.
         scriptingState.CleanStack();
+        scriptingState.CollectGarbage(0.002f);
+
+        // Release unused resources.
+        resourceManager.ReleaseUnused();
 
         // Tick the timer.
         timer.Tick();
