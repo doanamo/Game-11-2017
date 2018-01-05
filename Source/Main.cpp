@@ -12,10 +12,11 @@
 #include "Scripting/Helpers.hpp"
 #include "Game/EntitySystem.hpp"
 #include "Game/ComponentSystem.hpp"
+#include "Game/TransformComponent.hpp"
 #include "Game/ScriptSystem.hpp"
 #include "Game/ScriptBindings.hpp"
+#include "Game/ScriptComponent.hpp"
 #include "Game/RenderSystem.hpp"
-#include "Game/TransformComponent.hpp"
 #include "Game/RenderComponent.hpp"
 
 namespace
@@ -145,6 +146,9 @@ int main(int argc, char* argv[])
 
         auto* transform = componentSystem.Create<Transform>(entity);
         transform->SetPosition(0.0f, 0.0f, 0.0f);
+
+        auto* script = componentSystem.Create<Script>(entity);
+        script->AddScript(resourceManager.Load<Scripting::Reference>("Data/Scripts/Player.lua", scriptSystem.GetState()));
 
         auto* render = componentSystem.Create<Render>(entity);
         render->SetTexture(resourceManager.Load<Graphics::Texture>("Data/Textures/ColorCheckerboard.png"));
