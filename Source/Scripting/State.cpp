@@ -222,12 +222,12 @@ void State::CollectGarbage()
     lua_gc(m_luaState, LUA_GCCOLLECT, 0);
 }
 
-void State::CollectGarbage(float maxTime)
+void State::CollectGarbage(float maxSeconds)
 {
     if(m_luaState == nullptr)
         return;
 
-    if(maxTime <= 0.0f)
+    if(maxSeconds <= 0.0f)
         return;
 
     // Run the garbage collector for a specified time.
@@ -238,7 +238,7 @@ void State::CollectGarbage(float maxTime)
         if(lua_gc(m_luaState, LUA_GCSTEP, 0))
             break;
     }
-    while((glfwGetTime() - startTime) < maxTime);
+    while((glfwGetTime() - startTime) < maxSeconds);
 }
 
 bool State::IsValid() const

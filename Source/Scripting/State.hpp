@@ -42,7 +42,7 @@ namespace Scripting
         void CollectGarbage();
 
         // Collects memory garbage for a specified time.
-        void CollectGarbage(float maxTime);
+        void CollectGarbage(float maxSeconds);
 
         // Checks if the instance is valid.
         bool IsValid() const;
