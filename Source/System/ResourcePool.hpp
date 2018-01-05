@@ -128,7 +128,7 @@ namespace System
                 it = m_resources.erase(it);
 
                 // Print a log message.
-                Log() << "Released a resource loaded from \"" << filename << "\" file.";
+                Log() << "Released an unused resource loaded from \"" << filename << "\" file.";
             }
             else
             {
