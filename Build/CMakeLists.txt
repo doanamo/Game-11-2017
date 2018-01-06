@@ -24,10 +24,10 @@ Set(PrecompiledSource "Precompiled.cpp")
 
 Set(SourceFiles
     "Main.cpp"
-    
+
     "${PrecompiledHeader}"
     "${PrecompiledSource}"
-    
+
     "Common/Debug.hpp"
     "Common/Build.hpp"
     "Common/Build.cpp"
@@ -179,6 +179,9 @@ Add_Executable(${TargetName} ${SourceFiles})
 # Add the source directory as an include directory.
 Include_Directories(${SourceDir})
 
+# Add the binary directory as an include directory.
+Include_Directories(${CMAKE_CURRENT_BINARY_DIR})
+
 # Enable unicode support.
 Add_Definitions(-DUNICODE -D_UNICODE)
 
@@ -250,6 +253,37 @@ If("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # Enable C++17 support by default.
     # List(APPEND CMAKE_CXX_FLAGS "-std=c++17")
 EndIf()
+
+#
+# Git
+#
+
+# Find required package.
+Find_Package(Git)
+
+# Add a target for creating a build version file.
+Add_Custom_Target(BuildVersion
+    COMMAND ${CMAKE_COMMAND}
+        -D GIT_EXECUTABLE=${GIT_EXECUTABLE}
+        -D INPUT_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../Source/Common/BuildVersion.hpp.in"
+        -D OUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.hpp"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/GenerateBuildVersion.cmake"
+)
+
+# Add to dependencies.
+Add_Dependencies(${TargetName} BuildVersion)
+
+# Move the configuration target to CMake folder.
+Set_Property(TARGET BuildVersion PROPERTY FOLDER "CMake")
+
+# Write an empty file that has not been generated yet.
+File(WRITE "${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.hpp")
+
+# Add an extra source file.
+Target_Sources(${TargetName} PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.hpp")
+
+# Move the configuration file to a specific folder.
+Source_Group("Config" FILES "${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.hpp")
 
 #
 # GLM

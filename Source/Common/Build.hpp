@@ -19,4 +19,16 @@ namespace Build
 
     // Gets the source directory specified by the build system.
     std::string GetSourceDir();
+
+    // Gets the build's change list number.
+    std::string GetChangeList();
+
+    // Gets the build's shot commit hash.
+    std::string GetCommitHash();
+
+    // Gets the build's commit date.
+    std::string GetCommitDate();
+
+    // Gets the build's branch name.
+    std::string GetBranchName();
 }

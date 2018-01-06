@@ -1,0 +1,9 @@
+#pragma once
+
+namespace Build
+{
+    const char* ChangeList = "${GIT_CHANGE_LIST}";
+    const char* CommitHash = "${GIT_COMMIT_HASH}";
+    const char* CommitDate = "${GIT_COMMIT_DATE}";
+    const char* BranchName = "${GIT_BRANCH_NAME}";
+}

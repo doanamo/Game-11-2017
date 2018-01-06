@@ -28,9 +28,9 @@ namespace
 int main(int argc, char* argv[])
 {
     // Initialize core systems.
-    Build::Initialize();
-    Debug::Initialize();
     Logger::Initialize();
+    Debug::Initialize();
+    Build::Initialize();
 
     // Initialize the platform.
     System::Platform platform;
@@ -69,6 +69,14 @@ int main(int argc, char* argv[])
         Log() << LogFatalError() << "Could not open a window.";
         return -1;
     }
+
+    // Put build information in window's title.
+    std::string windowTitle = window.GetTitle();
+    windowTitle += " - CL " + Build::GetChangeList();
+    windowTitle += " - " + Build::GetCommitHash();
+    windowTitle += " - " + Build::GetBranchName();
+    windowTitle += " - " + Build::GetCommitDate();
+    window.SetTitle(windowTitle);
 
     // Create an input state.
     System::InputState inputState;
