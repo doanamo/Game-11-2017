@@ -2,7 +2,7 @@
 
 #include "Precompiled.hpp"
 #include "ScriptBindings.hpp"
-#include "Scripting/Helpers.hpp"
+#include "Scripting/State.hpp"
 
 /*
     Entity Handle
@@ -85,9 +85,13 @@ namespace std
 
 namespace Scripting
 {
+    // Template forward declaration.
+    template<typename Type>
+    void Push(State& state, const Type& value);
+
     // Entity handle push function.
     template<>
-    inline void Push(Scripting::State& state, const Game::EntityHandle& handle)
+    inline void Push(State& state, const Game::EntityHandle& handle)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
 
