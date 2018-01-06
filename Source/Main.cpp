@@ -73,8 +73,8 @@ int main(int argc, char* argv[])
     // Add build information to the window's title.
     std::string windowTitle = window.GetTitle();
     windowTitle += " - CL " + Build::GetChangeList();
-    windowTitle += " - " + Build::GetCommitHash();
-    windowTitle += " - " + Build::GetBranchName();
+    windowTitle += ", " + Build::GetCommitHash();
+    windowTitle += ", " + Build::GetBranchName();
     windowTitle += " - " + Build::GetCommitDate();
     window.SetTitle(windowTitle);
 
