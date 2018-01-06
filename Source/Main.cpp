@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    // Put build information in window's title.
+    // Add build information to the window's title.
     std::string windowTitle = window.GetTitle();
     windowTitle += " - CL " + Build::GetChangeList();
     windowTitle += " - " + Build::GetCommitHash();
