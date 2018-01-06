@@ -10,7 +10,7 @@ namespace
 }
 
 WindowInfo::WindowInfo() :
-    name("Window"),
+    title("Window"),
     width(1024),
     height(576),
     vsync(true),
@@ -23,6 +23,7 @@ WindowInfo::WindowInfo() :
 
 Window::Window() :
     m_window(nullptr),
+    m_title(""),
     m_sizeChanged(false)
 {
 }
@@ -228,7 +229,7 @@ bool Window::Open(const WindowInfo& info)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Create the window.
-    m_window = glfwCreateWindow(info.width, info.height, info.name.c_str(), nullptr, nullptr);
+    m_window = glfwCreateWindow(info.width, info.height, info.title.c_str(), nullptr, nullptr);
 
     if(m_window == nullptr)
     {
@@ -237,6 +238,11 @@ bool Window::Open(const WindowInfo& info)
     }
 
     SCOPE_GUARD_IF(!initialized, this->DestroyWindow());
+
+    // Store window's title.
+    m_title = info.title;
+
+    SCOPE_GUARD_IF(!initialized, m_title = "");
 
     // Set window size limits.
     glfwSetWindowSizeLimits(m_window, info.minWidth, info.minHeight, info.maxWidth, info.maxHeight);
@@ -345,6 +351,18 @@ void Window::Close()
     glfwSetWindowShouldClose(m_window, GL_TRUE);
 }
 
+void Window::SetTitle(std::string title)
+{
+    if(m_window == nullptr)
+        return;
+
+    // Set the window's new title.
+    glfwSetWindowTitle(m_window, title.c_str());
+
+    // Cache the window's title as it cannot be retrieved back via GLFW.
+    m_title = title;
+}
+
 bool Window::IsOpen() const
 {
     if(m_window == nullptr)
@@ -359,6 +377,11 @@ bool Window::IsFocused() const
         return false;
 
     return glfwGetWindowAttrib(m_window, GLFW_FOCUSED) > 0;
+}
+
+std::string Window::GetTitle() const
+{
+    return m_title;
 }
 
 int Window::GetWidth() const

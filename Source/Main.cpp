@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 
     // Create a window.
     System::WindowInfo windowInfo;
-    windowInfo.name = "Game";
+    windowInfo.title = "Game";
     windowInfo.width = config.GetParameter<int>("Window.Width", 1024);
     windowInfo.height = config.GetParameter<int>("Window.Height", 576);
     windowInfo.vsync = config.GetParameter<bool>("Window.Vsync", true);

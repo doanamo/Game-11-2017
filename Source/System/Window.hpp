@@ -37,7 +37,7 @@ namespace System
     {
         WindowInfo();
 
-        std::string name;
+        std::string title;
         int width;
         int height;
         bool vsync;
@@ -70,11 +70,17 @@ namespace System
         // Closes the window.
         void Close();
 
+        // Sets the window's title.
+        void SetTitle(std::string title);
+
         // Checks if the window is open.
         bool IsOpen() const;
 
         // Checks if the window is focused.
         bool IsFocused() const;
+
+        // Gets the window's title.
+        std::string GetTitle() const;
 
         // Gets the window's width.
         int GetWidth() const;
@@ -215,6 +221,9 @@ namespace System
     private:
         // Window handle.
         GLFWwindow* m_window;
+
+        // Window title.
+        std::string m_title;
 
         // Intermediate state.
         bool m_sizeChanged;
