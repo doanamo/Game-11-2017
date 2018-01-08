@@ -62,11 +62,11 @@ namespace System
         // Resets the input state.
         void Reset();
 
-        // Checks if a key is down.
-        bool IsKeyDown(int key, bool repeat = true);
+        // Checks if a keyboard key is down.
+        bool IsKeyboardKeyDown(int key, bool repeat = true);
 
-        // Checks if a key is up.
-        bool IsKeyUp(int key, bool repeat = true);
+        // Checks if a keyboard key is up.
+        bool IsKeyboardKeyUp(int key, bool repeat = true);
 
     private:
         // Called when a keyboard key is pressed.

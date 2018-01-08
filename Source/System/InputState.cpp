@@ -85,7 +85,7 @@ void InputState::Reset()
     }
 }
 
-bool InputState::IsKeyDown(int key, bool repeat)
+bool InputState::IsKeyboardKeyDown(int key, bool repeat)
 {
     if(key < 0 || key >= KeyboardKeyCount)
         return false;
@@ -99,7 +99,7 @@ bool InputState::IsKeyDown(int key, bool repeat)
     return false;
 }
 
-bool InputState::IsKeyUp(int key, bool repeat)
+bool InputState::IsKeyboardKeyUp(int key, bool repeat)
 {
     if(key < 0 || key >= KeyboardKeyCount)
         return false;
