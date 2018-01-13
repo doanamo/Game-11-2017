@@ -84,6 +84,7 @@ bool Reference::Load(std::string filename, State* state)
     if(luaL_loadfile(*m_state, (Build::GetWorkingDir() + filename).c_str()) != 0)
     {
         Log() << LogLoadError(filename) << "Could not load the file.";
+        m_state->PrintError();
         return false;
     }
 
