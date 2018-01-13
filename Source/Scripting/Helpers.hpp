@@ -8,6 +8,28 @@
 #include "State.hpp"
 
 /*
+    Lua Helpers
+*/
+
+inline bool luaL_checkboolean(lua_State* state, int index)
+{
+    if(lua_isboolean(state, index))
+    {
+        return lua_toboolean(state, index) != 0;
+    }
+    else
+    {
+        luaL_error(state, "Not a boolean.");
+        return false;
+    }
+}
+
+inline bool luaL_optboolean(lua_State* state, int index, bool default)
+{
+    return luaL_opt(state, luaL_checkboolean, index, default);
+}
+
+/*
     Push()
      
     Pushes a value on top of the stack.
