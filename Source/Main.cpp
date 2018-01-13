@@ -126,6 +126,8 @@ int main(int argc, char* argv[])
     }
 
     Game::ScriptBindings::References scriptBindingsReferences;
+    scriptBindingsReferences.inputState = &inputState;
+
     if(!Game::ScriptBindings::Register(&scriptingState, scriptBindingsReferences))
     {
         Log() << LogFatalError() << "Could not register script bindings.";

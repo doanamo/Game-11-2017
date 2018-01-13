@@ -21,6 +21,10 @@ function Player:Update(entitySelf, timeDelta)
         Log("Player:Update() script has been called.");
         self.once = true
     end
+    
+    if InputState.IsKeyboardKeyDown(KeyboardKeys["Escape"], false) then
+        Log("Player:Update() - Escape has been pressed.");
+    end
 end
 
 return Player

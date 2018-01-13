@@ -3,6 +3,11 @@
 #include "Precompiled.hpp"
 
 // Forward declarations.
+namespace System
+{
+    class InputState;
+}
+
 namespace Scripting
 {
     class State;
@@ -20,6 +25,8 @@ namespace Game
         struct References
         {
             References();
+
+            System::InputState* inputState;
         };
 
         // Registers all script bindings.
@@ -61,6 +68,45 @@ namespace Game
             int LengthSqr(lua_State* state);
             int Truncate(lua_State* state);
             int Normalize(lua_State* state);
+        }
+    }
+}
+
+/*
+    Keyboard Bindings
+*/
+
+namespace Game
+{
+    namespace ScriptBindings
+    {
+        namespace KeyboardKeys
+        {
+            // Registers bindings.
+            bool Register(Scripting::State& state);
+        }
+    }
+}
+
+/*
+    Input State Bindings
+*/
+
+namespace Game
+{
+    namespace ScriptBindings
+    {
+        namespace InputState
+        {
+            // Registers bindings.
+            bool Register(Scripting::State& state, System::InputState* reference);
+
+            // Helper functions.
+            System::InputState* Check(lua_State* state, int index);
+
+            // Metatable methods.
+            int IsKeyboardKeyDown(lua_State* state);
+            int IsKeyboardKeyUp(lua_State* state);
         }
     }
 }
