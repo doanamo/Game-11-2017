@@ -60,6 +60,6 @@ namespace Scripting
 
     private:
         // Virtual machine state.
-        lua_State* m_luaState;
+        lua_State* m_state;
     };
 }
