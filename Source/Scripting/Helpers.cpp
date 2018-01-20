@@ -39,7 +39,7 @@ void Scripting::PushVariable(State& state, std::string name)
         // Push token key.
         lua_pushstring(state, token.c_str());
 
-        // Get table element.
+        // Get a value from the table.
         lua_gettable(state, -2);
 
         // Remove the table.
