@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Precompiled.hpp"
-#include "ScriptBindings.hpp"
 #include "Scripting/State.hpp"
+#include "ScriptBindings/GameBindings.hpp"
 
 /*
     Entity Handle

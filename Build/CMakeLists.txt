@@ -118,6 +118,15 @@ Set(SourceFiles
     "Game/RenderComponent.cpp"
     "Game/RenderSystem.hpp"
     "Game/RenderSystem.cpp"
+
+    "Game/ScriptBindings/MathBindings.hpp"
+    "Game/ScriptBindings/MathBindings.cpp"
+    "Game/ScriptBindings/InputBindings.hpp"
+    "Game/ScriptBindings/InputBindings.cpp"
+    "Game/ScriptBindings/SystemBindings.hpp"
+    "Game/ScriptBindings/SystemBindings.cpp"
+    "Game/ScriptBindings/GameBindings.hpp"
+    "Game/ScriptBindings/GameBindings.cpp"
 )
 
 # Append source directory path to each source file.
