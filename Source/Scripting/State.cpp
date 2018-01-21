@@ -271,6 +271,22 @@ bool State::IsValid() const
     return m_state != nullptr;
 }
 
+State* State::GetOwner()
+{
+    if(m_state == nullptr)
+        return nullptr;
+
+    // Retrieve pointer to the instance that owns this Lua state.
+    lua_getglobal(m_state, "ScriptingState");
+    
+    // Get a pointer to the owner.
+    State* owner = (State*)lua_touserdata(m_state, -1);
+    lua_pop(m_state, 1);
+
+    // Return the pointer.
+    return owner;
+}
+
 lua_State* State::GetPrivate()
 {
     return m_state;

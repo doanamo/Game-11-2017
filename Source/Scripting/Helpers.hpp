@@ -241,8 +241,11 @@ namespace Scripting
         // Creating a reference of the value will pop it, but we want the stack intact.
         lua_pushvalue(state, index);
 
+        // Retrive the original state reference as the provided argument may be a proxy reference.
+        State* stateOwner = state.GetOwner();
+
         // Create a reference to the value at given index.
-        Reference reference(&state);
+        Reference reference(stateOwner);
         reference.CreateFromStack();
         return reference;
     }

@@ -48,6 +48,9 @@ namespace Scripting
         // Checks if the instance is valid.
         bool IsValid() const;
 
+        // Gets the owner instance of this state.
+        State* GetOwner();
+
         // Gets the private implementation.
         lua_State* GetPrivate();
 
