@@ -13,6 +13,8 @@
 
 inline bool luaL_checkboolean(lua_State* state, int index)
 {
+    Assert(state != nullptr, "Scripting state is null!");
+
     if(lua_isboolean(state, index))
     {
         return lua_toboolean(state, index) != 0;
@@ -26,6 +28,7 @@ inline bool luaL_checkboolean(lua_State* state, int index)
 
 inline bool luaL_optboolean(lua_State* state, int index, bool default)
 {
+    Assert(state != nullptr, "Scripting state is null!");
     return luaL_opt(state, luaL_checkboolean, index, default);
 }
 
@@ -42,9 +45,39 @@ namespace Scripting
     }
 
     template<typename Type>
-    void Push(State& state, const Type& value)
+    void Push(State& state)
     {
-        static_assert(false, "Not implemented for the given type.");
+        Assert(state.IsValid(), "Invalid scripting state!");
+
+        // Create a new userdata memory.
+        void* memory = lua_newuserdata(state, sizeof(Type));
+        Assert(memory != nullptr, "Could not allocate an userdata memory!");
+
+        // Construct an instance in userdata memory.
+        auto* instance = new (memory) Type();
+        Assert(instance != nullptr, "Could not construct an userdata instance!");
+
+        // Set the object's metatable.
+        luaL_getmetatable(state, typeid(Type).name());
+        lua_setmetatable(state, -2);
+    }
+
+    template<typename Type>
+    void Push(State& state, const Type& object)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+
+        // Create a new userdata memory for the object copy.
+        void* memory = lua_newuserdata(state, sizeof(Type));
+        Assert(memory != nullptr, "Could not allocate an userdata memory!");
+
+        // Construct a copy instance in userdata memory.
+        auto* instance = new (memory) Type(object);
+        Assert(instance != nullptr, "Could not construct an userdata instance!");
+
+        // Set the object's metatable.
+        luaL_getmetatable(state, typeid(Type).name());
+        lua_setmetatable(state, -2);
     }
 
     template<>
@@ -248,6 +281,65 @@ namespace Scripting
         Reference reference(stateOwner);
         reference.CreateFromStack();
         return reference;
+    }
+}
+
+/*
+    Check()
+
+    Checks if a value is of a given type a returns its reference (or nullptr if not).
+*/
+
+namespace Scripting
+{
+    template<typename Type>
+    Type Check(State& state, const int index = -1)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+
+        // Get the userdata object.
+        void* memory = luaL_checkudata(state, index, typeid(std::remove_pointer<Type>::type).name());
+        Assert(memory != nullptr, "Could not get an userdata memory!");
+
+        Type instance = reinterpret_cast<Type>(memory);
+        Assert(instance != nullptr, "Could not get an userdata instance!");
+
+        return instance;
+    }
+
+    template<>
+    inline bool Check<bool>(State& state, const int index)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return luaL_checkboolean(state, index);
+    }
+
+    template<>
+    inline int Check<int>(State& state, const int index)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return (int)luaL_checkinteger(state, index);
+    }
+
+    template<>
+    inline float Check<float>(State& state, const int index)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return (float)luaL_checknumber(state, index);
+    }
+
+    template<>
+    inline double Check<double>(State& state, const int index)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return luaL_checknumber(state, index);
+    }
+
+    template<>
+    inline std::string Check<std::string>(State& state, const int index)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return luaL_checkstring(state, index);
     }
 }
 

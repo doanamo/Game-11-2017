@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Precompiled.hpp"
-#include "Scripting/State.hpp"
-#include "ScriptBindings/GameBindings.hpp"
 
 /*
     Entity Handle
@@ -81,21 +79,4 @@ namespace std
             return pair.first.identifier * std::numeric_limits<int>::max() + pair.second.identifier;
         }
     };
-}
-
-namespace Scripting
-{
-    // Template forward declaration.
-    template<typename Type>
-    void Push(State& state, const Type& value);
-
-    // Entity handle push function.
-    template<>
-    inline void Push(State& state, const Game::EntityHandle& handle)
-    {
-        Assert(state.IsValid(), "Invalid scripting state!");
-
-        // Push a copy of the handle onto the stack.
-        Game::ScriptBindings::EntityHandle::Push(state, handle);
-    }
 }

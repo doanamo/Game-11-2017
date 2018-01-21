@@ -5,6 +5,7 @@
 */
 
 #include <cctype>
+#include <typeinfo>
 #include <typeindex>
 #include <memory>
 #include <numeric>
