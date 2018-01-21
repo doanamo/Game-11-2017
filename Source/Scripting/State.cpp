@@ -25,7 +25,14 @@ extern "C"
 }
 
 State::State() :
-    m_state(nullptr)
+    m_state(nullptr),
+    m_owner(false)
+{
+}
+
+State::State(lua_State* state) :
+    m_state(state),
+    m_owner(false)
 {
 }
 
@@ -33,12 +40,20 @@ State::State(State&& other)
 {
     m_state = other.m_state;
     other.m_state = nullptr;
+
+    m_owner = other.m_owner;
+    other.m_owner = false;
 }
 
 State& State::operator=(State&& other)
 {
+    this->DestroyState();
+
     m_state = other.m_state;
     other.m_state = nullptr;
+
+    m_owner = other.m_owner;
+    other.m_owner = false;
 
     return *this;
 }
@@ -51,10 +66,13 @@ State::~State()
 void State::DestroyState()
 {
     // Cleanup Lua state.
-    if(m_state != nullptr)
+    if(m_owner)
     {
-        lua_close(m_state);
-        m_state = nullptr;
+        if(m_state != nullptr)
+        {
+            lua_close(m_state);
+            m_state = nullptr;
+        }
     }
 }
 
@@ -102,6 +120,9 @@ bool State::Create()
 
     // Make sure that we did not leave anything on the stack.
     Assert(lua_gettop(m_state) == 0, "Stack is not empty.");
+
+    // Set this instance as the owner of the created state.
+    m_owner = true;
 
     // Success!
     Log() << "Created a scripting Lua state.";

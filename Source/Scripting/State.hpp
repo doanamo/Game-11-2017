@@ -15,6 +15,7 @@ namespace Scripting
     {
     public:
         State();
+        State(lua_State* state);
         State(State&& state);
         State& operator=(State&& other);
         ~State();
@@ -61,5 +62,8 @@ namespace Scripting
     private:
         // Virtual machine state.
         lua_State* m_state;
+        
+        // State owner flag.
+        bool m_owner;
     };
 }
