@@ -1,6 +1,7 @@
 #include "Precompiled.hpp"
 #include "MathBindings.hpp"
 #include "Scripting/State.hpp"
+#include "Scripting/Helpers.hpp"
 using namespace Game;
 
 /*
@@ -12,7 +13,7 @@ bool ScriptBindings::Vec2::Register(Scripting::State& state)
     Assert(state.IsValid(), "Invalid scripting state!");
 
     // Create a class metatable.
-    luaL_newmetatable(state, "Vec2");
+    luaL_newmetatable(state, typeid(glm::vec2).name());
 
     lua_pushcfunction(state, ScriptBindings::Vec2::New);
     lua_setfield(state, -2, "New");
@@ -64,64 +65,18 @@ bool ScriptBindings::Vec2::Register(Scripting::State& state)
     return true;
 }
 
-glm::vec2* ScriptBindings::Vec2::Push(lua_State* state)
-{
-    Assert(state != nullptr, "Scripting state is nullptr!");
-
-    // Create a new userdata object.
-    void* memory = lua_newuserdata(state, sizeof(glm::vec2));
-    Assert(memory != nullptr, "Could not allocate an userdata memory!");
-
-    auto* instance = new (memory) glm::vec2();
-    Assert(instance != nullptr, "Could not construct an userdata instance!");
-
-    // Set the object's metatable.
-    luaL_getmetatable(state, "Vec2");
-    lua_setmetatable(state, -2);
-
-    return instance;
-}
-
-glm::vec2* ScriptBindings::Vec2::Push(lua_State* state, const glm::vec2& object)
-{
-    Assert(state != nullptr, "Scripting state is nullptr!");
-
-    // Create a new userdata object.
-    void* memory = lua_newuserdata(state, sizeof(glm::vec2));
-    Assert(memory != nullptr, "Could not allocate an userdata memory!");
-
-    auto* instance = new (memory) glm::vec2(object);
-    Assert(instance != nullptr, "Could not construct an userdata instance!");
-
-    // Set the object's metatable.
-    luaL_getmetatable(state, "Vec2");
-    lua_setmetatable(state, -2);
-
-    return instance;
-}
-
-glm::vec2* ScriptBindings::Vec2::Check(lua_State* state, int index)
-{
-    Assert(state != nullptr, "Scripting state is nullptr!");
-
-    // Get the userdata object.
-    void* memory = luaL_checkudata(state, index, "Vec2");
-    Assert(memory != nullptr, "Could not get an userdata memory!");
-
-    auto* instance = reinterpret_cast<glm::vec2*>(memory);
-    Assert(instance != nullptr, "Could not get an userdata instance!");
-
-    return instance;
-}
-
 int ScriptBindings::Vec2::New(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Push a new instance.
-    auto* vector = Vec2::Push(state);
-    vector->x = (float)luaL_optnumber(state, 1, 0.0);
-    vector->y = (float)luaL_optnumber(state, 2, 0.0);
+    float x = (float)luaL_optnumber(state, 1, 0.0);
+    float y = (float)luaL_optnumber(state, 2, 0.0);
+
+    Scripting::Push<glm::vec2>(stateProxy, glm::vec2(x, y));
 
     return 1;
 }
@@ -130,10 +85,14 @@ int ScriptBindings::Vec2::Call(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Push a new instance.
-    auto* vector = Vec2::Push(state);
-    vector->x = (float)luaL_optnumber(state, 2, 0.0);
-    vector->y = (float)luaL_optnumber(state, 3, 0.0);
+    float x = (float)luaL_optnumber(state, 2, 0.0);
+    float y = (float)luaL_optnumber(state, 3, 0.0);
+
+    Scripting::Push<glm::vec2>(stateProxy, glm::vec2(x, y));
 
     return 1;
 }
@@ -142,8 +101,11 @@ int ScriptBindings::Vec2::Index(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Return the property.
-    glm::vec2* vector = Vec2::Check(state, 1);
+    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
     std::string key = luaL_checkstring(state, 2);
 
     if(key == "x")
@@ -171,8 +133,11 @@ int ScriptBindings::Vec2::NewIndex(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Set the property.
-    glm::vec2* vector = Vec2::Check(state, 1);
+    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
     std::string key = luaL_checkstring(state, 2);
 
     if(key == "x")
@@ -193,13 +158,16 @@ int ScriptBindings::Vec2::Add(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Get arguments from the stack.
-    glm::vec2* vector = Vec2::Check(state, 1);
-    glm::vec2* argument = Vec2::Check(state, 2);
+    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
+    glm::vec2* argument = Scripting::Check<glm::vec2*>(stateProxy, 2);
 
     // Push the result.
-    glm::vec2* result = Vec2::Push(state);
-    *result = *vector + *argument;
+    glm::vec2 result = *vector + *argument;
+    Scripting::Push<glm::vec2>(stateProxy, result);
 
     return 1;
 }
@@ -208,13 +176,16 @@ int ScriptBindings::Vec2::Subtract(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Get arguments from the stack.
-    glm::vec2* vector = Vec2::Check(state, 1);
-    glm::vec2* argument = Vec2::Check(state, 2);
+    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
+    glm::vec2* argument = Scripting::Check<glm::vec2*>(stateProxy, 2);
 
     // Push the result.
-    glm::vec2* result = Vec2::Push(state);
-    *result = *vector - *argument;
+    glm::vec2 result = *vector - *argument;
+    Scripting::Push<glm::vec2>(stateProxy, result);
 
     return 1;
 }
@@ -223,13 +194,16 @@ int ScriptBindings::Vec2::Multiply(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Get arguments from the stack.
-    glm::vec2* vector = Vec2::Check(state, 1);
-    lua_Number argument = luaL_checknumber(state, 2);
+    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
+    float argument = (float)luaL_checknumber(state, 2);
 
     // Push the result.
-    glm::vec2* result = Vec2::Push(state);
-    *result = *vector * (float)argument;
+    glm::vec2 result = *vector * argument;
+    Scripting::Push<glm::vec2>(stateProxy, result);
 
     return 1;
 }
@@ -238,13 +212,16 @@ int ScriptBindings::Vec2::Divide(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Get arguments from the stack.
-    glm::vec2* vector = Vec2::Check(state, 1);
-    lua_Number argument = luaL_checknumber(state, 2);
+    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
+    float argument = (float)luaL_checknumber(state, 2);
 
     // Push the result.
-    glm::vec2* result = Vec2::Push(state);
-    *result = *vector / (float)argument;
+    glm::vec2 result = *vector / argument;
+    Scripting::Push<glm::vec2>(stateProxy, result);
 
     return 1;
 }
@@ -253,9 +230,12 @@ int ScriptBindings::Vec2::Equals(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Get arguments from the stack.
-    glm::vec2* vector = Vec2::Check(state, 1);
-    glm::vec2* argument = Vec2::Check(state, 2);
+    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
+    glm::vec2* argument = Scripting::Check<glm::vec2*>(stateProxy, 2);
 
     // Push the result.
     bool result = *vector == *argument;
@@ -268,8 +248,11 @@ int ScriptBindings::Vec2::Length(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Get arguments from the stack.
-    glm::vec2* vector = Vec2::Check(state, 1);
+    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
 
     // Push the result.
     float result = glm::length(*vector);
@@ -282,8 +265,11 @@ int ScriptBindings::Vec2::LengthSqr(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Get arguments from the stack.
-    glm::vec2* vector = Vec2::Check(state, 1);
+    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
 
     // Push the result.
     float result = glm::length2(*vector);
@@ -296,13 +282,16 @@ int ScriptBindings::Vec2::Truncate(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Get arguments from the stack.
-    glm::vec2* vector = Vec2::Check(state, 1);
+    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
     float length = (float)luaL_checknumber(state, 2);
 
     // Push the result.
-    glm::vec2* result = Vec2::Push(state);
-    *result = glm::normalize(*vector) * glm::min(glm::length(*vector), length);
+    glm::vec2 result = glm::normalize(*vector) * glm::min(glm::length(*vector), length);
+    Scripting::Push<glm::vec2>(stateProxy, result);
 
     return 1;
 }
@@ -311,12 +300,15 @@ int ScriptBindings::Vec2::Normalize(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Get arguments from the stack.
-    glm::vec2* vector = Vec2::Check(state, 1);
+    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
 
     // Push the result.
-    glm::vec2* result = Vec2::Push(state);
-    *result = glm::normalize(*vector);
+    glm::vec2 result = glm::normalize(*vector);
+    Scripting::Push<glm::vec2>(stateProxy, result);
 
     return 1;
 }

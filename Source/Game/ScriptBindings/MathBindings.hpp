@@ -21,11 +21,6 @@ namespace Game
             // Registers bindings.
             bool Register(Scripting::State& state);
 
-            // Helper functions.
-            glm::vec2* Push(lua_State* state);
-            glm::vec2* Push(lua_State* state, const glm::vec2& object);
-            glm::vec2* Check(lua_State* state, int index);
-
             // Metatable methods.
             int New(lua_State* state);
             int Call(lua_State* state);

@@ -1,6 +1,7 @@
 #include "Precompiled.hpp"
 #include "GameBindings.hpp"
 #include "Scripting/State.hpp"
+#include "Scripting/Helpers.hpp"
 #include "Game/EntityHandle.hpp"
 using namespace Game;
 
@@ -13,7 +14,7 @@ bool ScriptBindings::EntityHandle::Register(Scripting::State& state)
     Assert(state.IsValid(), "Invalid scripting state!");
 
     // Create a class metatable.
-    luaL_newmetatable(state, "EntityHandle");
+    luaL_newmetatable(state, typeid(Game::EntityHandle).name());
 
     lua_pushcfunction(state, ScriptBindings::EntityHandle::New);
     lua_setfield(state, -2, "New");
@@ -38,62 +39,15 @@ bool ScriptBindings::EntityHandle::Register(Scripting::State& state)
     return true;
 }
 
-Game::EntityHandle* ScriptBindings::EntityHandle::Push(lua_State* state)
-{
-    Assert(state != nullptr, "Scripting state is nullptr!");
-
-    // Create a new userdata object.
-    void* memory = lua_newuserdata(state, sizeof(Game::EntityHandle));
-    Assert(memory != nullptr, "Could not allocate an userdata memory!");
-
-    auto* instance = new (memory) Game::EntityHandle();
-    Assert(instance != nullptr, "Could not construct an userdata instance!");
-
-    // Set the object's metatable.
-    luaL_getmetatable(state, "EntityHandle");
-    lua_setmetatable(state, -2);
-
-    return instance;
-}
-
-Game::EntityHandle* ScriptBindings::EntityHandle::Push(lua_State* state, const Game::EntityHandle& object)
-{
-    Assert(state != nullptr, "Scripting state is nullptr!");
-
-    // Create an userdata for the object copy.
-    void* memory = lua_newuserdata(state, sizeof(Game::EntityHandle));
-    Assert(memory != nullptr, "Could not allocate an userdata memory!");
-
-    auto* instance = new (memory) Game::EntityHandle(object);
-    Assert(instance != nullptr, "Could not construct an userdata instance!");
-
-    // Set the object's metatable.
-    luaL_getmetatable(state, "EntityHandle");
-    lua_setmetatable(state, -2);
-
-    return instance;
-}
-
-Game::EntityHandle* ScriptBindings::EntityHandle::Check(lua_State* state, int index)
-{
-    Assert(state != nullptr, "Scripting state is nullptr!");
-
-    // Get the userdata object.
-    void* memory = luaL_checkudata(state, index, "EntityHandle");
-    Assert(memory != nullptr, "Could not get an userdata memory!");
-
-    auto* instance = reinterpret_cast<Game::EntityHandle*>(memory);
-    Assert(instance != nullptr, "Could not get an userdata instance!");
-
-    return instance;
-}
-
 int ScriptBindings::EntityHandle::New(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Push a new object.
-    ScriptBindings::EntityHandle::Push(state);
+    Scripting::Push<Game::EntityHandle>(stateProxy);
 
     return 1;
 }
@@ -102,9 +56,12 @@ int ScriptBindings::EntityHandle::Index(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Get arguments from the stack.
-    auto* handle = ScriptBindings::EntityHandle::Check(state, 1);
-    std::string key = luaL_checkstring(state, 2);
+    Game::EntityHandle* handle = Scripting::Check<Game::EntityHandle*>(stateProxy, 1);
+    std::string key = Scripting::Check<std::string>(stateProxy, 2);
 
     // Return a property.
     if(key == "identifier")
@@ -128,19 +85,22 @@ int ScriptBindings::EntityHandle::NewIndex(lua_State* state)
 {
     Assert(state != nullptr);
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Get arguments from the stack.
-    auto* handle = ScriptBindings::EntityHandle::Check(state, 1);
-    std::string key = luaL_checkstring(state, 2);
+    Game::EntityHandle* handle = Scripting::Check<Game::EntityHandle*>(stateProxy, 1);
+    std::string key = Scripting::Check<std::string>(stateProxy, 2);
 
     // Set a property.
     if(key == "identifier")
     {
-        handle->identifier = (Game::EntityHandle::ValueType)luaL_checkinteger(state, 3);
+        handle->identifier = Scripting::Check<Game::EntityHandle::ValueType>(stateProxy, 3);
         return 0;
     }
     else if(key == "version")
     {
-        handle->version = (Game::EntityHandle::ValueType)luaL_checkinteger(state, 3);
+        handle->version = Scripting::Check<Game::EntityHandle::ValueType>(stateProxy, 3);
         return 0;
     }
 

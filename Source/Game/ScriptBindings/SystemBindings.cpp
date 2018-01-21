@@ -19,7 +19,7 @@ bool ScriptBindings::InputState::Register(Scripting::State& state, System::Input
     *pointer = reference;
 
     // Create a metatable and set it on the userdata pointer.
-    luaL_newmetatable(state, "InputState");
+    luaL_newmetatable(state, typeid(System::InputState*).name());
 
     lua_pushliteral(state, "__index");
     lua_pushvalue(state, -2);
@@ -39,32 +39,21 @@ bool ScriptBindings::InputState::Register(Scripting::State& state, System::Input
     return true;
 }
 
-System::InputState* ScriptBindings::InputState::Check(lua_State* state, int index)
-{
-    Assert(state != nullptr, "Scripting state is nullptr!");
-
-    // Get the userdata object.
-    void* memory = luaL_checkudata(state, index, "InputState");
-    Assert(memory != nullptr, "Could not get an userdata memory!");
-
-    auto** pointer = reinterpret_cast<System::InputState**>(memory);
-    Assert(pointer != nullptr, "Could not get an userdata pointer!");
-
-    return *pointer;
-}
-
 int ScriptBindings::InputState::IsKeyboardKeyDown(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
+
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
 
     // Push an input system reference as the first argument.
     lua_getglobal(state, "InputState");
     lua_insert(state, 1);
 
     // Get arguments from the stack.
-    auto* inputState = InputState::Check(state, 1);
-    int   key = (int)luaL_checkinteger(state, 2);
-    bool  repeat = luaL_optboolean(state, 3, true);
+    System::InputState* inputState = *Scripting::Check<System::InputState**>(stateProxy, 1);
+    int key = (int)luaL_checkinteger(state, 2);
+    bool repeat = luaL_optboolean(state, 3, true);
 
     // Call the method and push its result.
     bool result = inputState->IsKeyboardKeyDown(key, repeat);
@@ -77,12 +66,15 @@ int ScriptBindings::InputState::IsKeyboardKeyUp(lua_State* state)
 {
     Assert(state != nullptr, "Scripting state is nullptr!");
 
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
     // Push an input system reference as the first argument.
     lua_getglobal(state, "InputState");
     lua_insert(state, 1);
 
     // Get arguments from the stack.
-    auto* inputState = InputState::Check(state, 1);
+    System::InputState* inputState = *Scripting::Check<System::InputState**>(stateProxy, 1);
     int   key = (int)luaL_checkinteger(state, 2);
     bool  repeat = luaL_optboolean(state, 3, true);
 

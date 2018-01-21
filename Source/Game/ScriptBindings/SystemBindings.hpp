@@ -26,9 +26,6 @@ namespace Game
             // Registers bindings.
             bool Register(Scripting::State& state, System::InputState* reference);
 
-            // Helper functions.
-            System::InputState* Check(lua_State* state, int index);
-
             // Metatable methods.
             int IsKeyboardKeyDown(lua_State* state);
             int IsKeyboardKeyUp(lua_State* state);
