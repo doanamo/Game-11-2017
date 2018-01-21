@@ -96,6 +96,10 @@ bool State::Create()
     lua_pushcfunction(m_state, LuaLog);
     lua_setglobal(m_state, "Log");
 
+    // Push a reference to this object.
+    lua_pushlightuserdata(m_state, (void*)this);
+    lua_setglobal(m_state, "ScriptingState");
+
     // Make sure that we did not leave anything on the stack.
     Assert(lua_gettop(m_state) == 0, "Stack is not empty.");
 
