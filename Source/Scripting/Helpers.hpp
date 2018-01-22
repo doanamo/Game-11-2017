@@ -225,7 +225,7 @@ namespace Scripting
     typename ReadHelper<Type>::ReturnType Read(State& state, const int index = -1)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
-        return (Type*)lua_touserdata(state, index);
+        return reinterpret_cast<Type*>(lua_touserdata(state, index));
     }
 
     template<>
@@ -506,10 +506,7 @@ namespace Scripting
     bool Is(State& state, const int index = -1)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
-
-        // Check if the value is an userdata object.
-        void* memory = luaL_checkudata(state, index, typeid(std::remove_pointer<Type>::type).name());
-        return memory != nullptr;
+        return luaL_checkudata(state, index, typeid(std::remove_pointer<Type>::type).name()) != nullptr;
     }
 
     template<>
