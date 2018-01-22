@@ -105,7 +105,7 @@ int ScriptBindings::Vec2::Index(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Return the property.
-    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
+    glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
     std::string key = luaL_checkstring(state, 2);
 
     if(key == "x")
@@ -137,7 +137,7 @@ int ScriptBindings::Vec2::NewIndex(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Set the property.
-    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
+    glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
     std::string key = luaL_checkstring(state, 2);
 
     if(key == "x")
@@ -162,8 +162,8 @@ int ScriptBindings::Vec2::Add(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Get arguments from the stack.
-    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
-    glm::vec2* argument = Scripting::Check<glm::vec2*>(stateProxy, 2);
+    glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
+    glm::vec2* argument = Scripting::Check<glm::vec2>(stateProxy, 2);
 
     // Push the result.
     glm::vec2 result = *vector + *argument;
@@ -180,8 +180,8 @@ int ScriptBindings::Vec2::Subtract(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Get arguments from the stack.
-    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
-    glm::vec2* argument = Scripting::Check<glm::vec2*>(stateProxy, 2);
+    glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
+    glm::vec2* argument = Scripting::Check<glm::vec2>(stateProxy, 2);
 
     // Push the result.
     glm::vec2 result = *vector - *argument;
@@ -198,7 +198,7 @@ int ScriptBindings::Vec2::Multiply(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Get arguments from the stack.
-    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
+    glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
     float argument = (float)luaL_checknumber(state, 2);
 
     // Push the result.
@@ -216,7 +216,7 @@ int ScriptBindings::Vec2::Divide(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Get arguments from the stack.
-    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
+    glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
     float argument = (float)luaL_checknumber(state, 2);
 
     // Push the result.
@@ -234,8 +234,8 @@ int ScriptBindings::Vec2::Equals(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Get arguments from the stack.
-    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
-    glm::vec2* argument = Scripting::Check<glm::vec2*>(stateProxy, 2);
+    glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
+    glm::vec2* argument = Scripting::Check<glm::vec2>(stateProxy, 2);
 
     // Push the result.
     bool result = *vector == *argument;
@@ -252,7 +252,7 @@ int ScriptBindings::Vec2::Length(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Get arguments from the stack.
-    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
+    glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
 
     // Push the result.
     float result = glm::length(*vector);
@@ -269,7 +269,7 @@ int ScriptBindings::Vec2::LengthSqr(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Get arguments from the stack.
-    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
+    glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
 
     // Push the result.
     float result = glm::length2(*vector);
@@ -286,7 +286,7 @@ int ScriptBindings::Vec2::Truncate(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Get arguments from the stack.
-    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
+    glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
     float length = (float)luaL_checknumber(state, 2);
 
     // Push the result.
@@ -304,7 +304,7 @@ int ScriptBindings::Vec2::Normalize(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Get arguments from the stack.
-    glm::vec2* vector = Scripting::Check<glm::vec2*>(stateProxy, 1);
+    glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
 
     // Push the result.
     glm::vec2 result = glm::normalize(*vector);

@@ -23,7 +23,7 @@ function Player:Update(entitySelf, timeDelta)
     end
     
     if InputState.IsKeyboardKeyDown(KeyboardKeys["Escape"], false) then
-        Log("Player:Update() - Escape has been pressed.");
+        Log("Player:Update() - " .. entitySelf.identifier .. ", " .. entitySelf.version);
     end
 end
 

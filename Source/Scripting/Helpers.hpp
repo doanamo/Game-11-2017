@@ -58,7 +58,7 @@ namespace Scripting
         Assert(instance != nullptr, "Could not construct an userdata instance!");
 
         // Set the object's metatable.
-        luaL_getmetatable(state, typeid(Type).name());
+        luaL_getmetatable(state, typeid(std::remove_pointer<Type>::type).name());
         lua_setmetatable(state, -2);
     }
 
@@ -76,7 +76,7 @@ namespace Scripting
         Assert(instance != nullptr, "Could not construct an userdata instance!");
 
         // Set the object's metatable.
-        luaL_getmetatable(state, typeid(Type).name());
+        luaL_getmetatable(state, typeid(std::remove_pointer<Type>::type).name());
         lua_setmetatable(state, -2);
     }
 
@@ -105,7 +105,21 @@ namespace Scripting
     inline void Push(State& state, const int& value)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
-        lua_pushnumber(state, value);
+        lua_pushinteger(state, value);
+    }
+
+    template<>
+    inline void Push(State& state, const long& value)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        lua_pushinteger(state, value);
+    }
+
+    template<>
+    inline void Push(State& state, const long long& value)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        lua_pushinteger(state, value);
     }
 
     template<>
@@ -202,60 +216,128 @@ namespace Scripting
 namespace Scripting
 {
     template<typename Type>
-    Type Read(State& state, const int index = -1)
+    struct ReadHelper
     {
-        static_assert(false, "Not implemented for the given type.");
+        typedef Type* ReturnType;
+    };
+
+    template<typename Type>
+    typename ReadHelper<Type>::ReturnType Read(State& state, const int index = -1)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return (Type*)lua_touserdata(state, index);
     }
 
     template<>
-    inline void Read(State& state, const int index)
+    struct ReadHelper<void>
+    {
+        typedef void ReturnType;
+    };
+
+    template<>
+    inline typename ReadHelper<void>::ReturnType Read<void>(State& state, const int index)
     {
     }
 
     template<>
-    inline std::nullptr_t Read(State& state, const int index)
+    struct ReadHelper<std::nullptr_t>
+    {
+        typedef std::nullptr_t ReturnType;
+    };
+
+    template<>
+    inline typename ReadHelper<std::nullptr_t>::ReturnType Read<std::nullptr_t>(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
         return nullptr;
     }
 
     template<>
-    inline bool Read(State& state, const int index)
+    struct ReadHelper<bool>
+    {
+        typedef bool ReturnType;
+    };
+
+    template<>
+    inline typename ReadHelper<bool>::ReturnType Read<bool>(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
         return lua_toboolean(state, index) != 0;
     }
 
     template<>
-    inline int Read(State& state, const int index)
+    struct ReadHelper<int>
+    {
+        typedef int ReturnType;
+    };
+
+    template<>
+    inline typename ReadHelper<int>::ReturnType Read<int>(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
-        return (int)lua_tointeger(state, index);
+        return static_cast<int>(lua_tointeger(state, index));
     }
 
     template<>
-    inline long long Read(State& state, const int index)
+    struct ReadHelper<long>
+    {
+        typedef long ReturnType;
+    };
+
+    template<>
+    inline typename ReadHelper<long>::ReturnType Read<long>(State& state, const int index)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return static_cast<long>(lua_tointeger(state, index));
+    }
+
+    template<>
+    struct ReadHelper<long long>
+    {
+        typedef long long ReturnType;
+    };
+
+    template<>
+    inline typename ReadHelper<long long>::ReturnType Read<long long>(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
         return lua_tointeger(state, index);
     }
 
     template<>
-    inline float Read(State& state, const int index)
+    struct ReadHelper<float>
+    {
+        typedef float ReturnType;
+    };
+
+    template<>
+    inline typename ReadHelper<float>::ReturnType Read<float>(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
-        return (float)lua_tonumber(state, index);
+        return static_cast<float>(lua_tonumber(state, index));
     }
 
     template<>
-    inline double Read(State& state, const int index)
+    struct ReadHelper<double>
+    {
+        typedef double ReturnType;
+    };
+
+    template<>
+    inline typename ReadHelper<double>::ReturnType Read<double>(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
         return lua_tonumber(state, index);
     }
 
     template<>
-    inline std::string Read(State& state, const int index)
+    struct ReadHelper<std::string>
+    {
+        typedef std::string ReturnType;
+    };
+
+    template<>
+    inline typename ReadHelper<std::string>::ReturnType Read<std::string>(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
 
@@ -266,7 +348,13 @@ namespace Scripting
     }
 
     template<>
-    inline Reference Read<Reference>(State& state, const int index)
+    struct ReadHelper<Reference>
+    {
+        typedef Reference ReturnType;
+    };
+
+    template<>
+    inline typename ReadHelper<Reference>::ReturnType Read<Reference>(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
 
@@ -293,7 +381,13 @@ namespace Scripting
 namespace Scripting
 {
     template<typename Type>
-    Type Check(State& state, const int index = -1)
+    struct CheckHelper
+    {
+        typedef Type* ReturnType;
+    };
+
+    template<typename Type>
+    typename CheckHelper<Type>::ReturnType Check(State& state, const int index = -1)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
 
@@ -301,42 +395,99 @@ namespace Scripting
         void* memory = luaL_checkudata(state, index, typeid(std::remove_pointer<Type>::type).name());
         Assert(memory != nullptr, "Could not get an userdata memory!");
 
-        Type instance = reinterpret_cast<Type>(memory);
+        // Cast the userdata object.
+        Type* instance = reinterpret_cast<Type*>(memory);
         Assert(instance != nullptr, "Could not get an userdata instance!");
 
         return instance;
     }
 
     template<>
-    inline bool Check<bool>(State& state, const int index)
+    struct CheckHelper<bool>
+    {
+        typedef bool ReturnType;
+    };
+
+    template<>
+    inline typename CheckHelper<bool>::ReturnType Check<bool>(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
         return luaL_checkboolean(state, index);
     }
 
     template<>
-    inline int Check<int>(State& state, const int index)
+    struct CheckHelper<int>
+    {
+        typedef int ReturnType;
+    };
+
+    template<>
+    inline typename CheckHelper<int>::ReturnType Check<int>(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
-        return (int)luaL_checkinteger(state, index);
+        return static_cast<int>(luaL_checkinteger(state, index));
     }
 
     template<>
-    inline float Check<float>(State& state, const int index)
+    struct CheckHelper<long>
+    {
+        typedef long ReturnType;
+    };
+
+    template<>
+    inline typename CheckHelper<long>::ReturnType Check<long>(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
-        return (float)luaL_checknumber(state, index);
+        return static_cast<long>(luaL_checkinteger(state, index));
     }
 
     template<>
-    inline double Check<double>(State& state, const int index)
+    struct CheckHelper<long long>
+    {
+        typedef long long ReturnType;
+    };
+
+    template<>
+    inline typename CheckHelper<long long>::ReturnType Check<long long>(State& state, const int index)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return static_cast<long long>(luaL_checkinteger(state, index));
+    }
+
+    template<>
+    struct CheckHelper<float>
+    {
+        typedef float ReturnType;
+    };
+
+    template<>
+    inline typename CheckHelper<float>::ReturnType Check<float>(State& state, const int index)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return static_cast<float>(luaL_checknumber(state, index));
+    }
+
+    template<>
+    struct CheckHelper<double>
+    {
+        typedef double ReturnType;
+    };
+
+    template<>
+    inline typename CheckHelper<double>::ReturnType Check<double>(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
         return luaL_checknumber(state, index);
     }
 
     template<>
-    inline std::string Check<std::string>(State& state, const int index)
+    struct CheckHelper<std::string>
+    {
+        typedef std::string ReturnType;
+    };
+
+    template<>
+    inline typename CheckHelper<std::string>::ReturnType Check<std::string>(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
         return luaL_checkstring(state, index);
@@ -354,7 +505,11 @@ namespace Scripting
     template<typename Type>
     bool Is(State& state, const int index = -1)
     {
-        static_assert(false, "Not implemented for the given type.");
+        Assert(state.IsValid(), "Invalid scripting state!");
+
+        // Check if the value is an userdata object.
+        void* memory = luaL_checkudata(state, index, typeid(std::remove_pointer<Type>::type).name());
+        return memory != nullptr;
     }
 
     template<>
@@ -375,7 +530,21 @@ namespace Scripting
     inline bool Is<int>(State& state, const int index)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
-        return lua_isnumber(state, index) != 0;
+        return lua_isinteger(state, index) != 0;
+    }
+
+    template<>
+    inline bool Is<long>(State& state, const int index)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return lua_isinteger(state, index) != 0;
+    }
+
+    template<>
+    inline bool Is<long long>(State& state, const int index)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return lua_isinteger(state, index) != 0;
     }
 
     template<>

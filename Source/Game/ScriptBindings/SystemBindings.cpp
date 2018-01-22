@@ -13,13 +13,8 @@ bool ScriptBindings::InputState::Register(Scripting::State& state, System::Input
 {
     Assert(state.IsValid(), "Invalid scripting state!");
 
-    // Create an userdata pointer.
-    void* memory = lua_newuserdata(state, sizeof(System::InputState*));
-    auto** pointer = reinterpret_cast<System::InputState**>(memory);
-    *pointer = reference;
-
-    // Create a metatable and set it on the userdata pointer.
-    luaL_newmetatable(state, typeid(System::InputState*).name());
+    // Create a type metatable.
+    luaL_newmetatable(state, typeid(System::InputState).name());
 
     lua_pushliteral(state, "__index");
     lua_pushvalue(state, -2);
@@ -31,7 +26,8 @@ bool ScriptBindings::InputState::Register(Scripting::State& state, System::Input
     lua_pushcfunction(state, ScriptBindings::InputState::IsKeyboardKeyUp);
     lua_setfield(state, -2, "IsKeyboardKeyUp");
 
-    lua_setmetatable(state, -2);
+    // Push a pointer reference.
+    Scripting::Push<System::InputState*>(state, reference);
 
     // Register as a global variable.
     lua_setglobal(state, "InputState");
@@ -51,7 +47,7 @@ int ScriptBindings::InputState::IsKeyboardKeyDown(lua_State* state)
     lua_insert(state, 1);
 
     // Get arguments from the stack.
-    System::InputState* inputState = *Scripting::Check<System::InputState**>(stateProxy, 1);
+    System::InputState* inputState = *Scripting::Check<System::InputState*>(stateProxy, 1);
     int key = (int)luaL_checkinteger(state, 2);
     bool repeat = luaL_optboolean(state, 3, true);
 
@@ -74,7 +70,7 @@ int ScriptBindings::InputState::IsKeyboardKeyUp(lua_State* state)
     lua_insert(state, 1);
 
     // Get arguments from the stack.
-    System::InputState* inputState = *Scripting::Check<System::InputState**>(stateProxy, 1);
+    System::InputState* inputState = *Scripting::Check<System::InputState*>(stateProxy, 1);
     int   key = (int)luaL_checkinteger(state, 2);
     bool  repeat = luaL_optboolean(state, 3, true);
 

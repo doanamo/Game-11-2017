@@ -60,7 +60,7 @@ int ScriptBindings::EntityHandle::Index(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Get arguments from the stack.
-    Game::EntityHandle* handle = Scripting::Check<Game::EntityHandle*>(stateProxy, 1);
+    Game::EntityHandle* handle = Scripting::Check<Game::EntityHandle>(stateProxy, 1);
     std::string key = Scripting::Check<std::string>(stateProxy, 2);
 
     // Return a property.
@@ -89,7 +89,7 @@ int ScriptBindings::EntityHandle::NewIndex(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Get arguments from the stack.
-    Game::EntityHandle* handle = Scripting::Check<Game::EntityHandle*>(stateProxy, 1);
+    Game::EntityHandle* handle = Scripting::Check<Game::EntityHandle>(stateProxy, 1);
     std::string key = Scripting::Check<std::string>(stateProxy, 2);
 
     // Set a property.
