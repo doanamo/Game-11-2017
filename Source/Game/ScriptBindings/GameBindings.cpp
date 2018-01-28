@@ -68,17 +68,17 @@ int ScriptBindings::EntityHandle::Index(lua_State* state)
     // Return a property.
     if(key == "identifier")
     {
-        lua_pushinteger(state, handle->identifier);
+        Scripting::Push<Game::EntityHandle::ValueType>(stateProxy, handle->identifier);
         return 1;
     }
     else if(key == "version")
     {
-        lua_pushinteger(state, handle->version);
+        Scripting::Push<Game::EntityHandle::ValueType>(stateProxy, handle->version);
         return 1;
     }
     else
     {
-        lua_pushnil(state);
+        Scripting::Push<std::nullptr_t>(stateProxy);
         return 1;
     }
 }
@@ -209,8 +209,10 @@ int ScriptBindings::ComponentSystem::GetTransform(lua_State* state)
     Game::ComponentSystem* componentSystem = *Scripting::Check<Game::ComponentSystem*>(stateProxy, 1);
     Game::EntityHandle* entityHandle = Scripting::Check<Game::EntityHandle>(stateProxy, 2);
 
-    // Retrieve and push a reference to a transform component.
+    // Retrieve a transform component.
     Game::Components::Transform* transform = componentSystem->Lookup<Game::Components::Transform>(*entityHandle);
+
+    // Push a reference to the transform component.
     Scripting::Push<Game::Components::Transform*>(stateProxy, transform);
 
     return 1;
