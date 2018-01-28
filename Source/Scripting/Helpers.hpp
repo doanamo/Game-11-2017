@@ -268,6 +268,26 @@ namespace Scripting
     }
 }
 
+/*
+    Insert()
+
+    Inserts a value from the top of the stack into a specified index.
+*/
+
+namespace Scripting
+{
+    inline void Insert(State& state, const int index = 1)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        lua_insert(state, index);
+    }
+
+    inline void Insert(State& state, const StackValue& value)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        lua_insert(state, value.GetIndex());
+    }
+}
 
 /*
     Read()
