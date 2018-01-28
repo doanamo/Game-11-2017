@@ -45,6 +45,7 @@ bool ScriptBindings::Register(Scripting::State* state, const References& referen
     results &= ScriptBindings::KeyboardKeys::Register(*state);
     results &= ScriptBindings::InputState::Register(*state, references.inputState);
     results &= ScriptBindings::EntityHandle::Register(*state);
+    results &= ScriptBindings::TransformComponent::Register(*state);
 
     return results;
 }

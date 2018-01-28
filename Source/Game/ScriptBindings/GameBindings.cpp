@@ -3,6 +3,7 @@
 #include "Scripting/State.hpp"
 #include "Scripting/Helpers.hpp"
 #include "Game/EntityHandle.hpp"
+#include "Game/TransformComponent.hpp"
 using namespace Game;
 
 /*
@@ -83,7 +84,7 @@ int ScriptBindings::EntityHandle::Index(lua_State* state)
 
 int ScriptBindings::EntityHandle::NewIndex(lua_State* state)
 {
-    Assert(state != nullptr);
+    Assert(state != nullptr, "Scripting state is nullptr!");
 
     // Create a scripting state proxy.
     Scripting::State stateProxy(state);
@@ -103,6 +104,66 @@ int ScriptBindings::EntityHandle::NewIndex(lua_State* state)
         handle->version = Scripting::Check<Game::EntityHandle::ValueType>(stateProxy, 3);
         return 0;
     }
+
+    return 0;
+}
+
+/*
+    Transform Component Bindings
+*/
+
+bool ScriptBindings::TransformComponent::Register(Scripting::State& state)
+{
+    Assert(state.IsValid(), "Invalid scripting state!");
+
+    // Create a class metatable.
+    luaL_newmetatable(state, typeid(Game::Components::Transform).name());
+
+    lua_pushliteral(state, "__index");
+    lua_pushvalue(state, -2);
+    lua_rawset(state, -3);
+
+    lua_pushcfunction(state, ScriptBindings::TransformComponent::GetPosition);
+    lua_setfield(state, -2, "GetPosition");
+
+    lua_pushcfunction(state, ScriptBindings::TransformComponent::SetPosition);
+    lua_setfield(state, -2, "SetPosition");
+
+    // Register as a global table.
+    lua_setglobal(state, "TransformComponent");
+
+    return true;
+}
+
+int ScriptBindings::TransformComponent::GetPosition(lua_State* state)
+{
+    Assert(state != nullptr, "Scripting state is nullptr!");
+
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
+    // Get arugments from the stack.
+    Game::Components::Transform* transform = Scripting::Check<Game::Components::Transform>(stateProxy, 1);
+
+    // Push a position vector.
+    Scripting::Push<glm::vec3>(stateProxy, transform->GetPosition());
+
+    return 1;
+}
+
+int ScriptBindings::TransformComponent::SetPosition(lua_State* state)
+{
+    Assert(state != nullptr, "Scripting state is nullptr!");
+
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
+    // Get arugments from the stack.
+    Game::Components::Transform* transform = Scripting::Check<Game::Components::Transform>(stateProxy, 1);
+    glm::vec3* position = Scripting::Check<glm::vec3>(stateProxy, 2);
+
+    // Set the transform position.
+    transform->SetPosition(*position);
 
     return 0;
 }

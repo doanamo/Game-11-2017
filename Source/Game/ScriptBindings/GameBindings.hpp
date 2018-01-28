@@ -31,3 +31,23 @@ namespace Game
         }
     }
 }
+
+/*
+    Transform Component Bindings
+*/
+
+namespace Game
+{
+    namespace ScriptBindings
+    {
+        namespace TransformComponent
+        {
+            // Registers bindings.
+            bool Register(Scripting::State& state);
+
+            // Metatable methods.
+            int GetPosition(lua_State* state);
+            int SetPosition(lua_State* state);
+        }
+    }
+}
