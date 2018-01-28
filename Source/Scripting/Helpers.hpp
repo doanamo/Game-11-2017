@@ -455,6 +455,118 @@ namespace Scripting
 }
 
 /*
+    Optional()
+
+    Reads optional values from the stack and provides a default as failsafe.
+*/
+
+namespace Scripting
+{
+    template<typename Type>
+    struct OptionalHelper
+    {
+        typedef void ReturnType;
+    };
+
+    template<typename Type>
+    typename OptionalHelper<Type>::ReturnType Optional(State& state, const int index, Type default)
+    {
+        static_assert("Not implemented for given type!");
+    }
+
+    template<>
+    struct OptionalHelper<bool>
+    {
+        typedef bool ReturnType;
+    };
+
+    template<>
+    inline typename OptionalHelper<bool>::ReturnType Optional<bool>(State& state, const int index, bool default)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return luaL_optboolean(state, index, default) != 0;
+    }
+
+    template<>
+    struct OptionalHelper<int>
+    {
+        typedef int ReturnType;
+    };
+
+    template<>
+    inline typename OptionalHelper<int>::ReturnType Optional<int>(State& state, const int index, int default)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return static_cast<int>(luaL_optinteger(state, index, default));
+    }
+
+    template<>
+    struct OptionalHelper<long>
+    {
+        typedef long ReturnType;
+    };
+
+    template<>
+    inline typename OptionalHelper<long>::ReturnType Optional<long>(State& state, const int index, long default)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return static_cast<long>(luaL_optinteger(state, index, default));
+    }
+
+    template<>
+    struct OptionalHelper<long long>
+    {
+        typedef long long ReturnType;
+    };
+
+    template<>
+    inline typename OptionalHelper<long long>::ReturnType Optional<long long>(State& state, const int index, long long default)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return luaL_optinteger(state, index, default);
+    }
+
+    template<>
+    struct OptionalHelper<float>
+    {
+        typedef float ReturnType;
+    };
+
+    template<>
+    inline typename OptionalHelper<float>::ReturnType Optional<float>(State& state, const int index, float default)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return static_cast<float>(luaL_optnumber(state, index, default));
+    }
+
+    template<>
+    struct OptionalHelper<double>
+    {
+        typedef double ReturnType;
+    };
+
+    template<>
+    inline typename OptionalHelper<double>::ReturnType Optional<double>(State& state, const int index, double default)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return luaL_optnumber(state, index, default);
+    }
+
+    template<>
+    struct OptionalHelper<std::string>
+    {
+        typedef std::string ReturnType;
+    };
+
+    template<>
+    inline typename OptionalHelper<std::string>::ReturnType Optional<std::string>(State& state, const int index, std::string default)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        return std::string(luaL_optstring(state, index, default.c_str()));
+    }
+}
+
+/*
     Check()
 
     Checks if a value is of a given type a returns its reference (or nullptr if not).
