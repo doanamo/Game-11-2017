@@ -12,7 +12,7 @@ bool ScriptBindings::KeyboardKeys::Register(Scripting::State& state)
 {
     Assert(state.IsValid(), "Invalid scripting state!");
 
-    // Create a stack guard.
+    // Create a stack cleanup guard.
     Scripting::StackGuard guard(state);
 
     // Register a table of keyboard keys.

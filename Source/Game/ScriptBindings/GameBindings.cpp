@@ -15,7 +15,7 @@ bool ScriptBindings::EntityHandle::Register(Scripting::State& state)
 {
     Assert(state.IsValid(), "Invalid scripting state!");
 
-    // Create a stack guard.
+    // Create a stack cleanup guard.
     Scripting::StackGuard guard(state);
 
     // Create a class metatable.
@@ -120,7 +120,7 @@ bool ScriptBindings::TransformComponent::Register(Scripting::State& state)
 {
     Assert(state.IsValid(), "Invalid scripting state!");
 
-    // Create a stack guard.
+    // Create a stack cleanup guard.
     Scripting::StackGuard guard(state);
 
     // Create a class metatable.
@@ -183,6 +183,9 @@ bool ScriptBindings::ComponentSystem::Register(Scripting::State& state, Game::Co
 {
     Assert(state.IsValid(), "Invalid scripting state!");
 
+    // Create a stack cleanup guard.
+    Scripting::StackGuard guard(state);
+
     // Create a type metatable.
     luaL_newmetatable(state, typeid(Game::ComponentSystem).name());
 
@@ -211,7 +214,7 @@ int ScriptBindings::ComponentSystem::GetTransform(lua_State* state)
 
     // Push an input system reference as the first argument.
     Scripting::GetGlobalField(stateProxy, "Game.ComponentSystem", false);
-    lua_insert(state, 1);
+    Scripting::Insert(stateProxy, 1);
 
     // Get arguments from the stack.
     Game::ComponentSystem* componentSystem = *Scripting::Check<Game::ComponentSystem*>(stateProxy, 1);

@@ -13,7 +13,7 @@ bool ScriptBindings::InputState::Register(Scripting::State& state, System::Input
 {
     Assert(state.IsValid(), "Invalid scripting state!");
 
-    // Create a stack guard.
+    // Create a stack cleanup guard.
     Scripting::StackGuard guard(state);
 
     // Create a type metatable.
@@ -47,16 +47,15 @@ int ScriptBindings::InputState::IsKeyboardKeyDown(lua_State* state)
 
     // Push an input system reference as the first argument.
     Scripting::GetGlobalField(stateProxy, "System.InputState", false);
-    lua_insert(state, 1);
+    Scripting::Insert(stateProxy, 1);
 
     // Get arguments from the stack.
     System::InputState* inputState = *Scripting::Check<System::InputState*>(stateProxy, 1);
-    int key = (int)luaL_checkinteger(state, 2);
-    bool repeat = luaL_optboolean(state, 3, true);
+    int key = Scripting::Check<int>(stateProxy, 2);
+    bool repeat = Scripting::Optional<bool>(stateProxy, 3, true);
 
     // Call the method and push its result.
-    bool result = inputState->IsKeyboardKeyDown(key, repeat);
-    lua_pushboolean(state, result);
+    Scripting::Push<bool>(stateProxy, inputState->IsKeyboardKeyDown(key, repeat));
 
     return 1;
 }
@@ -70,16 +69,15 @@ int ScriptBindings::InputState::IsKeyboardKeyUp(lua_State* state)
 
     // Push an input system reference as the first argument.
     Scripting::GetGlobalField(stateProxy, "System.InputState", false);
-    lua_insert(state, 1);
+    Scripting::Insert(stateProxy, 1);
 
     // Get arguments from the stack.
     System::InputState* inputState = *Scripting::Check<System::InputState*>(stateProxy, 1);
-    int   key = (int)luaL_checkinteger(state, 2);
-    bool  repeat = luaL_optboolean(state, 3, true);
+    int key = Scripting::Check<int>(stateProxy, 2);
+    bool repeat = Scripting::Optional<bool>(stateProxy, 3, true);
 
     // Call the method and push its result.
-    bool result = inputState->IsKeyboardKeyUp(key, repeat);
-    lua_pushboolean(state, result);
+    Scripting::Push<bool>(stateProxy, inputState->IsKeyboardKeyUp(key, repeat));
 
     return 1;
 }

@@ -12,7 +12,7 @@ bool ScriptBindings::Vec2::Register(Scripting::State& state)
 {
     Assert(state.IsValid(), "Invalid scripting state!");
 
-    // Create a stack guard.
+    // Create a stack cleanup guard.
     Scripting::StackGuard guard(state);
 
     // Create a class metatable.
@@ -76,8 +76,8 @@ int ScriptBindings::Vec2::New(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Push a new instance.
-    float x = (float)luaL_optnumber(state, 1, 0.0);
-    float y = (float)luaL_optnumber(state, 2, 0.0);
+    float x = Scripting::Optional<float>(stateProxy, 1, 0.0f);
+    float y = Scripting::Optional<float>(stateProxy, 2, 0.0f);
 
     Scripting::Push<glm::vec2>(stateProxy, glm::vec2(x, y));
 
@@ -92,8 +92,8 @@ int ScriptBindings::Vec2::Call(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Push a new instance.
-    float x = (float)luaL_optnumber(state, 2, 0.0);
-    float y = (float)luaL_optnumber(state, 3, 0.0);
+    float x = Scripting::Optional<float>(stateProxy, 2, 0.0);
+    float y = Scripting::Optional<float>(stateProxy, 3, 0.0);
 
     Scripting::Push<glm::vec2>(stateProxy, glm::vec2(x, y));
 
@@ -109,7 +109,7 @@ int ScriptBindings::Vec2::Index(lua_State* state)
 
     // Return the property.
     glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
-    std::string key = luaL_checkstring(state, 2);
+    std::string key = Scripting::Check<std::string>(stateProxy, 2);
 
     if(key == "x")
     {
@@ -141,7 +141,7 @@ int ScriptBindings::Vec2::NewIndex(lua_State* state)
 
     // Set the property.
     glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
-    std::string key = luaL_checkstring(state, 2);
+    std::string key = Scripting::Check<std::string>(stateProxy, 2);
 
     if(key == "x")
     {
@@ -202,7 +202,7 @@ int ScriptBindings::Vec2::Multiply(lua_State* state)
 
     // Get arguments from the stack.
     glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
-    float argument = (float)luaL_checknumber(state, 2);
+    float argument = Scripting::Check<float>(stateProxy, 2);
 
     // Push the result.
     glm::vec2 result = *vector * argument;
@@ -220,7 +220,7 @@ int ScriptBindings::Vec2::Divide(lua_State* state)
 
     // Get arguments from the stack.
     glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
-    float argument = (float)luaL_checknumber(state, 2);
+    float argument = Scripting::Check<float>(stateProxy, 2);
 
     // Push the result.
     glm::vec2 result = *vector / argument;
@@ -290,7 +290,7 @@ int ScriptBindings::Vec2::Truncate(lua_State* state)
 
     // Get arguments from the stack.
     glm::vec2* vector = Scripting::Check<glm::vec2>(stateProxy, 1);
-    float length = (float)luaL_checknumber(state, 2);
+    float length = Scripting::Check<float>(stateProxy, 2);
 
     // Push the result.
     glm::vec2 result = glm::normalize(*vector) * glm::min(glm::length(*vector), length);
@@ -324,7 +324,7 @@ bool ScriptBindings::Vec3::Register(Scripting::State& state)
 {
     Assert(state.IsValid(), "Invalid scripting state!");
 
-    // Create a stack guard.
+    // Create a stack cleanup guard.
     Scripting::StackGuard guard(state);
 
     // Create a class metatable.
@@ -388,9 +388,9 @@ int ScriptBindings::Vec3::New(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Push a new instance.
-    float x = (float)luaL_optnumber(state, 1, 0.0);
-    float y = (float)luaL_optnumber(state, 2, 0.0);
-    float z = (float)luaL_optnumber(state, 3, 0.0);
+    float x = Scripting::Optional<float>(stateProxy, 1, 0.0);
+    float y = Scripting::Optional<float>(stateProxy, 2, 0.0);
+    float z = Scripting::Optional<float>(stateProxy, 3, 0.0);
 
     Scripting::Push<glm::vec3>(stateProxy, glm::vec3(x, y, z));
 
@@ -405,9 +405,9 @@ int ScriptBindings::Vec3::Call(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Push a new instance.
-    float x = (float)luaL_optnumber(state, 2, 0.0);
-    float y = (float)luaL_optnumber(state, 3, 0.0);
-    float z = (float)luaL_optnumber(state, 4, 0.0);
+    float x = Scripting::Optional<float>(stateProxy, 2, 0.0);
+    float y = Scripting::Optional<float>(stateProxy, 3, 0.0);
+    float z = Scripting::Optional<float>(stateProxy, 4, 0.0);
 
     Scripting::Push<glm::vec3>(stateProxy, glm::vec3(x, y, z));
 
@@ -423,7 +423,7 @@ int ScriptBindings::Vec3::Index(lua_State* state)
 
     // Return the property.
     glm::vec3* vector = Scripting::Check<glm::vec3>(stateProxy, 1);
-    std::string key = luaL_checkstring(state, 2);
+    std::string key = Scripting::Check<std::string>(stateProxy, 2);
 
     if(key == "x")
     {
@@ -460,7 +460,7 @@ int ScriptBindings::Vec3::NewIndex(lua_State* state)
 
     // Set the property.
     glm::vec3* vector = Scripting::Check<glm::vec3>(stateProxy, 1);
-    std::string key = luaL_checkstring(state, 2);
+    std::string key = Scripting::Check<std::string>(stateProxy, 2);
 
     if(key == "x")
     {
@@ -526,7 +526,7 @@ int ScriptBindings::Vec3::Multiply(lua_State* state)
 
     // Get arguments from the stack.
     glm::vec3* vector = Scripting::Check<glm::vec3>(stateProxy, 1);
-    float argument = (float)luaL_checknumber(state, 2);
+    float argument = Scripting::Check<float>(stateProxy, 2);
 
     // Push the result.
     glm::vec3 result = *vector * argument;
@@ -544,7 +544,7 @@ int ScriptBindings::Vec3::Divide(lua_State* state)
 
     // Get arguments from the stack.
     glm::vec3* vector = Scripting::Check<glm::vec3>(stateProxy, 1);
-    float argument = (float)luaL_checknumber(state, 2);
+    float argument = Scripting::Check<float>(stateProxy, 2);
 
     // Push the result.
     glm::vec3 result = *vector / argument;
@@ -614,7 +614,7 @@ int ScriptBindings::Vec3::Truncate(lua_State* state)
 
     // Get arguments from the stack.
     glm::vec3* vector = Scripting::Check<glm::vec3>(stateProxy, 1);
-    float length = (float)luaL_checknumber(state, 2);
+    float length = Scripting::Check<float>(stateProxy, 2);
 
     // Push the result.
     glm::vec3 result = glm::normalize(*vector) * glm::min(glm::length(*vector), length);
