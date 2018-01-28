@@ -1,30 +1,54 @@
-local Player = {}
-Player.__index = Player
+local Player = {};
+Player.__index = Player;
 
 function Player.New()
-    local self = {}
-    self.once = false
+    local self = {};
+    self.speed = 10.0;
 
-    return setmetatable(self, Player)
+    return setmetatable(self, Player);
 end
 
 setmetatable(Player, { __call = Player.New })
 
 function Player:Finalize(entitySelf)
-    Log("Player:Finalize() script has been called.");
+    self.transform = ComponentSystem.GetTransform(entitySelf);
+    
+    if self.transform == nil then
+        return false;
+    end
 
-    return true
+    return true;
 end
 
 function Player:Update(entitySelf, timeDelta)
-    if self.once == false then
-        Log("Player:Update() script has been called.");
-        self.once = true
+    -- Get the movement direction.
+    local direction = Vec3();
+
+    if InputState.IsKeyboardKeyDown(KeyboardKeys["D"]) then
+        direction.x = direction.x + 1.0;
     end
-    
-    if InputState.IsKeyboardKeyDown(KeyboardKeys["Escape"], false) then
-        Log("Player:Update() - " .. entitySelf.identifier .. ", " .. entitySelf.version);
+
+    if InputState.IsKeyboardKeyDown(KeyboardKeys["A"]) then
+        direction.x = direction.x - 1.0;
     end
+
+    if InputState.IsKeyboardKeyDown(KeyboardKeys["W"]) then
+        direction.y = direction.y + 1.0;
+    end
+
+    if InputState.IsKeyboardKeyDown(KeyboardKeys["S"]) then
+        direction.y = direction.y - 1.0;
+    end
+
+    -- Normalize the direction vector.
+    if direction:LengthSqr() ~= 0.0 then
+        direction = direction:Normalize();
+    end
+
+    -- Update the transform position.
+    local position = self.transform:GetPosition();
+    position = position + direction * self.speed * timeDelta;
+    self.transform:SetPosition(position);
 end
 
-return Player
+return Player;
