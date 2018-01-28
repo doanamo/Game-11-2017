@@ -223,7 +223,7 @@ namespace Scripting
 /*
     Pop()
 
-    Pops a value from top of the stacks.
+    Pops a value from the top of the stack.
 */
 
 namespace Scripting
@@ -234,12 +234,40 @@ namespace Scripting
         lua_pop(state, count);
     }
 
+    inline void Pop(State& state, const StackValue& value)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        lua_remove(state, value.GetIndex());
+    }
+
     template<typename... Types>
     typename StackPopper<sizeof...(Types), Types...>::ReturnType Pop(State& state)
     {
         return StackPopper<sizeof...(Types), Types...>::Pop(state);
     }
 }
+
+/*
+    Remove()
+
+    Removes a value from the stack.
+*/
+
+namespace Scripting
+{
+    inline void Remove(State& state, const int index = 1)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        lua_remove(state, index);
+    }
+
+    inline void Remove(State& state, const StackValue& value)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+        lua_remove(state, value.GetIndex());
+    }
+}
+
 
 /*
     Read()
