@@ -601,13 +601,28 @@ namespace Scripting
     void PushGlobal(State& state);
 
     // Pushes a nested variable from the current table.
-    void PushVariable(State& state, std::string name);
+    void PushVariable(State& state, std::string name, bool create = false);
+
+    // Pushes a field into a current table.
+    template<typename Type>
+    void SetField(State& state, std::string name, Type&& object)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+
+        // Push the value on top of the stack.
+        Scripting::Push<Type>(state, object);
+
+        // Set value as a field of the table on the stack.
+        lua_setfield(state, -2, name.c_str());
+    }
 
     // Calls a function in a table and returns its results as a tuple.
     // Returns an empty optional value if function fails to excute correctly.
     template<typename... Types, typename... Arguments>
     inline std::optional<typename StackPopper<sizeof...(Types), Types...>::ReturnType> Call(State& state, std::string function, const Arguments&... arguments)
     {
+        Assert(state.IsValid(), "Invalid scripting state!");
+
         // Create a scope guard.
         StackGuard guard(state);
 
