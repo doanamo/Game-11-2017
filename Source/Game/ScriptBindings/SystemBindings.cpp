@@ -26,10 +26,8 @@ bool ScriptBindings::InputState::Register(Scripting::State& state, System::Input
     lua_pushcfunction(state, ScriptBindings::InputState::IsKeyboardKeyUp);
     lua_setfield(state, -2, "IsKeyboardKeyUp");
 
-    // Push a pointer reference.
+    // Register reference pointer as a global variable.
     Scripting::Push<System::InputState*>(state, reference);
-
-    // Register as a global variable.
     lua_setglobal(state, "InputState");
 
     return true;

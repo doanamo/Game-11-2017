@@ -8,6 +8,11 @@ namespace Scripting
     class State;
 }
 
+namespace Game
+{
+    class ComponentSystem;
+}
+
 /*
     Entity Handle Bindings
 */
@@ -48,6 +53,25 @@ namespace Game
             // Metatable methods.
             int GetPosition(lua_State* state);
             int SetPosition(lua_State* state);
+        }
+    }
+}
+
+/*
+    Component System Bindings
+*/
+
+namespace Game
+{
+    namespace ScriptBindings
+    {
+        namespace ComponentSystem
+        {
+            // Registers bindings.
+            bool Register(Scripting::State& state, Game::ComponentSystem* reference);
+
+            // Metatable methods.
+            int GetTransform(lua_State* state);
         }
     }
 }

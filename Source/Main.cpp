@@ -127,6 +127,7 @@ int main(int argc, char* argv[])
 
     Game::ScriptBindings::References scriptBindingsReferences;
     scriptBindingsReferences.inputState = &inputState;
+    scriptBindingsReferences.componentSystem = &componentSystem;
 
     if(!Game::ScriptBindings::Register(&scriptingState, scriptBindingsReferences))
     {

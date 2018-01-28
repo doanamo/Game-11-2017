@@ -4,6 +4,7 @@
 #include "Scripting/Helpers.hpp"
 #include "Game/EntityHandle.hpp"
 #include "Game/TransformComponent.hpp"
+#include "Game/ComponentSystem.hpp"
 using namespace Game;
 
 /*
@@ -143,7 +144,7 @@ int ScriptBindings::TransformComponent::GetPosition(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Get arugments from the stack.
-    Game::Components::Transform* transform = Scripting::Check<Game::Components::Transform>(stateProxy, 1);
+    Game::Components::Transform* transform = *Scripting::Check<Game::Components::Transform*>(stateProxy, 1);
 
     // Push a position vector.
     Scripting::Push<glm::vec3>(stateProxy, transform->GetPosition());
@@ -159,11 +160,58 @@ int ScriptBindings::TransformComponent::SetPosition(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Get arugments from the stack.
-    Game::Components::Transform* transform = Scripting::Check<Game::Components::Transform>(stateProxy, 1);
+    Game::Components::Transform* transform = *Scripting::Check<Game::Components::Transform*>(stateProxy, 1);
     glm::vec3* position = Scripting::Check<glm::vec3>(stateProxy, 2);
 
     // Set the transform position.
     transform->SetPosition(*position);
 
     return 0;
+}
+
+/*
+    Component System Bindings
+*/
+
+bool ScriptBindings::ComponentSystem::Register(Scripting::State& state, Game::ComponentSystem* reference)
+{
+    Assert(state.IsValid(), "Invalid scripting state!");
+
+    // Create a type metatable.
+    luaL_newmetatable(state, typeid(Game::ComponentSystem).name());
+
+    lua_pushliteral(state, "__index");
+    lua_pushvalue(state, -2);
+    lua_rawset(state, -3);
+
+    lua_pushcfunction(state, ScriptBindings::ComponentSystem::GetTransform);
+    lua_setfield(state, -2, "GetTransform");
+
+    // Register reference pointer as a global variable.
+    Scripting::Push<Game::ComponentSystem*>(state, reference);
+    lua_setglobal(state, "ComponentSystem");
+
+    return true;
+}
+
+int ScriptBindings::ComponentSystem::GetTransform(lua_State* state)
+{
+    Assert(state != nullptr, "Scripting state is nullptr!");
+
+    // Create a scripting state proxy.
+    Scripting::State stateProxy(state);
+
+    // Push an input system reference as the first argument.
+    lua_getglobal(state, "ComponentSystem");
+    lua_insert(state, 1);
+
+    // Get arguments from the stack.
+    Game::ComponentSystem* componentSystem = *Scripting::Check<Game::ComponentSystem*>(stateProxy, 1);
+    Game::EntityHandle* entityHandle = Scripting::Check<Game::EntityHandle>(stateProxy, 2);
+
+    // Retrieve and push a reference to a transform component.
+    Game::Components::Transform* transform = componentSystem->Lookup<Game::Components::Transform>(*entityHandle);
+    Scripting::Push<Game::Components::Transform*>(stateProxy, transform);
+
+    return 1;
 }

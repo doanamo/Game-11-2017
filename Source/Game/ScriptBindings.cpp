@@ -18,7 +18,8 @@ namespace
 */
 
 ScriptBindings::References::References() :
-    inputState(nullptr)
+    inputState(nullptr),
+    componentSystem(nullptr)
 {
 }
 
@@ -46,6 +47,7 @@ bool ScriptBindings::Register(Scripting::State* state, const References& referen
     results &= ScriptBindings::InputState::Register(*state, references.inputState);
     results &= ScriptBindings::EntityHandle::Register(*state);
     results &= ScriptBindings::TransformComponent::Register(*state);
+    results &= ScriptBindings::ComponentSystem::Register(*state, references.componentSystem);
 
     return results;
 }

@@ -13,6 +13,11 @@ namespace System
     class InputState;
 }
 
+namespace Game
+{
+    class ComponentSystem;
+}
+
 /*
     Script Bindings
 */
@@ -27,6 +32,7 @@ namespace Game
             References();
 
             System::InputState* inputState;
+            Game::ComponentSystem* componentSystem;
         };
 
         // Registers all script bindings.
