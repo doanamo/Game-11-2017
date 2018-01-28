@@ -3,29 +3,46 @@
 #include "State.hpp"
 using namespace Scripting;
 
-StackGuard::StackGuard(State* state) :
-    m_state(state),
-    m_size(0)
+StackGuard::StackGuard(lua_State* state, bool assert, int removes, int returns) :
+    m_state(state), m_assert(assert), m_removes(removes), m_returns(returns)
 {
+    Assert(state != nullptr, "Scripting state is nullptr!");
+    Assert(m_removes <= 0, "Stack element removal count cannot be positive!");
+    Assert(m_returns >= 0, "Stack element return count cannot be negative!");
+
     if(m_state != nullptr)
     {
-        m_size = lua_gettop(*m_state);
+        m_size = lua_gettop(m_state);
     }
 }
 
-StackGuard::StackGuard(State& state) :
-    StackGuard(&state)
+StackGuard::StackGuard(State& state, bool assert, int removes, int returns) :
+    StackGuard(state.GetPrivate(), assert, removes, returns)
 {
+    Assert(state.IsValid(), "Invalid scripting state!");
+}
+
+StackGuard::StackGuard(State* state, bool assert, int removes, int returns) :
+    StackGuard(state->GetPrivate(), assert, removes, returns)
+{
+    Assert(state->IsValid(), "Invalid scripting state!");
 }
 
 StackGuard::~StackGuard()
 {
     if(m_state != nullptr)
     {
-        // Check the current stack size.
-        Assert(lua_gettop(*m_state) >= m_size, "Stack is smaller than the declared guard size.");
+        // Calculate expected stack size.
+        int expectedSize = m_size + m_removes + m_returns;
+        int actualSize = lua_gettop(m_state);
 
-        // Restore the previous stack size.
-        lua_settop(*m_state, m_size);
+        // Check the current stack size.
+        if(m_assert)
+        {
+            Assert(actualSize == expectedSize, "Stack does not match the expected size!");
+        }
+
+        // Set the stack to the expected size.
+        lua_settop(m_state, expectedSize);
     }
 }
