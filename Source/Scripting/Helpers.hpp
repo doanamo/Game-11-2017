@@ -40,6 +40,24 @@ inline bool luaL_optboolean(lua_State* state, int index, bool default)
 
 namespace Scripting
 {
+    template<typename Type, class Enable = void>
+    struct PushHelper
+    {
+        static bool IsNull(const Type& object)
+        {
+            return false;
+        }
+    };
+
+    template<typename Type>
+    struct PushHelper<Type, typename std::enable_if<std::is_pointer<Type>::value>::type>
+    {
+        static bool IsNull(const Type& object)
+        {
+            return object == nullptr;
+        }
+    };
+
     inline void Push(State& state)
     {
     }
@@ -66,6 +84,13 @@ namespace Scripting
     void Push(State& state, const Type& object)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
+
+        // Check if a pointer is a nullptr (if it is a pointer type).
+        if(PushHelper<Type>::IsNull(object))
+        {
+            lua_pushnil(state);
+            return;
+        }
 
         // Create a new userdata memory for the object copy.
         void* memory = lua_newuserdata(state, sizeof(Type));
