@@ -13,6 +13,9 @@ bool ScriptBindings::InputState::Register(Scripting::State& state, System::Input
 {
     Assert(state.IsValid(), "Invalid scripting state!");
 
+    // Create a stack guard.
+    Scripting::StackGuard guard(state);
+
     // Create a type metatable.
     luaL_newmetatable(state, typeid(System::InputState).name());
 
@@ -26,9 +29,11 @@ bool ScriptBindings::InputState::Register(Scripting::State& state, System::Input
     lua_pushcfunction(state, ScriptBindings::InputState::IsKeyboardKeyUp);
     lua_setfield(state, -2, "IsKeyboardKeyUp");
 
-    // Register reference pointer as a global variable.
+    // Push a reference to input state.
     Scripting::Push<System::InputState*>(state, reference);
-    lua_setglobal(state, "InputState");
+
+    // Register as a global variable.
+    Scripting::SetGlobalField(state, "System.InputState", Scripting::StackValue(-1), true);
 
     return true;
 }
@@ -41,7 +46,7 @@ int ScriptBindings::InputState::IsKeyboardKeyDown(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Push an input system reference as the first argument.
-    lua_getglobal(state, "InputState");
+    Scripting::GetGlobalField(stateProxy, "System.InputState", false);
     lua_insert(state, 1);
 
     // Get arguments from the stack.
@@ -64,7 +69,7 @@ int ScriptBindings::InputState::IsKeyboardKeyUp(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Push an input system reference as the first argument.
-    lua_getglobal(state, "InputState");
+    Scripting::GetGlobalField(stateProxy, "System.InputState", false);
     lua_insert(state, 1);
 
     // Get arguments from the stack.

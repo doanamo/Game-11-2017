@@ -11,7 +11,7 @@ end
 setmetatable(Player, { __call = Player.New })
 
 function Player:Finalize(entitySelf)
-    self.transform = ComponentSystem.GetTransform(entitySelf);
+    self.transform = Game.ComponentSystem.GetTransform(entitySelf);
     
     if self.transform == nil then
         return false;
@@ -22,21 +22,21 @@ end
 
 function Player:Update(entitySelf, timeDelta)
     -- Get the movement direction.
-    local direction = Vec3();
+    local direction = Math.Vec3();
 
-    if InputState.IsKeyboardKeyDown(KeyboardKeys["D"]) then
+    if System.InputState.IsKeyboardKeyDown(System.KeyboardKeys["D"]) then
         direction.x = direction.x + 1.0;
     end
 
-    if InputState.IsKeyboardKeyDown(KeyboardKeys["A"]) then
+    if System.InputState.IsKeyboardKeyDown(System.KeyboardKeys["A"]) then
         direction.x = direction.x - 1.0;
     end
 
-    if InputState.IsKeyboardKeyDown(KeyboardKeys["W"]) then
+    if System.InputState.IsKeyboardKeyDown(System.KeyboardKeys["W"]) then
         direction.y = direction.y + 1.0;
     end
 
-    if InputState.IsKeyboardKeyDown(KeyboardKeys["S"]) then
+    if System.InputState.IsKeyboardKeyDown(System.KeyboardKeys["S"]) then
         direction.y = direction.y - 1.0;
     end
 

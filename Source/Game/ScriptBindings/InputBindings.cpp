@@ -1,6 +1,7 @@
 #include "Precompiled.hpp"
 #include "InputBindings.hpp"
 #include "Scripting/State.hpp"
+#include "Scripting/Helpers.hpp"
 using namespace Game;
 
 /*
@@ -10,6 +11,9 @@ using namespace Game;
 bool ScriptBindings::KeyboardKeys::Register(Scripting::State& state)
 {
     Assert(state.IsValid(), "Invalid scripting state!");
+
+    // Create a stack guard.
+    Scripting::StackGuard guard(state);
 
     // Register a table of keyboard keys.
     lua_newtable(state);
@@ -329,8 +333,8 @@ bool ScriptBindings::KeyboardKeys::Register(Scripting::State& state)
     lua_pushinteger(state, GLFW_KEY_MENU);
     lua_setfield(state, -2, "Menu");
 
-    // Register as a global table.
-    lua_setglobal(state, "KeyboardKeys");
+    // Register as a global variable.
+    Scripting::SetGlobalField(state, "System.KeyboardKeys", Scripting::StackValue(-1), true);
 
     return true;
 }

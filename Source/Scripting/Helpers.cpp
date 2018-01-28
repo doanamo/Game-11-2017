@@ -2,13 +2,21 @@
 #include "Helpers.hpp"
 using namespace Scripting;
 
-void Scripting::PushGlobal(State& state)
+void Scripting::GetGlobalField(State& state, std::string name, bool create)
 {
     Assert(state.IsValid(), "Invalid scripting state!");
-    lua_pushglobaltable(state);
+
+    // Push the global table.
+    Scripting::PushGlobal(state);
+
+    // Get the field in global table.
+    Scripting::GetField(state, name, create);
+
+    // Remove the global table.
+    lua_remove(state, -2);
 }
 
-void Scripting::PushVariable(State& state, std::string name, bool create)
+void Scripting::GetField(State& state, std::string name, bool create)
 {
     Assert(state.IsValid(), "Invalid scripting state!");
 

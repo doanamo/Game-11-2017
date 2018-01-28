@@ -62,6 +62,15 @@ namespace Scripting
     {
     }
 
+    // Pushes the global table.
+    inline void PushGlobal(State& state)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+
+        // Push the global table.
+        lua_pushglobaltable(state);
+    }
+
     template<typename Type>
     void Push(State& state)
     {
@@ -597,23 +606,67 @@ namespace Scripting
 
 namespace Scripting
 {
-    // Pushes the global table.
-    void PushGlobal(State& state);
+    // Pushes a nested variable from the global table.
+    void GetGlobalField(State& state, std::string name, bool create = false);
 
     // Pushes a nested variable from the current table.
-    void PushVariable(State& state, std::string name, bool create = false);
+    void GetField(State& state, std::string name, bool create = false);
 
-    // Pushes a field into a current table.
+    // Pushes a field into the global table.
     template<typename Type>
-    void SetField(State& state, std::string name, Type&& object)
+    void SetGlobalField(State& state, std::string name, Type& object, bool create = false)
     {
         Assert(state.IsValid(), "Invalid scripting state!");
+
+        // Caulcate absolute stack indices for StackValue objects.
+        // We have to do this because we will be modifying the stack.
+        StackValue::CalculateAbsoluteIndices(state, object);
+
+        // Push the global table.
+        Scripting::PushGlobal(state);
+
+        // Set the field in global table.
+        Scripting::SetField(state, name, object, create);
+
+        // Remove the global table.
+        lua_pop(state, 1);
+    }
+
+    // Pushes a field into the current table.
+    template<typename Type>
+    void SetField(State& state, std::string name, Type& object, bool create = false)
+    {
+        Assert(state.IsValid(), "Invalid scripting state!");
+
+        // Create a stack guard.
+        Scripting::StackGuard guard(state);
+
+        // Caulcate absolute stack indices for StackValue objects.
+        // We have to do this because we will be modifying the stack.
+        StackValue::CalculateAbsoluteIndices(state, object);
+
+        // Get the field table.
+        std::string fieldPath = "";
+        std::string fieldName = name;
+        std::size_t lastSeparator = name.find_last_of('.');
+
+        if(lastSeparator != std::string::npos)
+        {
+            // Get field's path and name.
+            fieldPath = name.substr(0, lastSeparator);
+            fieldName = name.substr(lastSeparator + 1);
+
+            // Push the table from the path.
+            Scripting::GetField(state, fieldPath, create);
+            if(Scripting::Is<std::nullptr_t>(state, -1))
+                return;
+        }
 
         // Push the value on top of the stack.
         Scripting::Push<Type>(state, object);
 
         // Set value as a field of the table on the stack.
-        lua_setfield(state, -2, name.c_str());
+        lua_setfield(state, -2, fieldName.c_str());
     }
 
     // Calls a function in a table and returns its results as a tuple.

@@ -15,6 +15,9 @@ bool ScriptBindings::EntityHandle::Register(Scripting::State& state)
 {
     Assert(state.IsValid(), "Invalid scripting state!");
 
+    // Create a stack guard.
+    Scripting::StackGuard guard(state);
+
     // Create a class metatable.
     luaL_newmetatable(state, typeid(Game::EntityHandle).name());
 
@@ -35,8 +38,8 @@ bool ScriptBindings::EntityHandle::Register(Scripting::State& state)
 
     lua_setmetatable(state, -2);
 
-    // Register as a global table.
-    lua_setglobal(state, "EntityHandle");
+    // Register as a global variable.
+    Scripting::SetGlobalField(state, "Game.EntityHandle", Scripting::StackValue(-1), true);
 
     return true;
 }
@@ -117,6 +120,9 @@ bool ScriptBindings::TransformComponent::Register(Scripting::State& state)
 {
     Assert(state.IsValid(), "Invalid scripting state!");
 
+    // Create a stack guard.
+    Scripting::StackGuard guard(state);
+
     // Create a class metatable.
     luaL_newmetatable(state, typeid(Game::Components::Transform).name());
 
@@ -130,8 +136,8 @@ bool ScriptBindings::TransformComponent::Register(Scripting::State& state)
     lua_pushcfunction(state, ScriptBindings::TransformComponent::SetPosition);
     lua_setfield(state, -2, "SetPosition");
 
-    // Register as a global table.
-    lua_setglobal(state, "TransformComponent");
+    // Register as a global variable.
+    Scripting::SetGlobalField(state, "Game.Components.Transform", Scripting::StackValue(-1), true);
 
     return true;
 }
@@ -187,9 +193,11 @@ bool ScriptBindings::ComponentSystem::Register(Scripting::State& state, Game::Co
     lua_pushcfunction(state, ScriptBindings::ComponentSystem::GetTransform);
     lua_setfield(state, -2, "GetTransform");
 
-    // Register reference pointer as a global variable.
+    // Push a reference to the component system.
     Scripting::Push<Game::ComponentSystem*>(state, reference);
-    lua_setglobal(state, "ComponentSystem");
+
+    // Register as a global variable.
+    Scripting::SetGlobalField(state, "Game.ComponentSystem", Scripting::StackValue(-1), true);
 
     return true;
 }
@@ -202,7 +210,7 @@ int ScriptBindings::ComponentSystem::GetTransform(lua_State* state)
     Scripting::State stateProxy(state);
 
     // Push an input system reference as the first argument.
-    lua_getglobal(state, "ComponentSystem");
+    Scripting::GetGlobalField(stateProxy, "Game.ComponentSystem", false);
     lua_insert(state, 1);
 
     // Get arguments from the stack.

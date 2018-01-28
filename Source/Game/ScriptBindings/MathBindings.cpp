@@ -12,6 +12,9 @@ bool ScriptBindings::Vec2::Register(Scripting::State& state)
 {
     Assert(state.IsValid(), "Invalid scripting state!");
 
+    // Create a stack guard.
+    Scripting::StackGuard guard(state);
+
     // Create a class metatable.
     luaL_newmetatable(state, typeid(glm::vec2).name());
 
@@ -59,8 +62,8 @@ bool ScriptBindings::Vec2::Register(Scripting::State& state)
 
     lua_setmetatable(state, -2);
 
-    // Register as a global table.
-    lua_setglobal(state, "Vec2");
+    // Register as a global variable.
+    Scripting::SetGlobalField(state, "Math.Vec2", Scripting::StackValue(-1), true);
 
     return true;
 }
@@ -321,6 +324,9 @@ bool ScriptBindings::Vec3::Register(Scripting::State& state)
 {
     Assert(state.IsValid(), "Invalid scripting state!");
 
+    // Create a stack guard.
+    Scripting::StackGuard guard(state);
+
     // Create a class metatable.
     luaL_newmetatable(state, typeid(glm::vec3).name());
 
@@ -368,8 +374,8 @@ bool ScriptBindings::Vec3::Register(Scripting::State& state)
 
     lua_setmetatable(state, -2);
 
-    // Register as a global table.
-    lua_setglobal(state, "Vec3");
+    // Register as a global variable.
+    Scripting::SetGlobalField(state, "Math.Vec3", Scripting::StackValue(-1), true);
 
     return true;
 }
