@@ -7,19 +7,32 @@
     Resource Manager
 
     Tracks resource references and releases them when no longer needed.
+    Wraps multiple ResourcePool instances that can hold resources
+    of different types in a single ResourceManager instance.
 
-    Example usage:
+    void ExampleResourceManager()
+    {
+        // Create a resource manager instance.
         System::ResourceManager resourceManager;
     
-        auto instanceDefault = std::make_shared<Class>();
-        resourceManager->SetDefault<Class>(instanceDefault);
+        // Set a default resource that will be returned on failed loads.
+        std::shared_ptr<Texture> defaultTexture = std::make_shared<Texture>();
+        resourceManager->SetDefault<Texture>(defaultTexture);
     
+        // Load different resources in a scope.
         {
-            auto instanceA = resourceManager->Load<Class>("Resources/InstanceA");
-            auto instanceB = resourceManager->Load<Class>("Resources/InstanceB");
+            // Load a resource from the pool. Returns an existing resource if exist.
+            // Resource type must provide Load(std::string, ...) method for the template.
+            auto floorTexture = resourceManager->Load<Texture("Data/Textures/floor.png");
+            auto grassTexture = resourceManager->Load<Texture>("Data/Textures/grass.png");
+
+            // Load a shader using the same ResourceManager instance.
+            std::shared_ptr<Shader> shader = resourceManager->Load<Shader>("Data/Shader/shiny.png");
         }
-    
+
+        // Release resources that are no longer referenced.
         resourceManager.ReleaseUnused();
+    }
 */
 
 namespace System
@@ -46,23 +59,25 @@ namespace System
         std::shared_ptr<const Type> GetDefault() const;
 
         // Loads a resource.
+        // Name argument does not have to refer to a file path.
+        // Resource type must have Load(std::string, ...) method implemented.
         template<typename Type, typename... Arguments>
-        std::shared_ptr<const Type> Load(std::string filename, Arguments... arguments);
+        std::shared_ptr<const Type> Load(std::string name, Arguments... arguments);
 
-        // Releases unused resources.
+        // Releases unused resources of all types.
         void ReleaseUnused();
 
-        // Gets a resource pool.
+        // Gets a resource pool for a specified type of resource.
         template<typename Type>
         ResourcePool<Type>* GetPool();
 
     private:
-        // Creates a resource pool.
+        // Creates a resource pool for a specified type of resource.
         template<typename Type>
         ResourcePool<Type>* CreatePool();
 
     private:
-        // Resource pools.
+        // Resource pools for different types.
         ResourcePoolList m_pools;
     };
 
@@ -70,7 +85,7 @@ namespace System
     template<typename Type>
     void ResourceManager::SetDefault(std::shared_ptr<const Type> default)
     {
-        // Get the resource pool.
+        // Get a resource pool.
         ResourcePool<Type>* pool = this->GetPool<Type>();
         Assert(pool != nullptr, "Could not retrieve a resource pool!");
 
@@ -81,7 +96,7 @@ namespace System
     template<typename Type>
     std::shared_ptr<const Type> ResourceManager::GetDefault() const
     {
-        // Get the resource pool.
+        // Get a resource pool.
         ResourcePool<Type>* pool = this->GetPool<Type>();
         Assert(pool != nullptr, "Could not retrieve a resource pool!");
 
@@ -90,14 +105,14 @@ namespace System
     }
 
     template<typename Type, typename... Arguments>
-    std::shared_ptr<const Type> ResourceManager::Load(std::string filename, Arguments... arguments)
+    std::shared_ptr<const Type> ResourceManager::Load(std::string name, Arguments... arguments)
     {
-        // Get the resource pool.
+        // Get a resource pool.
         ResourcePool<Type>* pool = this->GetPool<Type>();
         Assert(pool != nullptr, "Could not retrieve a resource pool!");
 
-        // Delegate to the resource pool.
-        return pool->Load(filename, std::forward<Arguments>(arguments)...);
+        // Delegate call to the resource pool, which will then delegate it further to a new resource instance.
+        return pool->Load(name, std::forward<Arguments>(arguments)...);
     }
 
     template<typename Type>
@@ -116,7 +131,7 @@ namespace System
     template<typename Type>
     ResourcePool<Type>* ResourceManager::GetPool()
     {
-        // Find the pool by resource type.
+        // Find a pool by resource type.
         auto it = m_pools.find(typeid(Type));
 
         if(it != m_pools.end())
@@ -124,8 +139,10 @@ namespace System
             // Cast and return the pointer that we already know is a resource pool.
             return reinterpret_cast<ResourcePool<Type>*>(it->second.get());
         }
-
-        // Create and return a new resource pool.
-        return this->CreatePool<Type>();
+        else
+        {
+            // Create and return a new resource pool.
+            return this->CreatePool<Type>();
+        }
     }
 };

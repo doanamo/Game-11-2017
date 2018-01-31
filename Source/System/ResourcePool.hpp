@@ -8,18 +8,27 @@
     Manages an instance pool for a single type of resource.
     See ResourceManager class for more context.
 
-    void ExampleResourcePool(std::shared_ptr<const Texture>& default)
+    void ExampleResourcePool()
     {
-        // Create a resource pool instance and set the default resource.
+        // Create a resource pool instance.
         System::ResourcePool<Texture> texturePool;
-        texturePool->SetDefault(default);
 
-        // Load a resource from the pool. Returns an existing resource if exist.
-        // Resource type must provide Load(std::string, ...) method for the template.
-        std::shared_ptr<const Texture> textureA = texture->Load("Data/Textures/checkerboard.png");
+        // Set a default resource that will be returned on failed loads.
+        std::shared_ptr<Texture> defaultTexture = std::make_shared<Texture>();
+        texturePool->SetDefault(defaultTexture);
 
-        // This will return the previously loaded resource.
-        std::shared_ptr<const Texture> textureB = texture->Load("Data/Textures/checkerboard.png");
+        // Create resources in a scope so they can be released when unused.
+        {
+            // Load a resource from the pool. Returns an existing resource if exist.
+            // Resource type must provide Load(std::string, ...) method for the template.
+            std::shared_ptr<const Texture> textureA = texture->Load("Data/Textures/checkerboard.png");
+
+            // This will return the previously loaded resource.
+            std::shared_ptr<const Texture> textureB = texture->Load("Data/Textures/checkerboard.png");
+        }
+
+        // Release resources that are no longer referenced.
+        resourceManager.ReleaseUnused();
     }
 */
 
