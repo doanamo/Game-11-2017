@@ -403,7 +403,7 @@ int Window::GetHeight() const
     if(m_window == nullptr)
         return 0;
 
-    // Return the current framebuffer;s height.
+    // Return the current framebuffer's height.
     int height = 0;
     glfwGetFramebufferSize(m_window, nullptr, &height);
     return height;

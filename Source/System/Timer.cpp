@@ -55,12 +55,10 @@ float Timer::CalculateFrameDelta()
 
 void Timer::SetMaxFrameDelta(float value)
 {
-    // Set maximum frame delta allowed.
     m_maxFrameDeltaSeconds = value;
 }
 
 float Timer::GetMaxFrameDelta() const
 {
-    // Return the set maximum frame delta.
     return m_maxFrameDeltaSeconds;
 }

@@ -5,8 +5,22 @@
 /*
     Resource Pool
 
-    Manages a pool for a single type of resources.
+    Manages an instance pool for a single type of resource.
     See ResourceManager class for more context.
+
+    void ExampleResourcePool(std::shared_ptr<const Texture>& default)
+    {
+        // Create a resource pool instance and set the default resource.
+        System::ResourcePool<Texture> texturePool;
+        texturePool->SetDefault(default);
+
+        // Load a resource from the pool. Returns an existing resource if exist.
+        // Resource type must provide Load(std::string, ...) method for the template.
+        std::shared_ptr<const Texture> textureA = texture->Load("Data/Textures/checkerboard.png");
+
+        // This will return the previously loaded resource.
+        std::shared_ptr<const Texture> textureB = texture->Load("Data/Textures/checkerboard.png");
+    }
 */
 
 namespace System
@@ -47,9 +61,11 @@ namespace System
         // Gets the default resource.
         std::shared_ptr<const Type> GetDefault() const;
 
-        // Loads a resource from a file.
+        // Loads a resource by name.
+        // Name argument does not have to refer to a file path.
+        // Resource type must have Load(std::string, ...) method implemented.
         template<typename... Arguments>
-        std::shared_ptr<const Type> Load(std::string filename, Arguments... arguments);
+        std::shared_ptr<const Type> Load(std::string name, Arguments... arguments);
 
         // Releases unused resources.
         void ReleaseUnused();
@@ -75,6 +91,7 @@ namespace System
     template<typename Type>
     ResourcePool<Type>::~ResourcePool()
     {
+        // Release all resource by ourselves.
         this->ReleaseAll();
     }
 
@@ -85,27 +102,27 @@ namespace System
     }
 
     template<typename Type>
-    std::shared_ptr<const Type>  ResourcePool<Type>::GetDefault() const
+    std::shared_ptr<const Type> ResourcePool<Type>::GetDefault() const
     {
         return m_default;
     }
 
     template<typename Type>
     template<typename... Arguments>
-    std::shared_ptr<const Type> ResourcePool<Type>::Load(std::string filename, Arguments... arguments)
+    std::shared_ptr<const Type> ResourcePool<Type>::Load(std::string name, Arguments... arguments)
     {
-        // Find the resource.
-        auto it = m_resources.find(filename);
+        // Return existing resource if loaded.
+        auto it = m_resources.find(name);
         if(it != m_resources.end())
             return it->second;
 
         // Create and load a new resource instance.
         std::shared_ptr<Type> resource = std::make_shared<Type>();
-        if(!resource->Load(filename, std::forward<Arguments>(arguments)...))
+        if(!resource->Load(name, std::forward<Arguments>(arguments)...))
             return m_default;
 
         // Add resource to the list.
-        auto result = m_resources.emplace(filename, std::move(resource));
+        auto result = m_resources.emplace(name, std::move(resource));
         Assert(result.second, "Failed to emplace a new resource in the resource pool!");
 
         // Return the resource pointer.
@@ -121,14 +138,14 @@ namespace System
         {
             if(it->second.use_count() == 1)
             {
-                // Save the filename to print it later.
-                std::string filename = std::move(it->first);
+                // Retrieve the name to print it later.
+                std::string name = it->first;
 
                 // Release the resource.
                 it = m_resources.erase(it);
 
                 // Print a log message.
-                Log() << "Released an unused resource loaded from \"" << filename << "\" file.";
+                Log() << "Released \"" << name << "\" resource.";
             }
             else
             {
@@ -145,14 +162,14 @@ namespace System
 
         while(it != m_resources.end())
         {
-            // Save the filename to print it later.
-            std::string filename = std::move(it->first);
+            // Retrieve the name to print it later.
+            std::string name = it->first;
 
             // Release the resource.
             it = m_resources.erase(it);
 
             // Print a log message.
-            Log() << "Released a resource loaded from \"" << filename << "\" file.";
+            Log() << "Released \"" << name << "\" resource.";
         }
 
         Assert(m_resources.empty(), "Resource pool is not empty after releasing all resources!");

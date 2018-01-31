@@ -8,7 +8,7 @@
     Creates and manages an application window with OpenGL context.
     Supports multiple windows and OpenGL contextes.
 
-    void ExampleShowWindow()
+    void ExampleWindow()
     {
         // Describe a window.
         WindowInfo windowInfo;
@@ -31,7 +31,7 @@
         }
     }
 
-    void ExampleBindEvents(Class& instance)
+    void ExampleEvents(Class& instance)
     {
         // Create an event receiver with a signature matching the dispatcher.
         Receiver<void(const Window::Events::KeyboardKey&)> receiver;
