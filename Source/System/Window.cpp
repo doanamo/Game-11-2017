@@ -30,6 +30,7 @@ Window::Window() :
 
 Window::~Window()
 {
+    // We have to destroy an allocated handle.
     this->DestroyWindow();
 }
 
@@ -45,11 +46,11 @@ void Window::DestroyWindow()
 
 void Window::MoveCallback(GLFWwindow* window, int x, int y)
 {
-    Assert(window != nullptr);
+    Assert(window != nullptr, "Window handle is nullptr!");
 
     // Get the window instance.
     auto instance = reinterpret_cast<System::Window*>(glfwGetWindowUserPointer(window));
-    Assert(instance != nullptr);
+    Assert(instance != nullptr, "Window instance is nullptr!");
 
     // Send an event.
     Window::Events::Move eventData;
@@ -61,11 +62,11 @@ void Window::MoveCallback(GLFWwindow* window, int x, int y)
 
 void Window::ResizeCallback(GLFWwindow* window, int width, int height)
 {
-    Assert(window != nullptr);
+    Assert(window != nullptr, "Window reference is nullptr!");
 
     // Get the window instance.
     auto instance = reinterpret_cast<System::Window*>(glfwGetWindowUserPointer(window));
-    Assert(instance != nullptr);
+    Assert(instance != nullptr, "Window instance is nullptr!");
 
     // Remember that window size has changed.
     instance->m_sizeChanged = true;
@@ -80,11 +81,11 @@ void Window::ResizeCallback(GLFWwindow* window, int width, int height)
 
 void Window::FocusCallback(GLFWwindow* window, int focused)
 {
-    Assert(window != nullptr);
+    Assert(window != nullptr, "Window reference is nullptr!");
 
     // Get the window instance.
     auto instance = reinterpret_cast<System::Window*>(glfwGetWindowUserPointer(window));
-    Assert(instance != nullptr);
+    Assert(instance != nullptr, "Window instance is nullptr!");
 
     // Send an event.
     Window::Events::Focus eventData;
@@ -95,11 +96,11 @@ void Window::FocusCallback(GLFWwindow* window, int focused)
 
 void Window::CloseCallback(GLFWwindow* window)
 {
-    Assert(window != nullptr);
+    Assert(window != nullptr, "Window reference is nullptr!");
 
     // Get the window instance.
     auto instance = reinterpret_cast<System::Window*>(glfwGetWindowUserPointer(window));
-    Assert(instance != nullptr);
+    Assert(instance != nullptr, "Window instance is nullptr!");
 
     // Send an event.
     Window::Events::Close eventData;
@@ -109,11 +110,11 @@ void Window::CloseCallback(GLFWwindow* window)
 
 void Window::KeyboardKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    Assert(window != nullptr);
+    Assert(window != nullptr, "Window reference is nullptr!");
 
     // Get the window instance.
     auto instance = reinterpret_cast<System::Window*>(glfwGetWindowUserPointer(window));
-    Assert(instance != nullptr);
+    Assert(instance != nullptr, "Window instance is nullptr!");
 
     // Send an event.
     Window::Events::KeyboardKey eventData;
@@ -127,11 +128,11 @@ void Window::KeyboardKeyCallback(GLFWwindow* window, int key, int scancode, int 
 
 void Window::TextInputCallback(GLFWwindow* window, unsigned int character)
 {
-    Assert(window != nullptr);
+    Assert(window != nullptr, "Window reference is nullptr!");
 
     // Get the window instance.
     auto instance = reinterpret_cast<System::Window*>(glfwGetWindowUserPointer(window));
-    Assert(instance != nullptr);
+    Assert(instance != nullptr, "Window instance is nullptr!");
 
     // Send an event.
     Window::Events::TextInput eventData;
@@ -142,11 +143,11 @@ void Window::TextInputCallback(GLFWwindow* window, unsigned int character)
 
 void Window::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-    Assert(window != nullptr);
+    Assert(window != nullptr, "Window reference is nullptr!");
 
     // Get the window instance.
     auto instance = reinterpret_cast<System::Window*>(glfwGetWindowUserPointer(window));
-    Assert(instance != nullptr);
+    Assert(instance != nullptr, "Window instance is nullptr!");
 
     // Send an event.
     Window::Events::MouseButton eventData;
@@ -159,11 +160,11 @@ void Window::MouseButtonCallback(GLFWwindow* window, int button, int action, int
 
 void Window::MouseScrollCallback(GLFWwindow* window, double offsetx, double offsety)
 {
-    Assert(window != nullptr);
+    Assert(window != nullptr, "Window reference is nullptr!");
 
     // Get the window instance.
     auto instance = reinterpret_cast<System::Window*>(glfwGetWindowUserPointer(window));
-    Assert(instance != nullptr);
+    Assert(instance != nullptr, "Window instance is nullptr!");
 
     // Send an event.
     Window::Events::MouseScroll eventData;
@@ -174,11 +175,11 @@ void Window::MouseScrollCallback(GLFWwindow* window, double offsetx, double offs
 
 void Window::CursorPositionCallback(GLFWwindow* window, double x, double y)
 {
-    Assert(window != nullptr);
+    Assert(window != nullptr, "Window reference is nullptr!");
 
     // Get the window instance.
     auto instance = reinterpret_cast<System::Window*>(glfwGetWindowUserPointer(window));
-    Assert(instance != nullptr);
+    Assert(instance != nullptr, "Window instance is nullptr!");
 
     // Send an event.
     Window::Events::CursorPosition eventData;
@@ -190,11 +191,11 @@ void Window::CursorPositionCallback(GLFWwindow* window, double x, double y)
 
 void Window::CursorEnterCallback(GLFWwindow* window, int entered)
 {
-    Assert(window != nullptr);
+    Assert(window != nullptr, "Window reference is nullptr!");
 
     // Get the window's instance.
     auto instance = reinterpret_cast<System::Window*>(glfwGetWindowUserPointer(window));
-    Assert(instance != nullptr);
+    Assert(instance != nullptr, "Window instance is nullptr!");
 
     // Send an event.
     Window::Events::CursorEnter eventData;
@@ -329,7 +330,7 @@ void Window::Present()
     if(m_window == nullptr)
         return;
 
-    // Swap frame buffers.
+    // Swap framebuffers.
     glfwSwapBuffers(m_window);
 
     // Check if there are any uncaught OpenGL errors.
@@ -348,6 +349,7 @@ void Window::Close()
     if(m_window == nullptr)
         return;
 
+    // Force the window to close.
     glfwSetWindowShouldClose(m_window, GL_TRUE);
 }
 
@@ -368,6 +370,7 @@ bool Window::IsOpen() const
     if(m_window == nullptr)
         return false;
 
+    // Window is considered open as long as there was no request made to close it.
     return glfwWindowShouldClose(m_window) == 0;
 }
 
@@ -376,11 +379,13 @@ bool Window::IsFocused() const
     if(m_window == nullptr)
         return false;
 
+    // Check if the window is currently in the foreground.
     return glfwGetWindowAttrib(m_window, GLFW_FOCUSED) > 0;
 }
 
 std::string Window::GetTitle() const
 {
+    // Return the cached window's title.
     return m_title;
 }
 
@@ -389,6 +394,7 @@ int Window::GetWidth() const
     if(m_window == nullptr)
         return 0;
 
+    // Return the current framebuffer's width.
     int width = 0;
     glfwGetFramebufferSize(m_window, &width, nullptr);
     return width;
@@ -399,6 +405,7 @@ int Window::GetHeight() const
     if(m_window == nullptr)
         return 0;
 
+    // Return the current framebuffer;s height.
     int height = 0;
     glfwGetFramebufferSize(m_window, nullptr, &height);
     return height;
@@ -406,5 +413,6 @@ int Window::GetHeight() const
 
 GLFWwindow* Window::GetPrivateHandle()
 {
+    // Return the private window handle.
     return m_window;
 }

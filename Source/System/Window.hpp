@@ -6,28 +6,42 @@
     Window
 
     Creates and manages an application window with OpenGL context.
-    Supports multiple windows and contextes.
+    Supports multiple windows and OpenGL contextes.
 
-    Example usage:
+    void ExampleShowWindow()
+    {
+        // Describe a window.
+        WindowInfo windowInfo;
+        windowInfo.width = 1024;
+        windowInfo.height = 576;
+
+        // Open a new window.
         System::Window window;
-        window.Open();
-    
+        if(!window.Open(windowInfo))
+            return;
+
+        // Run a window loop.
         while(window.IsOpen())
         {
             window.ProcessEvents();
-        
-            ...
+
+            // Update and draw here.
 
             window.Present();
         }
+    }
 
-    Binding events:
-        void Class::OnKeyboardKey(const Window::Events::KeyboardKey& event) { ... }
-    
-        Class instance;
+    void ExampleBindEvents(Class& instance)
+    {
+        // Create an event receiver with a signature matching the dispatcher.
         Receiver<void(const Window::Events::KeyboardKey&)> receiver;
-        receiver.Bind<InputState, &InputState::OnKeyboardKey>(&instance);
+
+        // Bind a class method with the same signature as both receiver and dispatcher.
+        receiver.Bind<Instance, &Instance::HandleWindowEvent>(&instance);
+
+        // Subscribe to window's event dispatcher.
         receiver.Subscribe(window.events.keyboardKey);
+    }
 */
 
 namespace System
@@ -64,20 +78,20 @@ namespace System
         // Processes window events.
         void ProcessEvents();
 
-        // Presents backbuffer content on the window.
+        // Presents backbuffer's content in the window.
         void Present();
 
         // Closes the window.
         void Close();
-
-        // Sets the window's title.
-        void SetTitle(std::string title);
 
         // Checks if the window is open.
         bool IsOpen() const;
 
         // Checks if the window is focused.
         bool IsFocused() const;
+
+        // Sets the window's title.
+        void SetTitle(std::string title);
 
         // Gets the window's title.
         std::string GetTitle() const;
@@ -199,23 +213,23 @@ namespace System
         // Called when a keyboard key state changes.
         static void KeyboardKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-        // Called when a text character is entered.
+        // Called when a text character is entered on the keyboard.
         static void TextInputCallback(GLFWwindow* window, unsigned int character);
 
-        // Called when a mouse button state changes.
+        // Called when a state of a mouse button changes.
         static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
         // Called when the mouse scroll moves.
         static void MouseScrollCallback(GLFWwindow* window, double offsetx, double offsety);
 
-        // Called when the mouss cursor moves.
+        // Called when the mouse cursor moves.
         static void CursorPositionCallback(GLFWwindow* window, double x, double y);
 
         // Called when the mouse cursor enters or leaves the window.
         static void CursorEnterCallback(GLFWwindow* window, int entered);
 
     private:
-        // Destroy the window immediately.
+        // Destroy the window handle immediately.
         void DestroyWindow();
 
     private:
