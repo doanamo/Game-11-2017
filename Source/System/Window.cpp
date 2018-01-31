@@ -240,11 +240,6 @@ bool Window::Open(const WindowInfo& info)
 
     SCOPE_GUARD_IF(!initialized, this->DestroyWindow());
 
-    // Store window's title.
-    m_title = info.title;
-
-    SCOPE_GUARD_IF(!initialized, m_title = "");
-
     // Set window size limits.
     glfwSetWindowSizeLimits(m_window, info.minWidth, info.minHeight, info.maxWidth, info.maxHeight);
 
@@ -291,6 +286,9 @@ bool Window::Open(const WindowInfo& info)
     int windowWidth, windowHeight;
     glfwGetFramebufferSize(m_window, &windowWidth, &windowHeight);
     Log() << "Created a window with " << windowWidth << "x" << windowHeight << " size.";
+
+    // Store window's title as it cannot be retrived back via GLFW.
+    m_title = info.title;
 
     // Success!
     return initialized = true;
