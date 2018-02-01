@@ -4,10 +4,10 @@ using namespace System;
 
 namespace
 {
-    // Log messages.
+    // Log rror messages.
     #define LogInitializeError() "Failed to initialize the platform! "
 
-    // Callback functions.
+    // Callback error function.
     void ErrorCallback(int error, const char* description)
     {
         Log() << "GLFW Error: " << description;
@@ -30,7 +30,7 @@ Platform::~Platform()
 
 bool Platform::Initialize()
 {
-    // Check if instance has been already initialized.
+    // Check if the instance has been initialized already.
     if(m_initialized)
     {
         Log() << LogInitializeError() << "Instance is already initialized.";
@@ -47,11 +47,12 @@ bool Platform::Initialize()
         return false;
     }
 
-    // Success!
+    // Write GLFW details to log.
     int major, minor, revision;
     glfwGetVersion(&major, &minor, &revision);
 
     Log() << "Initialized the platform with GLFW " << major << "." << minor << "." << revision << " library.";
 
+    // Success!
     return m_initialized = true;
 }
