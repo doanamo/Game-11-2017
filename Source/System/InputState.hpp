@@ -7,21 +7,32 @@
     Input State
 
     Caches input state between frames and handles repeating keys.
+    Allows various input states to be easily polled.
 
-    Example usage:
+    void ExampleInputState(System::Window& window)
+    {
+        // Create an input state instance.
         System::InputState inputState;
-        inputState.Initialize(...);
+
+        // Subscrube the input state to window's input events.
+        inputState.Subscribe(window);
     
-        while(true)
+        // Run the main window loop.
+        while(window.IsOpen())
         {
-            inputState.Update();
+            // Prepare the state for incoming events.
+            inputState.Prepare();
+
+            // Process events that will be dispatched to the input state.
             window.ProcessEvents();
     
+            // Check if the escape key was pressed once.
             if(window.IsKeyDown(GLFW_KEY_ESCAPE, false))
             {
-                ...
+                Log() << "Escape key has been pressed!";
             }
         }
+    }
 */
 
 namespace System
@@ -52,12 +63,12 @@ namespace System
         InputState();
         ~InputState();
 
-        // Subscribes to window input events.
+        // Subscribes to window's input events.
         bool Subscribe(Window& window);
 
-        // Updates the input state.
+        // Prepares the input state for incoming input events.
         // Must be called before window events are processed.
-        void Update();
+        void Prepare();
 
         // Resets the input state.
         void Reset();

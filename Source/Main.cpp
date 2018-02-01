@@ -175,10 +175,10 @@ int main(int argc, char* argv[])
         // Calculate frame delta time.
         float timeDelta = timer.CalculateFrameDelta();
 
-        // Update input state.
-        inputState.Update();
+        // Prepare input state for incoming events.
+        inputState.Prepare();
 
-        // Process window evenets.
+        // Process window events.
         window.ProcessEvents();
 
         // Process entity commands.

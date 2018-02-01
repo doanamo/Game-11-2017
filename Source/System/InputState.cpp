@@ -5,7 +5,7 @@ using namespace System;
 
 InputState::InputState()
 {
-    // Set initial input states.
+    // Setup initial input state.
     this->Reset();
 
     // Bind event receivers.
@@ -36,7 +36,7 @@ bool InputState::Subscribe(Window& window)
 
 void InputState::OnKeyboardKey(const Window::Events::KeyboardKey& event)
 {
-    Assert(0 <= event.key && event.key < KeyboardKeyCount);
+    Verify(0 <= event.key && event.key < KeyboardKeyCount, "Received an event with an invalid key!");
 
     // Handle keyboard input events.
     if(event.action == GLFW_PRESS)
@@ -52,13 +52,14 @@ void InputState::OnKeyboardKey(const Window::Events::KeyboardKey& event)
 void InputState::OnWindowFocus(const Window::Events::Focus& event)
 {
     // Reset key states on focus loss.
+    // This will help avoid stuck input states when user switches between applications.
     if(!event.focused)
     {
         this->Reset();
     }
 }
 
-void InputState::Update()
+void InputState::Prepare()
 {
     // Update repeating key states.
     for(int i = 0; i < KeyboardKeyCount; ++i)
@@ -78,7 +79,7 @@ void InputState::Update()
 
 void InputState::Reset()
 {
-    // Set all keys as released.
+    // Set all keys to their untouched state.
     for(int i = 0; i < KeyboardKeyCount; ++i)
     {
         m_keyboardState[i] = KeyboardKeyStates::ReleasedRepeat;
@@ -87,12 +88,15 @@ void InputState::Reset()
 
 bool InputState::IsKeyboardKeyDown(int key, bool repeat)
 {
+    // Check if the key is in a valid range.
     if(key < 0 || key >= KeyboardKeyCount)
         return false;
 
+    // Check if the key was just pressed.
     if(m_keyboardState[key] == KeyboardKeyStates::Pressed)
         return true;
 
+    // Check if the key is in repeating pressed state.
     if(repeat && m_keyboardState[key] == KeyboardKeyStates::PressedRepeat)
         return true;
 
@@ -101,12 +105,15 @@ bool InputState::IsKeyboardKeyDown(int key, bool repeat)
 
 bool InputState::IsKeyboardKeyUp(int key, bool repeat)
 {
+    // Check if the key is in a valid range.
     if(key < 0 || key >= KeyboardKeyCount)
         return false;
 
+    // Check if the key was just released.
     if(m_keyboardState[key] == KeyboardKeyStates::Released)
         return true;
 
+    // Check if the key is in repeating released state.
     if(repeat && m_keyboardState[key] == KeyboardKeyStates::ReleasedRepeat)
         return true;
 
