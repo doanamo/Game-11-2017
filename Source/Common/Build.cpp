@@ -12,12 +12,26 @@ void Build::Initialize()
 {
     // Read working and source directories from the build system.
     // These files are written by our CMakeLists.txt configuration file.
-    workingDir = Utility::GetTextFileContent("WorkingDir.txt");
-    sourceDir = Utility::GetTextFileContent("SourceDir.txt");
+    #ifndef NDEBUG
+        workingDir = Utility::GetTextFileContent("WorkingDir.txt");
+        sourceDir = Utility::GetTextFileContent("SourceDir.txt");
+    #endif
 
     // Log build information.
-    Log() << "Working directory: " << workingDir;
-    Log() << "Source directory: " << sourceDir;
+    if(!workingDir.empty())
+    {
+        Log() << "Working directory: " << workingDir;
+    }
+    else
+    {
+        Log() << "Working directory: ./";
+    }
+    
+    if(!sourceDir.empty())
+    {
+        Log() << "Source directory: " << sourceDir;
+    }
+
     Log() << "Build commit info: CL " << Build::ChangeList << ", " << Build::CommitHash << ", " << Build::BranchName;
     Log() << "Build commit date: " << Build::CommitDate;
 }
