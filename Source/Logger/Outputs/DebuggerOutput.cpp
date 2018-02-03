@@ -39,6 +39,12 @@ void DebuggerOutput::Write(const Message& message, const SinkContext& context)
     m_stream << std::setfill(' ') << std::setw(0);
     m_stream << "] ";
 
+    // Write message indent.
+    for(int i = 0; i < context.messageIndent; ++i)
+    {
+        m_stream << "  ";
+    }
+
     // Write message text.
     m_stream << message.GetText();
 

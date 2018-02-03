@@ -109,6 +109,12 @@ void FileOutput::Write(const Message& message, const SinkContext& context)
     m_file << std::setfill(' ') << std::setw(0);
     m_file << "] ";
 
+    // Write message indent.
+    for(int i = 0; i < context.messageIndent; ++i)
+    {
+        m_file << "  ";
+    }
+
     // Write message text.
     m_file << message.GetText();
 

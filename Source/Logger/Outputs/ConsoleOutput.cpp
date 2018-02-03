@@ -32,6 +32,12 @@ void ConsoleOutput::Write(const Message& message, const SinkContext& context)
     std::cout << std::setfill(' ') << std::setw(0);
     std::cout << "] ";
 
+    // Write message indent.
+    for(int i = 0; i < context.messageIndent; ++i)
+    {
+        std::cout << "  ";
+    }
+
     // Write message text.
     std::cout << message.GetText();
 

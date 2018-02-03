@@ -60,6 +60,19 @@ int Sink::AdvanceFrameReference()
     return m_context.referenceFrame;
 }
 
+void Sink::IncreaseIndent()
+{
+    m_context.messageIndent++;
+}
+
+void Sink::DecreaseIndent()
+{
+    if(m_context.messageIndent > 0)
+    {
+        m_context.messageIndent--;
+    }
+}
+
 const SinkContext& Sink::GetContext() const
 {
     return m_context;

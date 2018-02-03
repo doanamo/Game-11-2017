@@ -25,6 +25,7 @@ namespace Logger
 
         std::string name;
         int referenceFrame;
+        int messageIndent;
         bool messageWritten;
     };
 
@@ -53,6 +54,12 @@ namespace Logger
 
         // Advance frame of reference.
         int AdvanceFrameReference();
+
+        // Increase current message indent.
+        void IncreaseIndent();
+
+        // Decrease current message indent.
+        void DecreaseIndent();
 
         // Gets the context.
         const SinkContext& GetContext() const;

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Precompiled.hpp"
-#include "Logger/Message.hpp"
-#include "Logger/Sink.hpp"
+#include "ScopedIndent.hpp"
+#include "Message.hpp"
+#include "Sink.hpp"
 
 /*
     Logger
