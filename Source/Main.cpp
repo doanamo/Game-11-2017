@@ -19,6 +19,12 @@
 #include "Game/RenderSystem.hpp"
 #include "Game/RenderComponent.hpp"
 
+/*
+    Author: Piotr Doan <doanpiotr@gmail.com>
+    Website: https://github.com/gunstarpl/
+    Copyright: All rights reserved, 2018
+*/
+
 namespace
 {
     // Log error messages.
