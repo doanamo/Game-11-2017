@@ -16,24 +16,16 @@ Config::~Config()
 {
 }
 
-bool Config::Load(const std::string filename)
+bool Config::Parse(const std::string text)
 {
-    // Open the file.
-    std::ifstream file(Build::GetWorkingDir() + filename);
-
-    if(!file.is_open())
-    {
-        Log() << LogLoadError(filename) << "Could not open the file.";
-        return false;
-    }
-
-    Log() << "Parsing parameters from \"" << filename << "\" file...";
+    // Create a string stream.
+    std::istringstream stream(text);
 
     // Load parameters from the file.
     std::string section;
     std::string line;
 
-    while(std::getline(file, line))
+    while(std::getline(stream, line))
     {
         // Check if the line is empty.
         if(line.empty())
@@ -102,6 +94,39 @@ bool Config::Load(const std::string filename)
 
             Log() << "Parsed parameter \"" << name << "\" has been set to \"" << value << "\".";
         }
+    }
+
+    // Success!
+    return true;
+}
+
+bool Config::Load(const std::string filename)
+{
+    // Open the file.
+    std::ifstream file(Build::GetWorkingDir() + filename);
+
+    if(!file.is_open())
+    {
+        Log() << LogLoadError(filename) << "Could not open the file.";
+        return false;
+    }
+
+    // Read the content of the file.
+    std::string text;
+
+    file.seekg(0, std::ios::end);
+    text.resize((unsigned int)file.tellg());
+    file.seekg(0, std::ios::beg);
+
+    file.read(&text[0], text.size());
+
+    // Parse the read config text.
+    Log() << "Parsing parameters from \"" << filename << "\" file...";
+
+    if(!this->Parse(text))
+    {
+        Log() << LogLoadError(filename) << "Could not parse the file.";
+        return false;
     }
 
     Log() << "Finished parsing a config from \"" << filename << "\" file.";

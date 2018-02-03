@@ -26,6 +26,9 @@ namespace System
         Config();
         ~Config();
 
+        // Parses parameters from a text string.
+        bool Parse(const std::string text);
+
         // Reads parameters from a configuration file.
         bool Load(const std::string filename);
 
