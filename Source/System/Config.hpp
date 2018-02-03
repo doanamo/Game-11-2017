@@ -5,16 +5,30 @@
 /*
     Config
 
-    Stores application's configuration which can be
-    read from a file and then accessed in runtime.
+    Simple configuration file format with parameter lookup.
 
-    Example usage:
+    void ExampleConfig()
+    {
+        // Create a config instance.
         System::Config config;
-        config.LoadFromFile("Game.cfg");
+
+        // We can either parse a string or load from a file.
+        const char* configText =
+            "[Window]\n"
+            "Title = \"Game\"\n"
+            "Width = 1024\n"
+            "Height = 576\n"
+            "Vsync = true\n";
+
+        config.Parse(configText);
+        config.Load("Game.cfg");
     
-        width = config.GetParameter<int>("Window.Width", 1024);
-        height = config.GetParameter<int>("Window.Height", 576);
-        vsync = config.GetParameter<bool>("Window.Vsync", true);
+        // Retrieve loaded config parameters.
+        std::string title = config.GetParameter<std::string>("Window.Title", "Game");
+        int width = config.GetParameter<int>("Window.Width", 1024);
+        int height = config.GetParameter<int>("Window.Height", 576);
+        bool vsync = config.GetParameter<bool>("Window.Vsync", true);
+    }
 */
 
 namespace System
@@ -32,13 +46,13 @@ namespace System
         // Reads parameters from a configuration file.
         bool Load(const std::string filename);
 
-        // Sets a config parameters with provided value.
-        // Creates a parameter that does not exists with provided value by default.
+        // Sets a config parameter.
+        // Can create a parameter that does not exists with provided default value.
         template<typename Type>
         void SetParameter(const std::string name, const Type& value, bool create = true);
 
-        // Gets a config parameters.
-        // Returns a specified default value if queried parameters does not exit.
+        // Gets a config parameter.
+        // Returns a specified default value if queried parameter does not exit.
         // Can create a parameter that does not exists with provided default value.
         template<typename Type>
         Type GetParameter(const std::string name, const Type& default, bool create = false);
@@ -54,7 +68,7 @@ namespace System
         template<>
         std::string ConvertValueFrom(const bool& value);
 
-        // Converts a value from a string back to its type.
+        // Converts a value from a string back to a type.
         template<typename Type>
         Type ConvertValueTo(const std::string& text);
 
@@ -69,7 +83,7 @@ namespace System
         typedef std::map<std::string, std::string> ParameterMap;
 
     private:
-        // Map of parameters.
+        // List of parameters.
         ParameterMap m_parameters;
     };
 
@@ -82,21 +96,18 @@ namespace System
 
         if(it == m_parameters.end())
         {
-            // Insert a new parameter if it does not exist yet.
+            // Create a new parameter if it does not exist yet.
             if(create)
             {
-                auto result = m_parameters.emplace(std::make_pair(name, ConvertValueFrom<Type>(value)));
+                auto result = m_parameters.emplace(std::make_pair(name, this->ConvertValueFrom<Type>(value)));
                 Assert(result.first != m_parameters.end(), "Failed to insert a new config parameter!");
                 Assert(result.second, "Failed to insert a new config parameter!");
             }
-
-            // Return after creating a new parameter or not.
-            return;
         }
         else
         {
-            // Asign a new value for the found parameter.
-            it->second = ConvertValueFrom<Type>(value);
+            // Assign a new value to the found parameter.
+            it->second = this->ConvertValueFrom<Type>(value);
         }
     }
 
@@ -108,21 +119,21 @@ namespace System
 
         if(it == m_parameters.end())
         {
-            // Insert a new parameter if it does not exist yet.
+            // Create a new parameter if it does not exist yet.
             if(create)
             {
-                auto result = m_parameters.emplace(std::make_pair(name, ConvertValueFrom<Type>(default)));
+                auto result = m_parameters.emplace(std::make_pair(name, this->ConvertValueFrom<Type>(default)));
                 Assert(result.first != m_parameters.end(), "Failed to insert a new config parameter!");
                 Assert(result.second, "Failed to insert a new config parameter!");
             }
 
-            // Return default value.
+            // Return the specified default value.
             return default;
         }
         else
         {
             // Convert parameter's value from a string and return it.
-            return ConvertValueTo<Type>(it->second);
+            return this->ConvertValueTo<Type>(it->second);
         }
     }
 

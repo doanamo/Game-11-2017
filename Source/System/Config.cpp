@@ -77,7 +77,7 @@ bool Config::Parse(const std::string text)
                 break;
             }
 
-            // Remove enclosing quotation marks if present for string values.
+            // Remove enclosing quotation marks for string values.
             if(value.front() == '"' && value.back() == '"')
             {
                 value = std::string(value.begin() + 1, value.end() - 1);
