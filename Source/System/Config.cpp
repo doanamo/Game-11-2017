@@ -112,18 +112,13 @@ bool Config::Load(const std::string filename)
     }
 
     // Read the content of the file.
-    std::string text;
-
-    file.seekg(0, std::ios::end);
-    text.resize((unsigned int)file.tellg());
-    file.seekg(0, std::ios::beg);
-
-    file.read(&text[0], text.size());
+    std::stringstream text;
+    text << file.rdbuf();
 
     // Parse the read config text.
     Log() << "Parsing parameters from \"" << filename << "\" file...";
 
-    if(!this->Parse(text))
+    if(!this->Parse(text.str()))
     {
         Log() << LogLoadError(filename) << "Could not parse the file.";
         return false;
