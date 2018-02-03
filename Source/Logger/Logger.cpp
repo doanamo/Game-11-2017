@@ -1,10 +1,7 @@
 #include "Precompiled.hpp"
 #include "Logger.hpp"
+#include "Output.hpp"
 #include "Sink.hpp"
-
-#include "Outputs/DebuggerOutput.hpp"
-#include "Outputs/ConsoleOutput.hpp"
-#include "Outputs/FileOutput.hpp"
 
 namespace
 {
