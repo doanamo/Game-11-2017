@@ -5,6 +5,7 @@ using namespace Logger;
 
 Message::Message() :
     std::ostream(&m_text),
+    m_severity(Severity::Info),
     m_source(),
     m_line(0)
 {
@@ -13,6 +14,9 @@ Message::Message() :
 Message::Message(Message&& other) :
     std::ostream(&m_text)
 {
+    m_severity = other.m_severity;
+    other.m_severity = Severity::Info;
+
     m_text = std::move(other.m_text);
     m_source = std::move(other.m_source);
 
@@ -22,6 +26,14 @@ Message::Message(Message&& other) :
 
 Message::~Message()
 {
+}
+
+Message& Message::SetSeverity(Severity::Type severity)
+{
+    Assert(Severity::Invalid < severity && severity < Severity::Count, "Invalid severity enumeration value!");
+
+    m_severity = severity;
+    return *this;
 }
 
 Message& Message::SetText(const char* text)
@@ -88,6 +100,11 @@ Message& Message::SetLine(int line)
 
     m_line = line;
     return *this;
+}
+
+Severity::Type Message::GetSeverity() const
+{
+    return m_severity;
 }
 
 std::string Message::GetText() const

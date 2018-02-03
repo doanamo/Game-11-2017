@@ -49,7 +49,27 @@ std::string DefaultFormat::ComposeMessage(const Message& message, const SinkCont
     stream << std::setfill('0') << std::setw(3);
     stream << context.referenceFrame % 1000;
     stream << std::setfill(' ') << std::setw(0);
-    stream << "] ";
+    stream << "]";
+
+    // Write message severity.
+    switch(message.GetSeverity())
+    {
+    case Severity::Error:
+        stream << "[!]";
+        break;
+
+    case Severity::Warning:
+        stream << "[?]";
+        break;
+
+    case Severity::Debug:
+        stream << "[~]";
+        break;
+
+    default:
+        stream << "[-]";
+        break;
+    }
 
     // Write message indent.
     for(int i = 0; i < context.messageIndent; ++i)
@@ -58,7 +78,7 @@ std::string DefaultFormat::ComposeMessage(const Message& message, const SinkCont
     }
 
     // Write message text.
-    stream << message.GetText();
+    stream << " " << message.GetText();
 
     // Write message source.
     if(!message.GetSource().empty())

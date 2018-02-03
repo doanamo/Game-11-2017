@@ -10,6 +10,22 @@
 
 namespace Logger
 {
+    // Message severity.
+    struct Severity
+    {
+        enum Type
+        {
+            Invalid,
+
+            Info,
+            Debug,
+            Warning,
+            Error,
+
+            Count,
+        };
+    };
+
     // Message class.
     class Message : private NonCopyable, public std::ostream
     {
@@ -17,6 +33,9 @@ namespace Logger
         Message();
         Message(Message&& other);
         virtual ~Message();
+
+        // Sets the message severity.
+        Message& SetSeverity(Severity::Type severity);
 
         // Sets the message text.
         Message& SetText(const char* text);
@@ -26,6 +45,9 @@ namespace Logger
 
         // Sets the message line.
         Message& SetLine(int line);
+
+        // Gets the message severity.
+        Severity::Type GetSeverity() const;
 
         // Gets the message text.
         std::string GetText() const;
@@ -41,6 +63,7 @@ namespace Logger
 
     private:
         // Message state.
+        Severity::Type m_severity;
         std::stringbuf m_text;
         std::string    m_source;
         int            m_line;

@@ -33,6 +33,11 @@ namespace Logger
 }
 
 // Utility macros.
+#define LogInfo()    Log().SetSeverity(Logger::Severity::Info)
+#define LogDebug()   Log().SetSeverity(Logger::Severity::Debug)
+#define LogWarning() Log().SetSeverity(Logger::Severity::Warning)
+#define LogError()   Log().SetSeverity(Logger::Severity::Error)
+
 #ifndef NDEBUG
     #define Log() Logger::ScopedMessage(Logger::GetGlobalSink()).SetSource(__FILE__).SetLine(__LINE__)
 #else
