@@ -33,10 +33,19 @@ namespace
 
 int main(int argc, char* argv[])
 {
-    // Initialize core systems.
+    // Initialize the logger.
     Logger::Initialize();
+
+    // Initialize debug utilities.
     Debug::Initialize();
-    Build::Initialize();
+
+    // Initialize build info.
+    {
+        Verify(argc >= 1, "First launch argument is missing!");
+        std::string executablePath = argv[0];
+
+        Build::Initialize(executablePath);
+    }
 
     // Initialize the platform.
     System::Platform platform;

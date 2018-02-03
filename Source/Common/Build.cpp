@@ -8,7 +8,7 @@ namespace
     std::string sourceDir = "";
 }
 
-void Build::Initialize()
+void Build::Initialize(std::string executablePath)
 {
     // Read working and source directories from the build system.
     // These files are written by our CMakeLists.txt configuration file.
@@ -22,7 +22,11 @@ void Build::Initialize()
     }
     else
     {
-        Log() << "Working directory: ./";
+        std::string directory = executablePath;
+        directory = Utility::StringReplace(directory, "\\", "/");
+        directory = directory.substr(0, directory.find_last_of('/') + 1);
+
+        Log() << "Working directory: " << directory;
     }
     
     if(!sourceDir.empty())
