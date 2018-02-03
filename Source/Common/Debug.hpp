@@ -46,11 +46,11 @@ namespace Debug
 #define DEBUG_EXPAND_MACRO(x) x
 
 #define DEBUG_PRINT_ASSERT_SIMPLE(expression) \
-    Logger::ScopedMessage(Logger::GetGlobalSink()).SetSource(__FILE__).SetLine(__LINE__) \
+    Logger::ScopedMessage(Logger::GetGlobalSink()).SetSeverity(Logger::Severity::Error).SetSource(__FILE__).SetLine(__LINE__) \
         << "Assertion failed: \"" << expression << "\"";
 
 #define DBEUG_PRINT_ASSERT_MESSAGE(expression, message) \
-    Logger::ScopedMessage(Logger::GetGlobalSink()).SetSource(__FILE__).SetLine(__LINE__) \
+    Logger::ScopedMessage(Logger::GetGlobalSink()).SetSeverity(Logger::Severity::Error).SetSource(__FILE__).SetLine(__LINE__) \
         << "Assertion failed: \"" << expression << "\" - " << message;
 
 /*
