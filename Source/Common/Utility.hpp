@@ -42,25 +42,19 @@ namespace Utility
     std::vector<char> GetBinaryFileContent(std::string filename);
 
     // Splits a string into tokens.
-    std::vector<std::string> TokenizeString(std::string text, char character = ' ');
+    std::vector<std::string> StringTokenize(std::string text, char character = ' ');
 
     // Removes leading characters in a string.
-    inline std::string LeftStringTrim(std::string& text, const char* characters = " ")
-    {
-        return text.erase(0, text.find_first_not_of(characters));
-    }
+    std::string StringLeftTrim(std::string& text, const char* characters = " ");
 
     // Removes trailing character in a string.
-    inline std::string RightStringTrim(std::string& text, const char* characters = " ")
-    {
-        return text.erase(text.find_last_not_of(characters) + 1);
-    }
+    std::string StringRightTrim(std::string& text, const char* characters = " ");
 
     // Removes characters from both ends of a string.
-    inline std::string StringTrim(std::string& text, const char* characters = " ")
-    {
-        return LeftStringTrim(RightStringTrim(text, characters), characters);
-    }
+    std::string StringTrim(std::string& text, const char* characters = " ");
+
+    // Replace all occurances of text in a string with a replacement text.
+    std::string StringReplace(const std::string& source, std::string find, std::string replace);
 
     // Reorders a vector using given indices.
     template<typename Type>

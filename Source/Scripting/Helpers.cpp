@@ -24,7 +24,7 @@ void Scripting::GetField(State& state, std::string name, bool create)
     lua_pushvalue(state, -1);
 
     // Parse name tokens.
-    auto tokens = Utility::TokenizeString(name, '.');
+    auto tokens = Utility::StringTokenize(name, '.');
 
     if(tokens.empty())
     {

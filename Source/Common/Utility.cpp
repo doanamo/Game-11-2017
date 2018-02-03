@@ -61,7 +61,7 @@ std::vector<char> Utility::GetBinaryFileContent(std::string filename)
     return content;
 }
 
-std::vector<std::string> Utility::TokenizeString(std::string text, char character)
+std::vector<std::string> Utility::StringTokenize(std::string text, char character)
 {
     std::vector<std::string> result;
 
@@ -87,4 +87,33 @@ std::vector<std::string> Utility::TokenizeString(std::string text, char characte
     }
 
     return result;
+}
+
+std::string Utility::StringLeftTrim(std::string& text, const char* characters)
+{
+    return text.erase(0, text.find_first_not_of(characters));
+}
+
+std::string Utility::StringRightTrim(std::string& text, const char* characters)
+{
+    return text.erase(text.find_last_not_of(characters) + 1);
+}
+
+std::string Utility::StringTrim(std::string& text, const char* characters)
+{
+    return StringLeftTrim(StringRightTrim(text, characters), characters);
+}
+
+std::string Utility::StringReplace(const std::string& source, std::string find, std::string replace)
+{
+    std::string output = source;
+    std::size_t i = 0;
+
+    while((i = output.find(find, i)) != std::string::npos)
+    {
+        output.replace(i, find.length(), replace);
+        i += replace.length();
+    }
+
+    return output;
 }
