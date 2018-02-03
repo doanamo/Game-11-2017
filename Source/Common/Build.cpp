@@ -43,8 +43,8 @@ void Build::Initialize(int argc, char* argv[])
     LogInfo() << "Build commit info: CL " << Build::ChangeList << ", " << Build::CommitHash << ", " << Build::BranchName;
     LogInfo() << "Build commit date: " << Build::CommitDate;
 
-    // Done!
-    Log() << "Done!";
+    // Success!
+    Log() << "Success!";
 }
 
 std::string Build::GetWorkingDir()

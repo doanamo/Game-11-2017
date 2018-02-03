@@ -112,9 +112,10 @@ bool Window::Open(const WindowInfo& info)
 
     Assert(glGetError() == GL_NO_ERROR, "OpenGL error occurred during context initialization!");
 
-    // Log created window resolution.
+    // Log created window info.
     int windowWidth, windowHeight;
     glfwGetFramebufferSize(m_window, &windowWidth, &windowHeight);
+
     LogInfo() << "Resolution is " << windowWidth << "x" << windowHeight << ".";
 
     // Log created OpenGL context.
