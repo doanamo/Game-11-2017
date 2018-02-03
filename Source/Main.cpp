@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
     // Initialize build info.
     Build::Initialize(argc, argv);
 
-    // Initialize the platform.
+    // Initialize system platform.
     System::Platform platform;
     if(!platform.Initialize())
     {

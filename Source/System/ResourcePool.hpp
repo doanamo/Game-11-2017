@@ -154,7 +154,7 @@ namespace System
                 it = m_resources.erase(it);
 
                 // Print a log message.
-                Log() << "Released \"" << name << "\" resource.";
+                LogInfo() << "Released \"" << name << "\" resource.";
             }
             else
             {
@@ -178,7 +178,7 @@ namespace System
             it = m_resources.erase(it);
 
             // Print a log message.
-            Log() << "Released \"" << name << "\" resource.";
+            LogInfo() << "Released \"" << name << "\" resource.";
         }
 
         Assert(m_resources.empty(), "Resource pool is not empty after releasing all resources!");

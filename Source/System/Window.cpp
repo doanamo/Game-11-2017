@@ -3,12 +3,6 @@
 #include "Config.hpp"
 using namespace System;
 
-namespace
-{
-    // Error log messages.
-    #define LogOpenError() "Failed to open a window! "
-}
-
 WindowInfo::WindowInfo() :
     title("Window"),
     width(1024),
@@ -206,10 +200,12 @@ void Window::CursorEnterCallback(GLFWwindow* window, int entered)
 
 bool Window::Open(const WindowInfo& info)
 {
+    Log() << "Opening application window..." << LogIndent();
+
     // Check if the window is already open.
     if(m_window != nullptr)
     {
-        Log() << LogOpenError() << "Window instance is already open.";
+        LogError() << "Window instance is already open!";
         return false;
     }
 
@@ -234,7 +230,7 @@ bool Window::Open(const WindowInfo& info)
 
     if(m_window == nullptr)
     {
-        Log() << LogOpenError() << "Could not create the window.";
+        LogError() << "Could not create the window!";
         return false;
     }
 
@@ -269,28 +265,30 @@ bool Window::Open(const WindowInfo& info)
 
     if(error != GLEW_OK)
     {
-        Log() << "GLEW Error: " << glewGetErrorString(error);
-        Log() << LogOpenError() << "Could not initialize GLEW library.";
+        LogError() << "GLEW Error: " << glewGetErrorString(error);
+        LogError() << "Could not initialize GLEW library!";
         return false;
     }
 
     Assert(glGetError() == GL_NO_ERROR, "OpenGL error occurred during context initialization!");
 
-    // Check created OpenGL context.
+    // Log created window resolution.
+    int windowWidth, windowHeight;
+    glfwGetFramebufferSize(m_window, &windowWidth, &windowHeight);
+    LogInfo() << "Resolution is " << windowWidth << "x" << windowHeight << ".";
+
+    // Log created OpenGL context.
     int glMajor = glfwGetWindowAttrib(m_window, GLFW_CONTEXT_VERSION_MAJOR);
     int glMinor = glfwGetWindowAttrib(m_window, GLFW_CONTEXT_VERSION_MINOR);
 
-    Log() << "Created OpenGL " << glMajor << "." << glMinor << " context.";
-
-    // Log created window info.
-    int windowWidth, windowHeight;
-    glfwGetFramebufferSize(m_window, &windowWidth, &windowHeight);
-    Log() << "Created a window with " << windowWidth << "x" << windowHeight << " size.";
+    LogInfo() << "Using OpenGL " << glMajor << "." << glMinor << " context.";
 
     // Store window's title as it cannot be retrived back via GLFW.
     m_title = info.title;
 
     // Success!
+    Log() << "Success!";
+
     return initialized = true;
 }
 
@@ -317,7 +315,7 @@ void Window::ProcessEvents()
         int windowWidth, windowHeight;
         glfwGetFramebufferSize(m_window, &windowWidth, &windowHeight);
 
-        Log() << "Window has been resized to " << windowWidth << "x" << windowHeight << ".";
+        LogInfo() << "Window has been resized to " << windowWidth << "x" << windowHeight << ".";
 
         m_sizeChanged = false;
     }
@@ -338,7 +336,7 @@ void Window::Present()
         std::stringstream stream;
         stream << std::hex << std::setfill('0') << std::setw(4) << error;
 
-        Log() << "Found an uncaught OpenGL error in the last frame (code 0x" << stream.str() << ")!";
+        LogWarning() << "Found uncaught OpenGL error in last frame (code 0x" << stream.str() << ")!";
     }
 }
 

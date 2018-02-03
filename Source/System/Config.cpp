@@ -2,12 +2,6 @@
 #include "Config.hpp"
 using namespace System;
 
-namespace
-{
-    // Log message strings.
-    #define LogLoadError(filename) "Could not load a config from \"" << filename << "\" file! "
-}
-
 Config::Config()
 {
 }
@@ -18,6 +12,8 @@ Config::~Config()
 
 bool Config::Parse(const std::string text)
 {
+    Log() << "Parsing config text..." << LogIndent();
+
     // Create a string stream.
     std::istringstream stream(text);
 
@@ -55,7 +51,7 @@ bool Config::Parse(const std::string text)
 
             if(incorrectlyFormatted)
             {
-                Log() << "Ignoring a config line with ill formatting: \"" << line << "\".";
+                LogWarning() << "Ignoring a config line with ill formatting: \"" << line << "\".";
                 break;
             }
 
@@ -64,7 +60,7 @@ bool Config::Parse(const std::string text)
 
             if(name.empty())
             {
-                Log() << "Ignoring a config line with an empty parameter name: \"" << line << "\".";
+                LogWarning() << "Ignoring a config line with an empty parameter name: \"" << line << "\".";
                 break;
             }
 
@@ -73,7 +69,7 @@ bool Config::Parse(const std::string text)
 
             if(value.empty())
             {
-                Log() << "Ignoring a config line with an empty parameter value: \"" << line << "\".";
+                LogWarning() << "Ignoring a config line with an empty parameter value: \"" << line << "\".";
                 break;
             }
 
@@ -92,22 +88,26 @@ bool Config::Parse(const std::string text)
             // Set a new config parameter.
             this->SetParameter(name, value, true);
 
-            Log() << "Parsed parameter \"" << name << "\" has been set to \"" << value << "\".";
+            LogInfo() << "Parameter \"" << name << "\" has been set to \"" << value << "\".";
         }
     }
 
     // Success!
+    Log() << "Success!";
+
     return true;
 }
 
 bool Config::Load(const std::string filename)
 {
+    Log() << "Loading config from \"" << filename << "\" file..." << LogIndent();
+
     // Open the file.
     std::ifstream file(Build::GetWorkingDir() + filename);
 
     if(!file.is_open())
     {
-        Log() << LogLoadError(filename) << "Could not open the file.";
+        LogError() << "Could not open the file!";
         return false;
     }
 
@@ -116,16 +116,14 @@ bool Config::Load(const std::string filename)
     text << file.rdbuf();
 
     // Parse the read config text.
-    Log() << "Parsing parameters from \"" << filename << "\" file...";
-
     if(!this->Parse(text.str()))
     {
-        Log() << LogLoadError(filename) << "Could not parse the file.";
+        LogError() << "Could not parse the file!";
         return false;
     }
 
-    Log() << "Finished parsing a config from \"" << filename << "\" file.";
-
     // Success!
+    Log() << "Success!";
+
     return true;
 }

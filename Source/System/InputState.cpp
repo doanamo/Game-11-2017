@@ -19,6 +19,8 @@ InputState::~InputState()
 
 bool InputState::Subscribe(Window& window)
 {
+    Log() << "Subscribing input state..." << LogIndent();
+
     // Subscribe to window's event receivers.
     bool subscribedSuccessfully = true;
 
@@ -27,9 +29,12 @@ bool InputState::Subscribe(Window& window)
 
     if(!subscribedSuccessfully)
     {
-        Log() << "Failed to subscribe an input state! Could not subscribe to window's event receivers.";
+        LogError() << "Could not subscribe to window's event receivers!";
         return false;
     }
+
+    // Success!
+    Log() << "Success!";
 
     return true;
 }

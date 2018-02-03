@@ -10,6 +10,8 @@ namespace
 
 void Build::Initialize(int argc, char* argv[])
 {
+    Log() << "Reading build info..." << LogIndent();
+
     // Get the executable path from the first argument.
     Verify(argc >= 1, "First launch argument is missing!");
     std::string executablePath = argv[0];
@@ -22,7 +24,7 @@ void Build::Initialize(int argc, char* argv[])
     // Log build information.
     if(!workingDir.empty())
     {
-        Log() << "Working directory: " << workingDir;
+        LogInfo() << "Working directory: " << workingDir;
     }
     else
     {
@@ -30,16 +32,19 @@ void Build::Initialize(int argc, char* argv[])
         directory = Utility::StringReplace(directory, "\\", "/");
         directory = directory.substr(0, directory.find_last_of('/') + 1);
 
-        Log() << "Working directory: " << directory;
+        LogInfo() << "Working directory: " << directory;
     }
     
     if(!sourceDir.empty())
     {
-        Log() << "Source directory: " << sourceDir;
+        LogInfo() << "Source directory: " << sourceDir;
     }
 
-    Log() << "Build commit info: CL " << Build::ChangeList << ", " << Build::CommitHash << ", " << Build::BranchName;
-    Log() << "Build commit date: " << Build::CommitDate;
+    LogInfo() << "Build commit info: CL " << Build::ChangeList << ", " << Build::CommitHash << ", " << Build::BranchName;
+    LogInfo() << "Build commit date: " << Build::CommitDate;
+
+    // Done!
+    Log() << "Done!";
 }
 
 std::string Build::GetWorkingDir()
