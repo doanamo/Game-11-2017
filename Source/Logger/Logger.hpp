@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Precompiled.hpp"
-#include "ScopedIndent.hpp"
 #include "Message.hpp"
 #include "Sink.hpp"
 

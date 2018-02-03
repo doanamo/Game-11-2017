@@ -50,8 +50,6 @@ Set(SourceFiles
     "Logger/Sink.cpp"
     "Logger/Output.hpp"
     "Logger/Output.cpp"
-    "Logger/ScopedIndent.hpp"
-    "Logger/ScopedIndent.cpp"
 
     "System/Platform.hpp"
     "System/Platform.cpp"
