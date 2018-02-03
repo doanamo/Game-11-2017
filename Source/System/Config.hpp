@@ -27,7 +27,7 @@ namespace System
         ~Config();
 
         // Reads parameters from a configuration file.
-        bool Load(const std::string filename = "");
+        bool Load(const std::string filename);
 
         // Sets a config parameters with provided value.
         // Creates a parameter that does not exists with provided value by default.

@@ -63,7 +63,7 @@ bool Config::Load(const std::string filename)
 
             if(incorrectlyFormatted)
             {
-                Log() << "Ignoring a config line with incorrectly formatted delimeter: \"" << line << "\".";
+                Log() << "Ignoring a config line with ill formatting: \"" << line << "\".";
                 break;
             }
 
@@ -83,6 +83,12 @@ bool Config::Load(const std::string filename)
             {
                 Log() << "Ignoring a config line with an empty parameter value: \"" << line << "\".";
                 break;
+            }
+
+            // Remove enclosing quotation marks if present for string values.
+            if(value.front() == '"' && value.back() == '"')
+            {
+                value = std::string(value.begin() + 1, value.end() - 1);
             }
 
             // Append current section to the parameter's name.
