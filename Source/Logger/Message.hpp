@@ -62,7 +62,7 @@ namespace Logger
     class ScopedMessage : public Message
     {
     public:
-        ScopedMessage(Logger::Sink* sink);
+        ScopedMessage(Sink* sink);
         ScopedMessage(ScopedMessage&& other);
         ~ScopedMessage();
 

@@ -110,7 +110,7 @@ bool Message::IsEmpty() const
     return m_text.str().empty();
 }
 
-ScopedMessage::ScopedMessage(Logger::Sink* sink) :
+ScopedMessage::ScopedMessage(Sink* sink) :
     m_sink(sink)
 {
 }

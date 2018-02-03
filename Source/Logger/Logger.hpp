@@ -33,10 +33,7 @@ namespace Logger
     Sink* GetGlobalSink();
 }
 
-//
-// Macros
-//
-
+// Utility macros.
 #ifndef NDEBUG
     #define Log() Logger::ScopedMessage(Logger::GetGlobalSink()).SetSource(__FILE__).SetLine(__LINE__)
 #else
