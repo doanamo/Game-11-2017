@@ -4,17 +4,18 @@
 
 namespace
 {
-    std::string workingDir;
-    std::string sourceDir;
+    std::string workingDir = "";
+    std::string sourceDir = "";
 }
 
 void Build::Initialize()
 {
     // Read working and source directories from the build system.
+    // These files are written by our CMakeLists.txt configuration file.
     workingDir = Utility::GetTextFileContent("WorkingDir.txt");
     sourceDir = Utility::GetTextFileContent("SourceDir.txt");
 
-    // Log build informations.
+    // Log build information.
     Log() << "Working directory: " << workingDir;
     Log() << "Source directory: " << sourceDir;
     Log() << "Build commit info: CL " << Build::ChangeList << ", " << Build::CommitHash << ", " << Build::BranchName;
