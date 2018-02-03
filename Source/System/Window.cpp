@@ -38,6 +38,157 @@ void Window::DestroyWindow()
     }
 }
 
+bool Window::Open(const WindowInfo& info)
+{
+    Log() << "Opening application window..." << LogIndent();
+
+    // Check if the window is already open.
+    if(m_window != nullptr)
+    {
+        LogError() << "Window instance is already open!";
+        return false;
+    }
+
+    // Setup a cleanup guard variable.
+    bool initialized = false;
+
+    // Setup window hints.
+    glfwWindowHint(GLFW_RED_BITS, 8);
+    glfwWindowHint(GLFW_GREEN_BITS, 8);
+    glfwWindowHint(GLFW_BLUE_BITS, 8);
+    glfwWindowHint(GLFW_ALPHA_BITS, 8);
+    glfwWindowHint(GLFW_DEPTH_BITS, 24);
+    glfwWindowHint(GLFW_STENCIL_BITS, 8);
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    // Create the window.
+    m_window = glfwCreateWindow(info.width, info.height, info.title.c_str(), nullptr, nullptr);
+
+    if(m_window == nullptr)
+    {
+        LogError() << "Could not create the window!";
+        return false;
+    }
+
+    SCOPE_GUARD_IF(!initialized, this->DestroyWindow());
+
+    // Set window size limits.
+    glfwSetWindowSizeLimits(m_window, info.minWidth, info.minHeight, info.maxWidth, info.maxHeight);
+
+    // Set window user data.
+    glfwSetWindowUserPointer(m_window, this);
+
+    // Add event callbacks.
+    glfwSetWindowPosCallback(m_window, Window::MoveCallback);
+    glfwSetFramebufferSizeCallback(m_window, Window::ResizeCallback);
+    glfwSetWindowFocusCallback(m_window, Window::FocusCallback);
+    glfwSetWindowCloseCallback(m_window, Window::CloseCallback);
+    glfwSetKeyCallback(m_window, Window::KeyboardKeyCallback);
+    glfwSetCharCallback(m_window, Window::TextInputCallback);
+    glfwSetMouseButtonCallback(m_window, Window::MouseButtonCallback);
+    glfwSetScrollCallback(m_window, Window::MouseScrollCallback);
+    glfwSetCursorPosCallback(m_window, Window::CursorPositionCallback);
+    glfwSetCursorEnterCallback(m_window, Window::CursorEnterCallback);
+
+    // Make window context current.
+    glfwMakeContextCurrent(m_window);
+
+    // Set the swap interval.
+    glfwSwapInterval((int)info.vsync);
+
+    // Initialize GLEW library for the current context.
+    GLenum error = glewInit();
+
+    if(error != GLEW_OK)
+    {
+        LogError() << "GLEW Error: " << glewGetErrorString(error);
+        LogError() << "Could not initialize GLEW library!";
+        return false;
+    }
+
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error occurred during context initialization!");
+
+    // Log created window resolution.
+    int windowWidth, windowHeight;
+    glfwGetFramebufferSize(m_window, &windowWidth, &windowHeight);
+    LogInfo() << "Resolution is " << windowWidth << "x" << windowHeight << ".";
+
+    // Log created OpenGL context.
+    int glMajor = glfwGetWindowAttrib(m_window, GLFW_CONTEXT_VERSION_MAJOR);
+    int glMinor = glfwGetWindowAttrib(m_window, GLFW_CONTEXT_VERSION_MINOR);
+
+    LogInfo() << "Using OpenGL " << glMajor << "." << glMinor << " context.";
+
+    // Store window's title as it cannot be retrived back via GLFW.
+    m_title = info.title;
+
+    // Success!
+    Log() << "Success!";
+
+    return initialized = true;
+}
+
+void Window::MakeContextCurrent()
+{
+    if(m_window == nullptr)
+        return;
+
+    // Mark associated OpenGL context as current.
+    glfwMakeContextCurrent(m_window);
+}
+
+void Window::ProcessEvents()
+{
+    if(m_window == nullptr)
+        return;
+
+    // Poll and process events using callbacks.
+    glfwPollEvents();
+
+    // Log window size change.
+    if(m_sizeChanged)
+    {
+        int windowWidth, windowHeight;
+        glfwGetFramebufferSize(m_window, &windowWidth, &windowHeight);
+
+        LogInfo() << "Window has been resized to " << windowWidth << "x" << windowHeight << ".";
+
+        m_sizeChanged = false;
+    }
+}
+
+void Window::Present()
+{
+    if(m_window == nullptr)
+        return;
+
+    // Swap framebuffers.
+    glfwSwapBuffers(m_window);
+
+    // Check if there are any uncaught OpenGL errors.
+    GLenum error;
+    while((error = glGetError()) != GL_NO_ERROR)
+    {
+        std::stringstream stream;
+        stream << std::hex << std::setfill('0') << std::setw(4) << error;
+
+        LogWarning() << "Found uncaught OpenGL error in last frame (code 0x" << stream.str() << ")!";
+    }
+}
+
+void Window::Close()
+{
+    if(m_window == nullptr)
+        return;
+
+    // Force the window to close.
+    glfwSetWindowShouldClose(m_window, GL_TRUE);
+}
+
 void Window::MoveCallback(GLFWwindow* window, int x, int y)
 {
     Assert(window != nullptr, "Window handle is nullptr!");
@@ -196,157 +347,6 @@ void Window::CursorEnterCallback(GLFWwindow* window, int entered)
     eventData.entered = entered != 0;
 
     instance->events.cursorEnter(eventData);
-}
-
-bool Window::Open(const WindowInfo& info)
-{
-    Log() << "Opening application window..." << LogIndent();
-
-    // Check if the window is already open.
-    if(m_window != nullptr)
-    {
-        LogError() << "Window instance is already open!";
-        return false;
-    }
-
-    // Setup a cleanup guard variable.
-    bool initialized = false;
-
-    // Setup window hints.
-    glfwWindowHint(GLFW_RED_BITS, 8);
-    glfwWindowHint(GLFW_GREEN_BITS, 8);
-    glfwWindowHint(GLFW_BLUE_BITS, 8);
-    glfwWindowHint(GLFW_ALPHA_BITS, 8);
-    glfwWindowHint(GLFW_DEPTH_BITS, 24);
-    glfwWindowHint(GLFW_STENCIL_BITS, 8);
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    // Create the window.
-    m_window = glfwCreateWindow(info.width, info.height, info.title.c_str(), nullptr, nullptr);
-
-    if(m_window == nullptr)
-    {
-        LogError() << "Could not create the window!";
-        return false;
-    }
-
-    SCOPE_GUARD_IF(!initialized, this->DestroyWindow());
-
-    // Set window size limits.
-    glfwSetWindowSizeLimits(m_window, info.minWidth, info.minHeight, info.maxWidth, info.maxHeight);
-
-    // Set window user data.
-    glfwSetWindowUserPointer(m_window, this);
-
-    // Add event callbacks.
-    glfwSetWindowPosCallback(m_window, Window::MoveCallback);
-    glfwSetFramebufferSizeCallback(m_window, Window::ResizeCallback);
-    glfwSetWindowFocusCallback(m_window, Window::FocusCallback);
-    glfwSetWindowCloseCallback(m_window, Window::CloseCallback);
-    glfwSetKeyCallback(m_window, Window::KeyboardKeyCallback);
-    glfwSetCharCallback(m_window, Window::TextInputCallback);
-    glfwSetMouseButtonCallback(m_window, Window::MouseButtonCallback);
-    glfwSetScrollCallback(m_window, Window::MouseScrollCallback);
-    glfwSetCursorPosCallback(m_window, Window::CursorPositionCallback);
-    glfwSetCursorEnterCallback(m_window, Window::CursorEnterCallback);
-
-    // Make window context current.
-    glfwMakeContextCurrent(m_window);
-
-    // Set the swap interval.
-    glfwSwapInterval((int)info.vsync);
-
-    // Initialize GLEW library for the current context.
-    GLenum error = glewInit();
-
-    if(error != GLEW_OK)
-    {
-        LogError() << "GLEW Error: " << glewGetErrorString(error);
-        LogError() << "Could not initialize GLEW library!";
-        return false;
-    }
-
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error occurred during context initialization!");
-
-    // Log created window resolution.
-    int windowWidth, windowHeight;
-    glfwGetFramebufferSize(m_window, &windowWidth, &windowHeight);
-    LogInfo() << "Resolution is " << windowWidth << "x" << windowHeight << ".";
-
-    // Log created OpenGL context.
-    int glMajor = glfwGetWindowAttrib(m_window, GLFW_CONTEXT_VERSION_MAJOR);
-    int glMinor = glfwGetWindowAttrib(m_window, GLFW_CONTEXT_VERSION_MINOR);
-
-    LogInfo() << "Using OpenGL " << glMajor << "." << glMinor << " context.";
-
-    // Store window's title as it cannot be retrived back via GLFW.
-    m_title = info.title;
-
-    // Success!
-    Log() << "Success!";
-
-    return initialized = true;
-}
-
-void Window::MakeContextCurrent()
-{
-    if(m_window == nullptr)
-        return;
-
-    // Mark associated OpenGL context as current.
-    glfwMakeContextCurrent(m_window);
-}
-
-void Window::ProcessEvents()
-{
-    if(m_window == nullptr)
-        return;
-
-    // Poll and process events using callbacks.
-    glfwPollEvents();
-
-    // Log window size change.
-    if(m_sizeChanged)
-    {
-        int windowWidth, windowHeight;
-        glfwGetFramebufferSize(m_window, &windowWidth, &windowHeight);
-
-        LogInfo() << "Window has been resized to " << windowWidth << "x" << windowHeight << ".";
-
-        m_sizeChanged = false;
-    }
-}
-
-void Window::Present()
-{
-    if(m_window == nullptr)
-        return;
-
-    // Swap framebuffers.
-    glfwSwapBuffers(m_window);
-
-    // Check if there are any uncaught OpenGL errors.
-    GLenum error;
-    while((error = glGetError()) != GL_NO_ERROR)
-    {
-        std::stringstream stream;
-        stream << std::hex << std::setfill('0') << std::setw(4) << error;
-
-        LogWarning() << "Found uncaught OpenGL error in last frame (code 0x" << stream.str() << ")!";
-    }
-}
-
-void Window::Close()
-{
-    if(m_window == nullptr)
-        return;
-
-    // Force the window to close.
-    glfwSetWindowShouldClose(m_window, GL_TRUE);
 }
 
 void Window::SetTitle(std::string title)
