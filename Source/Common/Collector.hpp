@@ -6,7 +6,18 @@
     Collector Templates
     
     Utility classes for storing return values of multiple invocations.
-    Returns boolean on a call that indicates if collection should continue.
+    Returns boolean on a call that indicates the result of invocations.
+
+    void ExampleCollector()
+    {
+        // Definition of a dispatcher that will keep invoking receivers
+        // as long as they keep returning true as the result.
+        Dispatcher<bool(void), CollectWhileTrue<bool>> dispatcher;
+
+        // Returns true if all receivers returned true.
+        // Returns false when the first receiver returns false.
+        bool result = dispatcher.Dispatch();
+    }
 */
 
 // Default collector.
