@@ -40,12 +40,7 @@ int main(int argc, char* argv[])
     Logger::Initialize();
 
     // Initialize build info.
-    {
-        Verify(argc >= 1, "First launch argument is missing!");
-        std::string executablePath = argv[0];
-
-        Build::Initialize(executablePath);
-    }
+    Build::Initialize(argc, argv);
 
     // Initialize the platform.
     System::Platform platform;

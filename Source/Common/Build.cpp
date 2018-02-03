@@ -8,8 +8,12 @@ namespace
     std::string sourceDir = "";
 }
 
-void Build::Initialize(std::string executablePath)
+void Build::Initialize(int argc, char* argv[])
 {
+    // Get the executable path from the first argument.
+    Verify(argc >= 1, "First launch argument is missing!");
+    std::string executablePath = argv[0];
+
     // Read working and source directories from the build system.
     // These files are written by our CMakeLists.txt configuration file.
     workingDir = Utility::GetTextFileContent("WorkingDir.txt");
