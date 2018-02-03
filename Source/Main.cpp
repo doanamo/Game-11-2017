@@ -33,11 +33,11 @@ namespace
 
 int main(int argc, char* argv[])
 {
-    // Initialize the logger.
-    Logger::Initialize();
-
-    // Initialize debug utilities.
+    // Initialize debug routines.
     Debug::Initialize();
+
+    // Initialize logging system.
+    Logger::Initialize();
 
     // Initialize build info.
     {
