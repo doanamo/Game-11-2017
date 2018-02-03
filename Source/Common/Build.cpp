@@ -12,10 +12,8 @@ void Build::Initialize()
 {
     // Read working and source directories from the build system.
     // These files are written by our CMakeLists.txt configuration file.
-    #ifndef NDEBUG
-        workingDir = Utility::GetTextFileContent("WorkingDir.txt");
-        sourceDir = Utility::GetTextFileContent("SourceDir.txt");
-    #endif
+    workingDir = Utility::GetTextFileContent("WorkingDir.txt");
+    sourceDir = Utility::GetTextFileContent("SourceDir.txt");
 
     // Log build information.
     if(!workingDir.empty())
