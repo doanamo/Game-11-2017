@@ -121,8 +121,8 @@ namespace System
         // Create and add a new resource pool.
         auto pool = std::make_unique<ResourcePool<Type>>();
         auto pair = ResourcePoolPair(typeid(Type), std::move(pool));
-        auto result = m_pools.insert(std::move(pair));
-        Assert(result.second, "Could not insert a new resource pool!");
+        auto result = m_pools.emplace(std::move(pair));
+        Assert(result.second, "Could not emplace a new resource pool!");
 
         // Return the created resource pool.
         return reinterpret_cast<ResourcePool<Type>*>(result.first->second.get());
