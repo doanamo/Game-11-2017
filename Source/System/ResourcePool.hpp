@@ -100,19 +100,23 @@ namespace System
     template<typename Type>
     ResourcePool<Type>::~ResourcePool()
     {
-        // Release all resource by ourselves.
+        // Release all resources now.
         this->ReleaseAll();
     }
 
     template<typename Type>
     void ResourcePool<Type>::SetDefault(std::shared_ptr<const Type> resource)
     {
+        Verify(it->second != nullptr, "Default resource cannot be null!");
+
         m_default = resource;
     }
 
     template<typename Type>
     std::shared_ptr<const Type> ResourcePool<Type>::GetDefault() const
     {
+        Verify(it->second != nullptr, "Default resource is null!");
+
         return m_default;
     }
 
@@ -120,10 +124,15 @@ namespace System
     template<typename... Arguments>
     std::shared_ptr<const Type> ResourcePool<Type>::Load(std::string name, Arguments... arguments)
     {
-        // Return existing resource if loaded.
+        // Return an existing resource if loaded.
         auto it = m_resources.find(name);
         if(it != m_resources.end())
+        {
+            Assert(it->second != nullptr, "Found resource is null!");
+
+            // Return found resource.
             return it->second;
+        }
 
         // Create and load a new resource instance.
         std::shared_ptr<Type> resource = std::make_shared<Type>();
@@ -168,7 +177,6 @@ namespace System
     {
         // Release all resources.
         auto it = m_resources.begin();
-
         while(it != m_resources.end())
         {
             // Retrieve the name to print it later.
