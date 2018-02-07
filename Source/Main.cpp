@@ -214,5 +214,7 @@ int main(int argc, char* argv[])
         timer.Tick();
     }
 
+    Log() << "Quitting application...";
+
     return 0;
 }
