@@ -133,10 +133,10 @@ namespace System
     {
         // Find a pool by resource type.
         auto it = m_pools.find(typeid(Type));
-
         if(it != m_pools.end())
         {
             // Cast and return the pointer that we already know is a resource pool.
+            Assert(it->second.get() != nullptr, "Retrieved resource pool is null!");
             return reinterpret_cast<ResourcePool<Type>*>(it->second.get());
         }
         else
