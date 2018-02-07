@@ -7,7 +7,7 @@ namespace
     // Callback error function.
     void ErrorCallback(int error, const char* description)
     {
-        Log() << "GLFW Error: " << description;
+        LogWarning() << "GLFW Error: " << description;
     }
 }
 
@@ -27,14 +27,10 @@ Platform::~Platform()
 
 bool Platform::Initialize()
 {
-    Log() << "Initializing system platform..." << LogIndent();
+    Log() << "Initializing platform..." << LogIndent();
 
-    // Check if the instance has been initialized already.
-    if(m_initialized)
-    {
-        LogError() << "Instance is already initialized!";
-        return false;
-    }
+    // Check if system platform is already initialized.
+    Verify(!m_initialized, "Platform is already initialized!");
 
     // Set a callback function for future GLFW errors.
     glfwSetErrorCallback(ErrorCallback);
