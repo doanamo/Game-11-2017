@@ -10,12 +10,12 @@ Config::~Config()
 {
 }
 
-bool Config::Load(const std::string filename)
+bool Config::Load(const std::string filepath)
 {
-    Log() << "Loading config from \"" << filename << "\" file..." << LogIndent();
+    Log() << "Loading config from \"" << filepath << "\" file..." << LogIndent();
 
     // Open the file.
-    std::ifstream file(Build::GetWorkingDir() + filename);
+    std::ifstream file(Build::GetWorkingDir() + filepath);
 
     if(!file.is_open())
     {
