@@ -20,6 +20,15 @@
 
 /*
     Debug Utility
+
+    Setups debugging routines for development builds.
+    Enables memory leak detection and debugging.
+
+    void ExampleDebug()
+    {
+        // Initialize debug routines.
+        Debug::Initialize();
+    }
 */
 
 namespace Debug
@@ -33,7 +42,7 @@ namespace Debug
         #endif
 
         // Enable memory leak detection.
-        #if defined(WIN32)
+        #ifdef WIN32
             _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
         #endif
     }
@@ -63,9 +72,11 @@ namespace Debug
     - Debug: Triggers a breakpoint
     - Release: Check is stripped
     
-    Usage:
-        Assert(m_initialized);
-        Assert(instance != nullptr, "Invalid instance.");
+    void ExampleAssert()
+    {
+        Assert(2 + 2 == 4);
+        Assert(true, "Life is a lie!");
+    }
 */
 
 #ifndef NDEBUG
@@ -97,15 +108,17 @@ namespace Debug
     
     Makes sure that a given expression is true.
     Same as Assert(), but triggers in release builds.
-    Runtime checks should be prefered instead of this.
+    Should be used whenever error recovery is not possible.
     
     Behaviour in different build types:
     - Debug: Triggers a breakpoint
     - Release: Triggers a breakpoint
     
-    Usage:
-        Verify(m_initialized);
-        Verify(instance != nullptr, "Invalid instance.");
+    void ExampleVerify()
+    {
+        Verify(2 + 2 == 4);
+        Verify(true, "Life is a lie!");
+    }
 */
 
 #ifndef NDEBUG
