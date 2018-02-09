@@ -40,12 +40,12 @@ namespace System
         Config();
         ~Config();
 
-        // Parses parameters from a text string.
-        bool Parse(const std::string text);
-
         // Reads parameters from a configuration file.
         bool Load(const std::string filename);
 
+        // Parses parameters from a text string.
+        bool Parse(const std::string text);
+        
         // Sets a config parameter.
         // Can create a parameter that does not exists with provided default value.
         template<typename Type>

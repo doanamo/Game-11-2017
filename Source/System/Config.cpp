@@ -10,6 +10,36 @@ Config::~Config()
 {
 }
 
+bool Config::Load(const std::string filename)
+{
+    Log() << "Loading config from \"" << filename << "\" file..." << LogIndent();
+
+    // Open the file.
+    std::ifstream file(Build::GetWorkingDir() + filename);
+
+    if(!file.is_open())
+    {
+        LogError() << "Could not open the file!";
+        return false;
+    }
+
+    // Read the content of the file.
+    std::stringstream text;
+    text << file.rdbuf();
+
+    // Parse the read config text.
+    if(!this->Parse(text.str()))
+    {
+        LogError() << "Could not parse the file!";
+        return false;
+    }
+
+    // Success!
+    Log() << "Success!";
+
+    return true;
+}
+
 bool Config::Parse(const std::string text)
 {
     Log() << "Parsing config text..." << LogIndent();
@@ -60,7 +90,7 @@ bool Config::Parse(const std::string text)
 
             if(name.empty())
             {
-                LogWarning() << "Ignoring a config line with an empty parameter name: \"" << line << "\".";
+                LogWarning() << "Ignoring a config line with empty parameter name: \"" << line << "\".";
                 break;
             }
 
@@ -69,7 +99,7 @@ bool Config::Parse(const std::string text)
 
             if(value.empty())
             {
-                LogWarning() << "Ignoring a config line with an empty parameter value: \"" << line << "\".";
+                LogWarning() << "Ignoring a config line with empty parameter value: \"" << line << "\".";
                 break;
             }
 
@@ -90,36 +120,6 @@ bool Config::Parse(const std::string text)
 
             LogInfo() << "Parameter \"" << name << "\" has been set to \"" << value << "\".";
         }
-    }
-
-    // Success!
-    Log() << "Success!";
-
-    return true;
-}
-
-bool Config::Load(const std::string filename)
-{
-    Log() << "Loading config from \"" << filename << "\" file..." << LogIndent();
-
-    // Open the file.
-    std::ifstream file(Build::GetWorkingDir() + filename);
-
-    if(!file.is_open())
-    {
-        LogError() << "Could not open the file!";
-        return false;
-    }
-
-    // Read the content of the file.
-    std::stringstream text;
-    text << file.rdbuf();
-
-    // Parse the read config text.
-    if(!this->Parse(text.str()))
-    {
-        LogError() << "Could not parse the file!";
-        return false;
     }
 
     // Success!
