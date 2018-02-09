@@ -5,8 +5,9 @@
 /*
     Collector Templates
     
-    Utility classes for storing return values of multiple invocations.
-    Returns boolean on a call that indicates the result of invocations.
+    Utility classes for storing return values of multiple receiver invocations.
+    Returns boolean on a call that indicates the final result of multiple invocations.
+    Some collector rules may terminate further receiver invocations on specific returns.
 
     void ExampleCollector()
     {
