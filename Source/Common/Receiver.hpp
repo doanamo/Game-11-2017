@@ -50,7 +50,7 @@ public:
         this->Unsubscribe();
 
         // Cleanup base class.
-        Delegate<ReturnType(Arguments...)>::Cleanup();
+        Delegate<ReturnType(Arguments...)>::Bind(nullptr);
     }
 
     // Subscribes to a dispatcher.

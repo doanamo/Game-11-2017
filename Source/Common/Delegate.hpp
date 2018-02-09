@@ -5,28 +5,56 @@
 /*
     Delegate Template
 
-    Binds a function which can be invoked at a later time.
+    Binds a function, a class method or a functor object which can be invoked at a later time.
     Be careful not to invoke a delagate to a method of an instance that no longer exists.
-    Check Receiver and Dispatcher templates for a subscription based solution that wraps delegates.
+    Check Receiver and Dispatcher class templates for a subscription based solution that wraps delegates.
     
-    Binding and invoking a function:
-        bool Function(const char* c, int i) { ... }
+    void ExampleDelegateFunction()
+    {
+        // Create a delegate that can bind to functions such as:
+        // bool Function(const char* c, int i) { ... }
         Delegate<bool(const char*, int)> delegate;
+
+        // Bind the delegate to a function.
         delegate.Bind<&Function>();
+
+        // Call the function by invoking the delegate.
         delegate.Invoke("hello", 5);
+    }
     
-    Binding and invoking a functor:
-        auto Object = [](const char* c, int i) { ... };
+    Binding and invoking a class method:
+    void ExampleDelegateMethod(Class& instance)
+    {
+        // Create a delegate that can bind to class methods such as:
+        // bool Class::Function(const char* c, int i) { ... }
         Delegate<bool(const char*, int)> delegate;
-        delegate.Bind(&Object);
-        delegate.Invoke("hello", 5);
-    
-    Binding and invoking a method:
-        bool Class::Function(const char* c, int i) { ... }
-        Class instance;
-        Delegate<bool(const char*, int)> delegate;
+
+        // Bind the delegate to a method of a class instance.
         delegate.Bind<Class, &Class::Function>(&instance);
+
+        // Call the method of the instance by invoking the delegate.
+        // Be careful to not call the delegate on an instance that no longer exists.
         delegate.Invoke("hello", 5);
+    }
+
+    
+    void ExampleDelegateFunctor()
+    {
+        // Create a functor object (object that overloads the call operator).
+        auto functor = [](const char* c, int i) -> bool
+        {
+            return true;
+        };
+
+        // Create a delegate that can bind to functors with above arguments.
+        Delegate<bool(const char*, int)> delegate;
+
+        // Bind the delegate to a functor instance.
+        delegate.Bind(&Object);
+
+        // Call the functor by invoking the delegate.
+        delegate.Invoke("hello", 5);
+    }
     
     Implementation based on: http://molecularmusings.wordpress.com/2011/09/19/generic-type-safe-delegates-and-events-in-c/
 */
@@ -49,16 +77,16 @@ private:
         return (Function)(std::forward<Arguments>(arguments)...);
     }
 
-    template<class InstanceType>
-    static ReturnType FunctorStub(InstancePtr instance, Arguments... arguments)
-    {
-        return (*static_cast<InstanceType*>(instance))(std::forward<Arguments>(arguments)...);
-    }
-
     template<class InstanceType, ReturnType (InstanceType::*Function)(Arguments...)>
     static ReturnType MethodStub(InstancePtr instance, Arguments... arguments)
     {
         return (static_cast<InstanceType*>(instance)->*Function)(std::forward<Arguments>(arguments)...);
+    }
+
+    template<class InstanceType>
+    static ReturnType FunctorStub(InstancePtr instance, Arguments... arguments)
+    {
+        return (*static_cast<InstanceType*>(instance))(std::forward<Arguments>(arguments)...);
     }
 
 public:
@@ -72,7 +100,8 @@ public:
     {
     }
 
-    void Cleanup()
+    // Unbinds the delegate.
+    void Bind(std::nullptr_t)
     {
         m_instance = nullptr;
         m_function = nullptr;
@@ -90,7 +119,7 @@ public:
     template<class InstanceType>
     void Bind(InstanceType* instance)
     {
-        Assert(instance != nullptr, "Received nullptr as functor instance!");
+        Verify(instance != nullptr, "Received nullptr as functor instance!");
 
         m_instance = instance;
         m_function = &FunctorStub<InstanceType>;
@@ -100,7 +129,7 @@ public:
     template<class InstanceType, ReturnType (InstanceType::*Function)(Arguments...)>
     void Bind(InstanceType* instance)
     {
-        Assert(instance != nullptr, "Received nullptr as method instance!");
+        Verify(instance != nullptr, "Received nullptr as method instance!");
 
         m_instance = instance;
         m_function = &MethodStub<InstanceType, Function>;
@@ -109,15 +138,16 @@ public:
     // Invokes the delegate.
     ReturnType Invoke(Arguments... arguments)
     {
-        Assert(m_function != nullptr, "Attempting to invoke delegate without a bound function!");
-
-        if(m_function == nullptr)
-            return ReturnType();
-
+        Verify(m_function != nullptr, "Attempting to invoke a delegate without a bound function!");
         return m_function(m_instance, std::forward<Arguments>(arguments)...);
     }
 
 private:
+    // Pointer to an instance of the delegate.
+    // Will be nullptr for standalone functions.
     InstancePtr m_instance;
+
+    // Pointer to a function generated from one of the three specialized
+    // templates (either for raw functions, methods and functors).
     FunctionPtr m_function;
 };
