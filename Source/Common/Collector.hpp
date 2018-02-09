@@ -50,8 +50,8 @@ template<typename ReturnType>
 class CollectLast
 {
 public:
-    CollectLast() :
-        m_result()
+    CollectLast(ReturnType initial) :
+        m_result(initial)
     {
     }
 
@@ -76,7 +76,7 @@ class CollectWhileTrue
 {
 public:
     CollectWhileTrue() :
-        m_result()
+        m_result(true)
     {
     }
 
@@ -101,7 +101,7 @@ class CollectWhileFalse
 public:
     public:
     CollectWhileFalse() :
-        m_result()
+        m_result(false)
     {
     }
 
