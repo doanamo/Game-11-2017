@@ -57,7 +57,7 @@ void InputState::OnKeyboardKey(const Window::Events::KeyboardKey& event)
 void InputState::OnWindowFocus(const Window::Events::Focus& event)
 {
     // Reset key states on focus loss.
-    // This will help avoid stuck input states when user switches between applications.
+    // This will help avoid stuck input states after alt + tabing between application.
     if(!event.focused)
     {
         this->Reset();
@@ -93,9 +93,7 @@ void InputState::Reset()
 
 bool InputState::IsKeyboardKeyDown(int key, bool repeat)
 {
-    // Check if the key is in a valid range.
-    if(key < 0 || key >= KeyboardKeyCount)
-        return false;
+    Verify(0 <= key && key < KeyboardKeyCount, "Attempting to index an invalid key!");
 
     // Check if the key was just pressed.
     if(m_keyboardState[key] == KeyboardKeyStates::Pressed)
@@ -110,9 +108,7 @@ bool InputState::IsKeyboardKeyDown(int key, bool repeat)
 
 bool InputState::IsKeyboardKeyUp(int key, bool repeat)
 {
-    // Check if the key is in a valid range.
-    if(key < 0 || key >= KeyboardKeyCount)
-        return false;
+    Verify(0 <= key && key < KeyboardKeyCount, "Attempting to index an invalid key!");
 
     // Check if the key was just released.
     if(m_keyboardState[key] == KeyboardKeyStates::Released)
