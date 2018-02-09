@@ -1,38 +1,71 @@
 #pragma once
 
 /*
-    Scope Guard Template
+    Scope Guard
 
     Executes a set function at the end of its lifetime.
     
-    Creating a scope guard:
+    void ExampleScopeGuard()
+    {
+        // Allocate an array on the heap.
         int* array = new int[10];
+
+        // Create a scope guard that will delete the
+        // allocated memory at the end of the current scope.
         auto Cleanup = MakeScopeGuard([&]()
         {
             delete[] array;
         });
+    }
     
-    Using a scope guard macro:
+    void ExampleScopeGuardMacro()
+    {
+        // Allocate an array on the heap.
         int* array = new int[10];
+
+        // Use a scope guard macro that will delete the
+        // allocated memory at the end of the current scope.
         SCOPE_GUARD(delete[] array);
+    }
     
-    Using a conditional scope guard macro:
+    void ExampleScopeGuardConditionalMacro()
+    {
+        // Create a condition for the scope guard.
         bool cleanup = true;
+
+        // Allocate an array on the heap.
         int* array = new int[10];
+
+        // Use a conditional scope guard macro that will delete the
+        // allocated memory at the end of the current scope.
         SCOPE_GUARD_IF(cleanup, delete[] array);
+    }
     
-    Using braced scope guard macros:
+    void ExampleScopeGuardBracedMacro()
+    {
+        // Allocate an array on the heap.
         int* array = new int[10];
+
+        // Use a braced scope guard macro that will delete the
+        // allocated memory at the end of the current scope.
         SCOPE_GUARD_BEGIN();
         {
             delete[] array;
             array = nullptr;
         }
         SCOPE_GUARD_END();
+    }
     
-    Using braced conditonal scope guard macros:
+    void ExampleScopeGuardConditionalBracedMacro()
+    {
+        // Create a condition for the scope guard.
         bool cleanup = true;
+
+        // Allocate an array on the heap.
         int* array = new int[10];
+
+        // Use a conditional braced scope guard macro that will delete
+        // the allocated memory at the end of the current scope.
         SCOPE_GUARD_BEGIN(cleanup);
         {
             delete[] array;
@@ -86,6 +119,7 @@ public:
     };
 
 private:
+    // Function that will be called.
     Type m_function;
 };
 
