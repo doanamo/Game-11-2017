@@ -27,11 +27,10 @@ FileOutput::~FileOutput()
     }
 }
 
-bool FileOutput::Initialize(std::string filename)
+bool FileOutput::Open(std::string filename)
 {
     // Check if the file stream is already open.
-    if(m_file.is_open())
-        return false;
+    Verify(!m_file.is_open(), "File stream is already open!");
 
     // Open the file stream for writing.
     m_file.open(filename);
@@ -49,7 +48,7 @@ bool FileOutput::Initialize(std::string filename)
 
 void FileOutput::Write(const Message& message, const SinkContext& context)
 {
-    if(!m_initialized)
+    if(!m_file.is_open())
         return;
 
     // Write a log message.

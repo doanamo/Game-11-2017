@@ -37,11 +37,8 @@ namespace Logger
         FileOutput();
         ~FileOutput();
 
-        // Restores an instance to its original state.
-        void Cleanup();
-
-        // Initializes the file output.
-        bool Initialize(std::string filename);
+        // Open the file output.
+        bool Open(std::string filename);
 
         // Writes a message to the file.
         void Write(const Message& message, const SinkContext& context);
@@ -49,9 +46,6 @@ namespace Logger
     private:
         // File output stream.
         std::ofstream m_file;
-
-        // Initialization state.
-        bool m_initialized;
     };
 }
 

@@ -29,7 +29,7 @@ void Logger::Initialize()
     sink.AddOutput(&consoleOutput);
 
     // Add the file output.
-    if(fileOutput.Initialize("Log.txt"))
+    if(fileOutput.Open("Log.txt"))
     {
         sink.AddOutput(&fileOutput);
     }
