@@ -9,35 +9,42 @@ template<typename Type>
 class Receiver;
 
 /*
-    Dispatcher Template
+    Dispatcher
 
     Holds a list of subscribed receivers that can be invoked all at once. 
     More safe than using raw delegates as unsubscribing is automated at 
-    receiver's destruction. No dangerous dangling pointers are left.
+    receiver's destruction, so dangerous dangling pointers are left.
 
     A single dispatcher instance can have multiple receivers subscribed,
     but a single receiver can be only subscribed to one dispatcher.
 
-    Example usage:
-        struct EventData { ... };
-    
-        void Class::FunctionA(const EventData& event) { ... }
-        void Class::FunctionB(const EventData& event) { ... }
+    void ExampleDispatcher()
+    {
+        // Create a class instance that defines following methods:
+        // void Class::FunctionA(const EventData& event) { ... }
+        // void Class::FunctionB(const EventData& event) { ... }
         Class instance;
     
+        // Create event receivers.
         Receiver<void(const EventData&)> receiverA;
         receiverA.Bind<Class, &Class::FunctionA>(&instance);
     
         Receiver<void(const EventData&)> receiverB;
         receiverB.Bind<Class, &Class::FunctionB>(&instance);
     
+        // Subscribe event receivers.
         Dispatcher<void(const EventData&)> dispatcher;
         dispatcher.Subscribe(receiverA);
         dispatcher.Subscribe(receiverB);
+
+        // Dispatch an event to receivers.
         dispatcher.Dispatch(EventData(...));
+    }
 */
 
 // Dispatcher base template class.
+// Does not allow dispatching/invoking receivers, allowing
+// a dispatcher instance to be safely passed as a reference.
 template<typename Type>
 class DispatcherBase;
 
@@ -45,6 +52,7 @@ template<typename ReturnType, typename... Arguments>
 class DispatcherBase<ReturnType(Arguments...)>
 {
 protected:
+    // Can only be contructed via Dispatcher template class.
     DispatcherBase();
     virtual ~DispatcherBase();
 
@@ -67,9 +75,52 @@ protected:
     ReturnType Dispatch(Arguments... arguments);
 
 private:
-    // List of receivers.
+    // Double linked list of receivers.
     Receiver<ReturnType(Arguments...)>* m_begin;
     Receiver<ReturnType(Arguments...)>* m_end;
+
+private:
+    // Receiver invoker template class helper.
+    template<typename Type>
+    class ReceiverInvoker;
+
+    template<typename ReturnType, typename... Arguments>
+    class ReceiverInvoker<ReturnType(Arguments...)>
+    {
+    protected:
+        ReturnType Dispatch(Receiver<ReturnType(Arguments...)>* receiver, Arguments... arguments)
+        {
+            Assert(receiver != nullptr, "Receiver is nullptr!");
+            return receiver->Receive(std::forward<Arguments>(arguments)...);
+        }
+    };
+
+    // Collector dispatcher template class helper.
+    template<typename Collector, typename Type>
+    class CollectorDispatcher;
+
+    template<class Collector, typename ReturnType, typename... Arguments>
+    class CollectorDispatcher<Collector, ReturnType(Arguments...)> : public ReceiverInvoker<ReturnType(Arguments...)>
+    {
+    public:
+        bool operator()(Collector& collector, Receiver<ReturnType(Arguments...)>* receiver, Arguments... arguments)
+        {
+            Assert(receiver != nullptr, "Receiver is nullptr!");
+            return collector(this->Dispatch(receiver, std::forward<Arguments>(arguments)...));
+        }
+    };
+
+    template<class Collector, typename... Arguments>
+    class CollectorDispatcher<Collector, void(Arguments...)> : public ReceiverInvoker<void(Arguments...)>
+    {
+    public:
+        bool operator()(Collector& collector, Receiver<void(Arguments...)>* receiver, Arguments... arguments)
+        {
+            Assert(receiver != nullptr, "Receiver is nullptr!");
+            this->Dispatch(receiver, std::forward<Arguments>(arguments)...);
+            return collector();
+        }
+    };
 };
 
 // Dispatcher template class.
@@ -83,51 +134,8 @@ public:
     // Invokes receivers with following arguments.
     ReturnType Dispatch(Arguments... arguments);
 
-    // Overloaded call operator that is used as dispatch.
+    // Overloaded call operator that is used as a dispatch.
     ReturnType operator()(Arguments... arguments);
-};
-
-// Receiver invoker template class.
-template<typename Type>
-class ReceiverInvoker;
-
-template<typename ReturnType, typename... Arguments>
-class ReceiverInvoker<ReturnType(Arguments...)>
-{
-protected:
-    ReturnType Dispatch(Receiver<ReturnType(Arguments...)>* receiver, Arguments... arguments)
-    {
-        Assert(receiver != nullptr, "Receiver is nullptr!");
-        return receiver->Receive(std::forward<Arguments>(arguments)...);
-    }
-};
-
-// Collector invocation template class for non void return types.
-template<typename Collector, typename Type>
-class CollectorInvocation;
-
-template<class Collector, typename ReturnType, typename... Arguments>
-class CollectorInvocation<Collector, ReturnType(Arguments...)> : public ReceiverInvoker<ReturnType(Arguments...)>
-{
-public:
-    bool operator()(Collector& collector, Receiver<ReturnType(Arguments...)>* receiver, Arguments... arguments)
-    {
-        Assert(receiver != nullptr, "Receiver is nullptr!");
-        return collector(this->Dispatch(receiver, std::forward<Arguments>(arguments)...));
-    }
-};
-
-// Collector invocation template class for void return types.
-template<class Collector, typename... Arguments>
-class CollectorInvocation<Collector, void(Arguments...)> : public ReceiverInvoker<void(Arguments...)>
-{
-public:
-    bool operator()(Collector& collector, Receiver<void(Arguments...)>* receiver, Arguments... arguments)
-    {
-        Assert(receiver != nullptr, "Receiver is nullptr!");
-        this->Dispatch(receiver, std::forward<Arguments>(arguments)...);
-        return collector();
-    }
 };
 
 // Template definitions.
@@ -147,7 +155,7 @@ DispatcherBase<ReturnType(Arguments...)>::~DispatcherBase()
 template<typename ReturnType, typename... Arguments>
 void DispatcherBase<ReturnType(Arguments...)>::UnsubscribeAll()
 {
-    // Unsubscribe all receivers.
+    // Iterate through the double linked list to unsubscribe all receivers.
     Receiver<ReturnType(Arguments...)>* iterator = m_begin;
     
     while(iterator != nullptr)
@@ -193,14 +201,14 @@ bool DispatcherBase<ReturnType(Arguments...)>::Subscribe(Receiver<ReturnType(Arg
     // Add receiver to the linked list.
     if(m_begin == nullptr)
     {
-        Assert(m_end == nullptr, "Linked list's beginning is nullptr but the end is not!");
+        Assert(m_end == nullptr, "Linked list's beginning element is nullptr but the ending is not!");
 
         m_begin = &receiver;
         m_end = &receiver;
     }
     else
     {
-        Assert(m_end != nullptr, "Linked list's end is nullptr but the beginning is not!");
+        Assert(m_end != nullptr, "Linked list's ending element is nullptr but the beginning is not!");
 
         m_end->m_next = &receiver;
         receiver.m_previous = m_end;
@@ -217,8 +225,7 @@ template<typename ReturnType, typename... Arguments>
 void DispatcherBase<ReturnType(Arguments...)>::Unsubscribe(Receiver<ReturnType(Arguments...)>& receiver)
 {
     // Check if receiver is subscribed to this dispatcher.
-    if(receiver.m_dispatcher != this)
-        return;
+    Verify(receiver.m_dispatcher == this, "Attempting to unsubscribe a receiver that is not subscribed to this dispatcher!");
 
     // Remove receiver from the linked list.
     if(m_begin == &receiver)
@@ -279,7 +286,7 @@ ReturnType DispatcherBase<ReturnType(Arguments...)>::Dispatch(Arguments... argum
     while(receiver != nullptr)
     {
         // Send an event to a receiver and collect the result.
-        CollectorInvocation<Collector, ReturnType(Arguments...)> invocation;
+        CollectorDispatcher<Collector, ReturnType(Arguments...)> invocation;
         if(!invocation(collector, receiver, std::forward<Arguments>(arguments)...))
             break;
 
