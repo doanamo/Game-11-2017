@@ -4,6 +4,8 @@
 
 /*
     Utility
+
+    Collection of small utility functions.
 */
 
 namespace Utility
@@ -15,7 +17,7 @@ namespace Utility
         return std::max(lower, std::min(value, upper));
     }
 
-    // Gets the size of a static array.
+    // Returns the size of a static array.
     template<typename Type, size_t Size>
     size_t ArraySize(const Type(&)[Size])
     {
@@ -29,38 +31,38 @@ namespace Utility
         container.swap(Type());
     }
 
-    // Gets the path of a file.
-    std::string GetFilePath(std::string filename);
+    // Gets a directory path without filename and extension.
+    std::string GetFilePath(std::string filepath);
 
-    // Gets the extension of a file.
-    std::string GetFileExtension(std::string filename);
+    // Gets an extension without directory path and filename.
+    std::string GetFileExtension(std::string filepath);
 
     // Gets the content of a text file.
-    std::string GetTextFileContent(std::string filename);
+    std::string GetTextFileContent(std::string filepath);
 
     // Gets the content of a binary file.
-    std::vector<char> GetBinaryFileContent(std::string filename);
+    std::vector<char> GetBinaryFileContent(std::string filepath);
 
-    // Splits a string into tokens.
-    std::vector<std::string> StringTokenize(std::string text, char character = ' ');
+    // Splits a string into a vector of tokens.
+    std::vector<std::string> StringTokenize(std::string text, char delimiter = ' ');
 
     // Removes leading characters in a string.
-    std::string StringLeftTrim(std::string& text, const char* characters = " ");
+    std::string StringLeftTrim(std::string& text, const char* delimiter = " ");
 
-    // Removes trailing character in a string.
-    std::string StringRightTrim(std::string& text, const char* characters = " ");
+    // Removes trailing characters in a string.
+    std::string StringRightTrim(std::string& text, const char* delimiter = " ");
 
     // Removes characters from both ends of a string.
-    std::string StringTrim(std::string& text, const char* characters = " ");
+    std::string StringTrim(std::string& text, const char* delimiter = " ");
 
     // Replace all occurances of text in a string with a replacement text.
-    std::string StringReplace(const std::string& source, std::string find, std::string replace);
+    std::string StringReplace(const std::string& source, std::string search, std::string replacement);
 
     // Reorders a vector using given indices.
     template<typename Type>
     void Reorder(std::vector<Type>& values, const std::vector<std::size_t>& order)
     {
-        Verify(values.size() == order.size());
+        Verify(values.size() == order.size(), "Sizes of vector containers do not match!");
 
         // Check if values are not empty.
         if(values.empty())
