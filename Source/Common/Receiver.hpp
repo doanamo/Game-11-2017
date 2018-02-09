@@ -12,10 +12,11 @@ template<typename Type>
 class ReceiverInvoker;
 
 /*
-    Receiver Template
+    Receiver
 
     Invokes a delegate after receiving a signal from a dispatcher.
-    Single receiver instance can be connected to only one dispatcher.
+    Single receiver instance can be subscribed to only one dispatcher.
+
     See Dispatcher template class for more information.
 */
 
@@ -40,17 +41,11 @@ public:
 
     virtual ~Receiver()
     {
-        Cleanup();
-    }
-
-    // Restores instance to its original state.
-    void Cleanup()
-    {
         // Unsubscribe from the dispatcher.
         this->Unsubscribe();
 
-        // Cleanup base class.
-        Delegate<ReturnType(Arguments...)>::Bind(nullptr);
+        // Unbind the delegeate.
+        this->Bind(nullptr);
     }
 
     // Subscribes to a dispatcher.
@@ -66,12 +61,18 @@ public:
         {
             m_dispatcher->Unsubscribe(*this);
 
-            Assert(m_dispatcher == nullptr, "Dispatcher didn't clear this receiver properly!");
-            Assert(m_previous == nullptr, "Dispatcher didn't clear this receiver properly!");
-            Assert(m_next == nullptr, "Dispatcher didn't clear this receiver properly!");
+            Assert(m_dispatcher == nullptr, "Dispatcher did not unsubscribe this receiver properly!");
+            Assert(m_previous == nullptr, "Dispatcher did not unsubscribe this receiver properly!");
+            Assert(m_next == nullptr, "Dispatcher did not unsubscribe this receiver properly!");
         }
     }
 
+    // Unbinds the receiver.
+    void Bind(std::nullptr_t)
+    {
+        Delegate<ReturnType(Arguments...)>::Bind(nullptr);
+    }
+    
     // Binds a static function.
     template<ReturnType(*Function)(Arguments...)>
     void Bind()
@@ -97,12 +98,12 @@ private:
     // Receives an event and invokes a bound function.
     ReturnType Receive(Arguments... arguments)
     {
-        // Call the bound delegate function.
+        Assert(m_dispatcher, "Invoked a receiver without it being subscribed!");
         return this->Invoke(std::forward<Arguments>(arguments)...);
     }
 
 private:
-    // Intrusive singly linked list.
+    // Intrusive double linked list element.
     DispatcherBase<ReturnType(Arguments...)>* m_dispatcher;
     Receiver<ReturnType(Arguments...)>*       m_previous;
     Receiver<ReturnType(Arguments...)>*       m_next;
