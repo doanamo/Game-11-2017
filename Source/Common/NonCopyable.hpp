@@ -1,15 +1,15 @@
 #pragma once
 
 /*
-    NonCopyable Base Class
+    NonCopyable
 
-    Prevents an instance of a derived class from being copied.
+    Base class that [revents an instance of a derived class from being copied.
     
-    Example usage:
-        class Object : private NonCopyable
-        {
-            ...
-        }
+    class Example : private NonCopyable
+    {
+        // Attempting to copy an instance of this class will generate a compile error.
+        // Private inheritance of NonCopyable base class is advised over public one.
+    }
 */
 
 class NonCopyable
