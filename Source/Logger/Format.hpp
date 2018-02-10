@@ -3,7 +3,16 @@
 #include "Precompiled.hpp"
 
 /*
-    Default Logging Format
+    Logger Format
+
+    Default logging format used for all outputs.
+
+    void ExampleFormat(std::ostream& stream, const Logger::Message& message, const SinkContext& context)
+    {
+        stream << ComposeSessionStart();
+        stream << ComposeMessage(message, context);
+        stream << ComposeSessionEnd();
+    }
 */
 
 namespace Logger

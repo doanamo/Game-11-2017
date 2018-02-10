@@ -32,7 +32,7 @@ std::string DefaultFormat::ComposeMessage(const Message& message, const SinkCont
     // Create a string stream.
     std::stringstream stream;
 
-    // Write message prefix.
+    // Write message time.
     time_t timeData = time(nullptr);
     tm* timeInfo = localtime(&timeData);
 
