@@ -4,13 +4,14 @@ using namespace Graphics;
 
 namespace
 {
-    // Log error messages.
-    #define LogCreateError() "Failed to create a buffer! "
-
     // Constant definitions.
     const GLuint InvalidHandle = 0;
     const GLenum InvalidEnum = 0;
 }
+
+/*
+    Buffer
+*/
 
 BufferInfo::BufferInfo() :
     usage(GL_STATIC_DRAW),
@@ -45,23 +46,21 @@ void Buffer::DestroyHandle()
 
 bool Buffer::Create(const BufferInfo& info)
 {
-    // Check if handle has been already created.
-    if(m_handle != InvalidHandle)
-    {
-        Log() << LogCreateError() << "Buffer instance has been already initialized.";
-        return false;
-    }
+    Log() << "Creating " << this->GetName() << "..." << LogIndent();
+
+    // Check if the handle has been already created.
+    Verify(m_handle == InvalidHandle, "Buffer instance has been already initialized!");
 
     // Validate buffer info.
     if(info.elementSize == 0)
     {
-        Log() << LogCreateError() << "Invalid argument - \"elementSize\" is 0.";
+        LogError() << "Invalid argument - \"elementSize\" is 0!";
         return false;
     }
 
     if(info.elementCount == 0)
     {
-        Log() << LogCreateError() << "Invalid argument - \"elementCount\" is 0.";
+        LogError() << "Invalid argument - \"elementCount\" is 0!";
         return false;
     }
 
@@ -69,15 +68,15 @@ bool Buffer::Create(const BufferInfo& info)
     bool initialized = false;
 
     // Create a buffer handle.
-    SCOPE_GUARD_IF(!initialized, this->DestroyHandle());
-
     glGenBuffers(1, &m_handle);
 
     if(m_handle == InvalidHandle)
     {
-        Log() << LogCreateError() << "Could not create a buffer handle.";
+        LogError() << "Could not create a buffer handle!";
         return false;
     }
+
+    SCOPE_GUARD_IF(!initialized, this->DestroyHandle());
 
     // Allocate buffer memory.
     unsigned int bufferSize = info.elementSize * info.elementCount;
@@ -90,23 +89,19 @@ bool Buffer::Create(const BufferInfo& info)
     m_elementSize = info.elementSize;
     m_elementCount = info.elementCount;
 
+    LogInfo() << "Buffer size is " << bufferSize << " bytes.";
+
     // Success!
-    Log() << "Created " << this->GetName() << " (" << bufferSize << " bytes).";
+    Log() << "Success!";
 
     return initialized = true;
 }
 
 void Buffer::Update(const void* data, int count)
 {
-    if(m_handle == InvalidHandle)
-        return;
-
-    // Validate arguments.
-    if(data == nullptr)
-        return;
-
-    if(count == 0)
-        return;
+    Verify(m_handle != InvalidHandle, "Buffer handle has not been created!");
+    Verify(data != nullptr, "Invalid argument - \"data\" is null!");
+    Verify(count != 0, "Invalid argument - \"count\" is invalid!");
 
     // Check if to upload the whole buffer.
     if(count < 0)
@@ -120,10 +115,82 @@ void Buffer::Update(const void* data, int count)
     glBindBuffer(m_type, 0);
 }
 
+GLenum Buffer::GetType() const
+{
+    Verify(m_handle != InvalidHandle, "Buffer handle has not been created!");
+
+    return m_type;
+}
+
+GLuint Buffer::GetHandle() const
+{
+    Verify(m_handle != InvalidHandle, "Buffer handle has not been created!");
+
+    return m_handle;
+}
+
+unsigned int Buffer::GetElementSize() const
+{
+    Verify(m_handle != InvalidHandle, "Buffer handle has not been created!");
+
+    return m_elementSize;
+}
+
+unsigned int Buffer::GetElementCount() const
+{
+    Verify(m_handle != InvalidHandle, "Buffer handle has not been created!");
+
+    return m_elementCount;
+}
+
+GLenum Buffer::GetElementType() const
+{
+    Verify(m_handle != InvalidHandle, "Buffer handle has not been created!");
+
+    return GL_INVALID_ENUM;
+}
+
+bool Buffer::IsValid() const
+{
+    return m_handle != 0;
+}
+
+bool Buffer::IsInstanced() const
+{
+    return false;
+}
+
+/*
+    Vertex Buffer
+*/
+
+VertexBuffer::VertexBuffer() :
+    Buffer(GL_ARRAY_BUFFER)
+{
+}
+
+const char* VertexBuffer::GetName() const
+{
+    return "vertex buffer";
+}
+
+/*
+    Index Buffer
+*/
+
+IndexBuffer::IndexBuffer() :
+    Buffer(GL_ELEMENT_ARRAY_BUFFER)
+{
+}
+
+const char* IndexBuffer::GetName() const
+{
+    return "index buffer";
+}
+
 GLenum IndexBuffer::GetElementType() const
 {
-    if(m_handle == InvalidHandle)
-        return InvalidEnum;
+    Verify(m_handle != InvalidHandle, "Buffer handle has not been created!");
 
     if(m_type == GL_ELEMENT_ARRAY_BUFFER)
     {
@@ -136,4 +203,23 @@ GLenum IndexBuffer::GetElementType() const
     }
 
     return InvalidEnum;
+}
+
+/*
+    Instance Buffer
+*/
+
+InstanceBuffer::InstanceBuffer() :
+    Buffer(GL_ARRAY_BUFFER)
+{
+}
+
+const char* InstanceBuffer::GetName() const
+{
+    return "instance buffer";
+}
+
+bool InstanceBuffer::IsInstanced() const
+{
+    return true;
 }

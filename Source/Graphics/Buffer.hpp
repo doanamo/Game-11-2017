@@ -3,17 +3,21 @@
 #include "Precompiled.hpp"
 
 /*
-    Buffer
+    Graphics Buffer
     
-    Generic object that can handle different types of OpenGL buffers.
+    Generic buffer base class that can handle different types of OpenGL buffers.
+    Available buffer types include vertex buffer, index buffer and instance buffer.
     
-    Creating a vertex buffer:
+    void ExampleGraphicsBuffer()
+    {
+        // Define vertex structure.
         struct Vertex
         {
             glm::vec3 position;
             glm::vec4 color;
         };
         
+        // Define vertex geometry.
         const Vertex vertices[] =
         {
             { glm::vec3( 0.0f,  0.433f,  0.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) }, // Top
@@ -21,13 +25,16 @@
             { glm::vec3(-0.5f, -0.433f,  0.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) }, // Left
         };
 
+        // Describe buffer info.
         Graphics::BufferInfo bufferInfo;
         bufferInfo.elementSize = sizeof(Vertex);
         bufferInfo.elementCount = Utility::ArraySize(vertices);
         bufferInfo.data = &vertices[0];
         
+        // Create a vertex buffer.
         Graphics::VertexBuffer vertexBuffer;
         vertexBuffer.Create(bufferInfo);
+    }
 */
 
 namespace Graphics
@@ -57,51 +64,30 @@ namespace Graphics
         // Updates the buffer's data.
         void Update(const void* data, int count = -1);
 
-        // Checks if the buffer is valid.
-        bool IsValid() const
-        {
-            return m_handle != 0;
-        }
-
         // Gets the buffer's type.
-        GLenum GetType() const
-        {
-            return m_type;
-        }
-
-        // Gets the buffer's handle.
-        GLuint GetHandle() const
-        {
-            return m_handle;
-        }
-
-        // Gets the buffer's element size.
-        unsigned int GetElementSize() const
-        {
-            return m_elementSize;
-        }
-
-        // Gets the buffer's element count.
-        unsigned int GetElementCount() const
-        {
-            return m_elementCount;
-        }
-
-        // Gets the buffer's element type.
-        // For use in index buffers where element size indicates a data type.
-        virtual GLenum GetElementType() const
-        {
-            return GL_INVALID_ENUM;
-        }
-
-        // Checks if the buffer is instanced.
-        virtual bool IsInstanced() const
-        {
-            return false;
-        }
+        GLenum GetType() const;
 
         // Gets the buffer's name.
         virtual const char* GetName() const = 0;
+
+        // Gets the buffer's handle.
+        GLuint GetHandle() const;
+
+        // Gets the buffer's element size.
+        unsigned int GetElementSize() const;
+
+        // Gets the buffer's element count.
+        unsigned int GetElementCount() const;
+
+        // Gets the buffer's element type.
+        // For use in index buffers where element size indicates data type.
+        virtual GLenum GetElementType() const;
+
+        // Checks if the buffer is valid.
+        bool IsValid() const;
+
+        // Checks if the buffer is instanced.
+        virtual bool IsInstanced() const;
 
     private:
         // Destroys the internal handle.
@@ -119,7 +105,7 @@ namespace Graphics
 }
 
 /*
-    Vertex Buffer
+    Graphics Vertex Buffer
 */
 
 namespace Graphics
@@ -127,20 +113,15 @@ namespace Graphics
     class VertexBuffer : public Buffer
     {
     public:
-        VertexBuffer() :
-            Buffer(GL_ARRAY_BUFFER)
-        {
-        }
+        VertexBuffer();
 
-        const char* GetName() const override
-        {
-            return "a vertex buffer";
-        }
+        // Returns the buffer's name.
+        const char* GetName() const override;
     };
 }
 
 /*
-    Index Buffer
+    Graphics Index Buffer
 */
 
 namespace Graphics
@@ -148,22 +129,18 @@ namespace Graphics
     class IndexBuffer : public Buffer
     {
     public:
-        IndexBuffer() :
-            Buffer(GL_ELEMENT_ARRAY_BUFFER)
-        {
-        }
+        IndexBuffer();
 
+        // Gets the element type of index indices.
         GLenum GetElementType() const override;
 
-        const char* GetName() const override
-        {
-            return "an index buffer";
-        }
+        // Returns the buffer's name.
+        const char* GetName() const override;
     };
 }
 
 /*
-    Instance Buffer
+    Graphics Instance Buffer
 */
 
 namespace Graphics
@@ -171,19 +148,12 @@ namespace Graphics
     class InstanceBuffer : public Buffer
     {
     public:
-        InstanceBuffer() :
-            Buffer(GL_ARRAY_BUFFER)
-        {
-        }
+        InstanceBuffer();
 
-        bool IsInstanced() const override
-        {
-            return true;
-        }
+        // Returns the buffer's name.
+        const char* GetName() const override;
 
-        const char* GetName() const override
-        {
-            return "an instance buffer";
-        }
+        // Returns true for this type of a buffer.
+        bool IsInstanced() const override;
     };
 }
