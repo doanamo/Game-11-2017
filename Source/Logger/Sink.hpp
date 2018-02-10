@@ -19,6 +19,7 @@ namespace Logger
     {
         SinkContext() :
             referenceFrame(0),
+            messageIndent(0),
             messageWritten(false)
         {
         }
