@@ -1,3 +1,9 @@
+/*
+    Author: Piotr Doan <doanpiotr@gmail.com>
+    Website: https://github.com/gunstarpl/
+    Copyright: All rights reserved, 2017-2018
+*/
+
 #include "Precompiled.hpp"
 #include "System/Platform.hpp"
 #include "System/Config.hpp"
@@ -18,12 +24,6 @@
 #include "Game/ScriptComponent.hpp"
 #include "Game/RenderSystem.hpp"
 #include "Game/RenderComponent.hpp"
-
-/*
-    Author: Piotr Doan <doanpiotr@gmail.com>
-    Website: https://github.com/gunstarpl/
-    Copyright: All rights reserved, 2018
-*/
 
 namespace
 {
