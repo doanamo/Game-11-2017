@@ -3,12 +3,12 @@
 #include "Precompiled.hpp"
 
 /*
-    Resource Pool
+    System Resource Pool
 
     Manages an instance pool for a single type of resource.
     See ResourceManager class for more context.
 
-    void ExampleResourcePool()
+    void ExampleSystemResourcePool()
     {
         // Create a resource pool instance.
         System::ResourcePool<Texture> texturePool;

@@ -3,11 +3,11 @@
 #include "Precompiled.hpp"
 
 /*
-    Config
+    System Config
 
     Simple configuration file format with parameter lookup.
 
-    void ExampleConfig()
+    void ExampleSystemConfig()
     {
         // Create a config instance.
         System::Config config;

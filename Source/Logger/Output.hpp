@@ -3,7 +3,7 @@
 #include "Precompiled.hpp"
 
 /*
-    Base Output
+    Logger Base Output
     
     Base class for output implementations that is added to logger sinks
 */
@@ -24,11 +24,11 @@ namespace Logger
 }
 
 /*
-    File Output
+    Logger File Output
 
     Writes log messages to a file.
 
-    void ExampleFileOutput()
+    void ExampleLoggerFileOutput()
     {
         // Create a logger sink.
         Logger::Sink sink;
@@ -63,11 +63,11 @@ namespace Logger
 }
 
 /*
-    Console Output
+    Logger Console Output
 
     Writes log messsages to the application's console window.
 
-    void ExampleConsoleOutput()
+    void ExampleLoggerConsoleOutput()
     {
         // Create a logger sink.
         Logger::Sink sink;
@@ -94,11 +94,11 @@ namespace Logger
 }
 
 /*
-    Debugger Output
+    Logger Debugger Output
 
     Writes log messages to the debugger's window.
 
-    void ExampleDebuggerOutput()
+    void ExampleLoggerDebuggerOutput()
     {
         // Create a logger sink.
         Logger::Sink sink;

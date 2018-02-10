@@ -3,12 +3,12 @@
 #include "Precompiled.hpp"
 
 /*
-    Timer
+    System Timer
 
     Keeps track of time and provides utilities such as automatic
     calculation of delta time between ticks and frame rate measurement.
 
-    void ExampleTimer()
+    void ExampleSystemTimer()
     {
         // Create a timer instance.
         // This also makes the timer tick once.

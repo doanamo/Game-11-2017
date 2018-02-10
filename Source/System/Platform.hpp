@@ -3,7 +3,7 @@
 #include "Precompiled.hpp"
 
 /*
-    Platform
+    System Platform
 
     Main platform context that must be initialized
     first before other system classes are used.
@@ -12,7 +12,7 @@
     that just have to be called at the very beginning
     of the main() function.
 
-    void ExmaplePlatform()
+    void ExmapleSystemPlatform()
     {
         // Initialize the platform instance.
         System::Platform platform;

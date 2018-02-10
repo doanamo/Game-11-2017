@@ -4,13 +4,13 @@
 #include "ResourcePool.hpp"
 
 /*
-    Resource Manager
+    System Resource Manager
 
     Tracks resource references and releases them when no longer needed.
     Wraps multiple ResourcePool instances that can hold resources
     of different types in a single ResourceManager instance.
 
-    void ExampleResourceManager()
+    void ExampleSystemResourceManager()
     {
         // Create a resource manager instance.
         System::ResourceManager resourceManager;

@@ -5,7 +5,25 @@
 /*
     Logger Sink
 
-    Writes messages to multiple outputs.
+    Writes log messages to multiple logging outputs.
+
+    void ExampleLoggerSink()
+    {
+        // Create a logging sink.
+        Logger::Sink sink;
+
+        // Open a file output.
+        Logger::FileOutput fileOutput;
+        fileOutput.Open("Log.txt");
+
+        // Add output to the sink.
+        sink.AddOutput(&fileOutput);
+
+        // Write a log message.
+        Logger::Message() message;
+        message << "Hello world!";
+        sink.Write(message);
+    }
 */
 
 namespace Logger
@@ -41,7 +59,7 @@ namespace Logger
         Sink();
         ~Sink();
 
-        // Sets the output name.
+        // Sets the sink name.
         void SetName(std::string name);
 
         // Adds an output.
@@ -53,16 +71,16 @@ namespace Logger
         // Writes a log message.
         void Write(const Logger::Message& message);
 
-        // Advance frame of reference.
+        // Advance the frame of reference.
         int AdvanceFrameReference();
 
-        // Increase current message indent.
+        // Increase the current message indent.
         void IncreaseIndent();
 
-        // Decrease current message indent.
+        // Decrease the current message indent.
         void DecreaseIndent();
 
-        // Gets the context.
+        // Gets the context needed for writting messages.
         const SinkContext& GetContext() const;
 
     private:
@@ -75,11 +93,11 @@ namespace Logger
 }
 
 /*
-    Scoped Indent
+    Logger Scoped Indent
 
     Increases logging indent for a duration of a scope.
 
-    void ExampleScopedIndent()
+    void ExampleLoggerScopedIndent()
     {
         // Initialize the logging system.
         Logger::Initialize();

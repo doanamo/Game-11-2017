@@ -3,9 +3,9 @@
 #include "Precompiled.hpp"
 
 /*
-    Collector Templates
+    Collector
     
-    Utility classes for storing return values of multiple receiver invocations.
+    Utility template classes for storing return values of multiple receiver invocations.
     Returns boolean on a call that indicates the final result of multiple invocations.
     Some collector rules may terminate further receiver invocations on specific returns.
 

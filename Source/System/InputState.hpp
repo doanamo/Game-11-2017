@@ -4,12 +4,12 @@
 #include "Window.hpp"
 
 /*
-    Input State
+    System Input State
 
     Caches input state between frames and handles repeating keys.
     Allows various input states to be easily polled.
 
-    void ExampleInputState(System::Window& window)
+    void ExampleSystemInputState(System::Window& window)
     {
         // Create an input state instance.
         System::InputState inputState;

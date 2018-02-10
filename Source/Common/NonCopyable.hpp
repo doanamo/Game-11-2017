@@ -1,9 +1,9 @@
 #pragma once
 
 /*
-    NonCopyable
+    Non-copyable
 
-    Base class that [revents an instance of a derived class from being copied.
+    Base class that prevents an instance of a derived class from being copied.
     
     class Example : private NonCopyable
     {

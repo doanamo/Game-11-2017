@@ -7,7 +7,7 @@
 
     Default logging format used for all outputs.
 
-    void ExampleFormat(std::ostream& stream, const Logger::Message& message, const SinkContext& context)
+    void ExampleLoggerFormat(std::ostream& stream, const Logger::Message& message, const SinkContext& context)
     {
         stream << ComposeSessionStart();
         stream << ComposeMessage(message, context);

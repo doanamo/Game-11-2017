@@ -3,12 +3,12 @@
 #include "Precompiled.hpp"
 
 /*
-    Window
+    System Window
 
     Creates and manages an application window with OpenGL context.
     Supports multiple windows and OpenGL contextes.
 
-    void ExampleWindow()
+    void ExampleSystemWindow()
     {
         // Describe a window.
         WindowInfo windowInfo;

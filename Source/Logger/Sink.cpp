@@ -20,8 +20,7 @@ void Sink::SetName(std::string name)
 
 void Sink::AddOutput(Logger::Output* output)
 {
-    if(output == nullptr)
-        return;
+    Verify(output != nullptr, "Attempting to add a null output!");
 
     // Add an output to the list.
     m_outputs.push_back(output);
@@ -29,8 +28,7 @@ void Sink::AddOutput(Logger::Output* output)
 
 void Sink::RemoveOutput(Logger::Output* output)
 {
-    if(output == nullptr)
-        return;
+    Verify(output != nullptr, "Attempting to remove a null output!");
 
     // Find and remove an output from the list.
     m_outputs.erase(std::remove(m_outputs.begin(), m_outputs.end(), output), m_outputs.end());
@@ -81,16 +79,14 @@ const SinkContext& Sink::GetContext() const
 ScopedIndent::ScopedIndent(Sink* sink) :
     m_sink(sink)
 {
-    if(m_sink != nullptr)
-    {
-        m_sink->IncreaseIndent();
-    }
+    Verify(m_sink != nullptr, "Argument for sink reference cannot be nullptr!");
+
+    m_sink->IncreaseIndent();
 }
 
 ScopedIndent::~ScopedIndent()
 {
-    if(m_sink != nullptr)
-    {
-        m_sink->DecreaseIndent();
-    }
+    Assert(m_sink != nullptr, "Saved sink reference somehow became nullptr!");
+
+    m_sink->DecreaseIndent();
 }

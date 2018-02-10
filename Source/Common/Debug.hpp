@@ -19,7 +19,7 @@
 #endif
 
 /*
-    Debug Utility
+    Debug
 
     Setups debugging routines for development builds.
     Enables memory leak detection and debugging.

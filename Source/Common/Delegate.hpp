@@ -3,7 +3,7 @@
 #include "Precompiled.hpp"
 
 /*
-    Delegate Template
+    Delegate
 
     Binds a function, a class method or a functor object which can be invoked at a later time.
     Be careful not to invoke a delagate to a method of an instance that no longer exists.

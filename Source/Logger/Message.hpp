@@ -7,7 +7,7 @@
 
     Object that holds a messages along with its metadata.
 
-    void ExampleMessage(Logger::Sink& sink)
+    void ExampleLoggerMessage(Logger::Sink& sink)
     {
         // Simply use a log macro.
         Log() << "Hello world!";
@@ -84,7 +84,7 @@ namespace Logger
 }
 
 /*
-    Scoped Logger Message
+    Logger Scoped Message
 
     Logger message object that writes to a sink at the end of its lifetime.
     Extensively used by Log() macro to write to the sink at the end of scope.
