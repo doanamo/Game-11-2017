@@ -5,10 +5,10 @@
 
 namespace
 {
-    // Logger sink.
+    // Default logger sink.
     Logger::Sink sink;
 
-    // Logger outputs.
+    // Default logger outputs.
     Logger::DebuggerOutput debuggerOutput;
     Logger::ConsoleOutput consoleOutput;
     Logger::FileOutput fileOutput;
@@ -19,14 +19,13 @@ namespace
 
 void Logger::Initialize()
 {
-    if(initialized)
-        return;
-
-    // Add the debugger output.
-    sink.AddOutput(&debuggerOutput);
+    Verify(!initialized, "Default logger sink has been already initialized!");
 
     // Add the console output.
     sink.AddOutput(&consoleOutput);
+
+    // Add the debugger output.
+    sink.AddOutput(&debuggerOutput);
 
     // Add the file output.
     if(fileOutput.Open("Log.txt"))
@@ -40,15 +39,21 @@ void Logger::Initialize()
 
 void Logger::Write(const Logger::Message& message)
 {
+    Verify(initialized, "Default logger has not been initialized yet!");
+
     sink.Write(message);
 }
 
 int Logger::AdvanceFrameReference()
 {
+    Verify(initialized, "Default logger has not been initialized yet!");
+
     return sink.AdvanceFrameReference();
 }
 
 Logger::Sink* Logger::GetGlobalSink()
 {
+    Verify(initialized, "Default logger has not been initialized yet!");
+
     return &sink;
 }

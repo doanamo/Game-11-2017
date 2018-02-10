@@ -36,7 +36,10 @@ bool FileOutput::Open(std::string filename)
     m_file.open(filename);
 
     if(!m_file.is_open())
+    {
+        LogError() << "Could not open a log file!";
         return false;
+    }
 
     // Write session start.
     m_file << DefaultFormat::ComposeSessionStart();

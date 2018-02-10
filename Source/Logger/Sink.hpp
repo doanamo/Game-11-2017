@@ -105,9 +105,3 @@ namespace Logger
         Sink * m_sink;
     };
 }
-
-// Utility macros.
-#define LogIndent() ""; Logger::ScopedIndent LOGGER_INDENT_NAME(__LINE__)(Logger::GetGlobalSink())
-
-#define LOGGER_INDENT_NAME(line) LOGGER_INDENT_STRING(line)
-#define LOGGER_INDENT_STRING(line) loggerIndent ## line
