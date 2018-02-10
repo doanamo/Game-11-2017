@@ -3,7 +3,7 @@
 #include "Precompiled.hpp"
 
 /*
-    Utility
+    Common Utility
 
     Collection of small utility functions.
 */
