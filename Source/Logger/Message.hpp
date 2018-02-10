@@ -6,6 +6,19 @@
     Logger Message
 
     Object that holds a messages along with its metadata.
+
+    void ExampleMessage(Logger::Sink& sink)
+    {
+        // Simply use a log macro.
+        Log() << "Hello world!";
+
+        // Above macro may equal to the following:
+        Logger::Message() message;
+        message.SetSource(__FILE__);
+        message.SetLine(__LINE__);
+        message << "Hello world!";
+        sink.Write(message);
+    }
 */
 
 namespace Logger
@@ -74,6 +87,8 @@ namespace Logger
     Scoped Logger Message
 
     Logger message object that writes to a sink at the end of its lifetime.
+    Extensively used by Log() macro to write to the sink at the end of scope.
+    Using anynomous instantiation, its scope ends at the next semicolon (';').
 */
 
 namespace Logger
