@@ -48,6 +48,19 @@ bool Window::Open(const WindowInfo& info)
     // Setup a cleanup guard variable.
     bool initialized = false;
 
+    // Validate arguments.
+    if(info.width < 0)
+    {
+        LogError() << "Invalid argument - \"info.width\" cannot be negative!";
+        return false;
+    }
+
+    if(info.height < 0)
+    {
+        LogError() << "Invalid argument - \"info.height\" cannot be negative!";
+        return false;
+    }
+
     // Setup window hints.
     glfwWindowHint(GLFW_RED_BITS, 8);
     glfwWindowHint(GLFW_GREEN_BITS, 8);
