@@ -85,6 +85,8 @@ bool Buffer::Create(const BufferInfo& info)
     glBufferData(m_type, bufferSize, info.data, info.usage);
     glBindBuffer(m_type, 0);
 
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
+
     // Save buffer parameters.
     m_elementSize = info.elementSize;
     m_elementCount = info.elementCount;
@@ -113,6 +115,8 @@ void Buffer::Update(const void* data, int count)
     glBindBuffer(m_type, m_handle);
     glBufferSubData(m_type, 0, m_elementSize * count, data);
     glBindBuffer(m_type, 0);
+
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 }
 
 GLenum Buffer::GetType() const
