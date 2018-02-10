@@ -54,7 +54,7 @@ namespace Logger
         bool Open(std::string filename);
 
         // Writes a message to the file.
-        void Write(const Message& message, const SinkContext& context);
+        void Write(const Message& message, const SinkContext& context) override;
 
     private:
         // File output stream.
@@ -89,7 +89,7 @@ namespace Logger
         ~ConsoleOutput();
 
         // Writes a message to the console window.
-        void Write(const Message& message, const SinkContext& context);
+        void Write(const Message& message, const SinkContext& context) override;
     };
 }
 
@@ -120,7 +120,7 @@ namespace Logger
         ~DebuggerOutput();
 
         // Writes a message to the debugger window.
-        void Write(const Message& message, const SinkContext& context);
+        void Write(const Message& message, const SinkContext& context) override;
 
     private:
         // Reusable string stream.
