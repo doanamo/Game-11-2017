@@ -5,7 +5,7 @@
 /*
     Base Output
     
-    Base class for output implementations.
+    Base class for output implementations that is added to logger sinks
 */
 
 namespace Logger
@@ -27,6 +27,19 @@ namespace Logger
     File Output
 
     Writes log messages to a file.
+
+    void ExampleFileOutput()
+    {
+        // Create a logger sink.
+        Logger::Sink sink;
+
+        // Open a file output.
+        Logger::FileOutput fileOutput;
+        fileOutput.Open("Log.txt");
+
+        // Add output to the sink.
+        sink.AddOutput(&fileOutput);
+    }
 */
 
 namespace Logger
@@ -53,6 +66,18 @@ namespace Logger
     Console Output
 
     Writes log messsages to the application's console window.
+
+    void ExampleConsoleOutput()
+    {
+        // Create a logger sink.
+        Logger::Sink sink;
+
+        // Open a console output.
+        Logger::ConsoleOutput consoleOutput;
+
+        // Add output to the sink.
+        sink.AddOutput(&consoleOutput);
+    }
 */
 
 namespace Logger
@@ -72,6 +97,18 @@ namespace Logger
     Debugger Output
 
     Writes log messages to the debugger's window.
+
+    void ExampleDebuggerOutput()
+    {
+        // Create a logger sink.
+        Logger::Sink sink;
+
+        // Open a debugger output.
+        Logger::DebuggerOutput debuggerOutput;
+
+        // Add output to the sink.
+        sink.AddOutput(&debuggerOutput);
+    }
 */
 
 namespace Logger

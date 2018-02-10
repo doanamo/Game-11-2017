@@ -9,9 +9,9 @@ namespace
     Logger::Sink sink;
 
     // Default logger outputs.
-    Logger::DebuggerOutput debuggerOutput;
-    Logger::ConsoleOutput consoleOutput;
     Logger::FileOutput fileOutput;
+    Logger::ConsoleOutput consoleOutput;
+    Logger::DebuggerOutput debuggerOutput;
 
     // Initialization state.
     bool initialized = false;
@@ -21,17 +21,17 @@ void Logger::Initialize()
 {
     Verify(!initialized, "Default logger sink has been already initialized!");
 
-    // Add the console output.
-    sink.AddOutput(&consoleOutput);
-
-    // Add the debugger output.
-    sink.AddOutput(&debuggerOutput);
-
     // Add the file output.
     if(fileOutput.Open("Log.txt"))
     {
         sink.AddOutput(&fileOutput);
     }
+
+    // Add the console output.
+    sink.AddOutput(&consoleOutput);
+
+    // Add the debugger output.
+    sink.AddOutput(&debuggerOutput);
 
     // Set initialized state.
     initialized = true;

@@ -51,8 +51,7 @@ bool FileOutput::Open(std::string filename)
 
 void FileOutput::Write(const Message& message, const SinkContext& context)
 {
-    if(!m_file.is_open())
-        return;
+    Verify(m_file.is_open(), "File stream is not open!");
 
     // Write a log message.
     m_file << DefaultFormat::ComposeMessage(message, context);
@@ -98,15 +97,13 @@ DebuggerOutput::~DebuggerOutput()
 
 void DebuggerOutput::Write(const Message& message, const SinkContext& context)
 {
-    #ifndef WIN32
-        return;
+    #ifdef WIN32
+        // Check if debugger is attached.
+        if(!IsDebuggerPresent())
+            return;
+
+        // Write a log message.
+        std::string output = DefaultFormat::ComposeMessage(message, context);
+        OutputDebugStringA(output.c_str());
     #endif
-
-    // Check if debugger is attached.
-    if(!IsDebuggerPresent())
-        return;
-
-    // Write a log message.
-    std::string output = DefaultFormat::ComposeMessage(message, context);
-    OutputDebugStringA(output.c_str());
 }
