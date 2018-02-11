@@ -3,21 +3,28 @@
 #include "Precompiled.hpp"
 
 /*
-    Sampler
+    Graphics Sampler
     
-    Encapsulates an OpenGL sampler object.
+    Encapsulates an OpenGL sampler object that defines texture sampling and filtering properties.
     
-    Example usage:
+    void ExampleGraphicsSampler()
+    {
+        // Describe sampler info.
         Graphics::SamplerInfo samplerInfo;
         samplerInfo.textureWrapS = GL_REPEAT;
         samplerInfo.textureWrapR = GL_REPEAT;
 
+        // Create a sampler instance.
         Graphics::Sampler sampler;
         sampler.Create(samplerInfo);
         
+        // Modify parameters after creation.
         sampler.SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         sampler.SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        // Retrieve an OpenGL handle.
         GLuint handle = sampler.GetHandle();
+    }
 */
 
 namespace Graphics
@@ -48,10 +55,10 @@ namespace Graphics
         Sampler();
         ~Sampler();
 
-        // Initializes the sampler object.
+        // Crates the sampler object.
         bool Create(const SamplerInfo& info);
 
-        // Sets a sampler's parameter.
+        // Sets the sampler's parameter.
         void SetParameter(GLenum parameter, GLint value);
 
         // Gets the sampler's handle.

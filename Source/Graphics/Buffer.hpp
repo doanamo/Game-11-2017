@@ -34,6 +34,9 @@
         // Create a vertex buffer.
         Graphics::VertexBuffer vertexBuffer;
         vertexBuffer.Create(bufferInfo);
+
+        // Retrieve an OpenGL handle.
+        GLuint handle = vertexBuffer.GetHandle();
     }
 */
 

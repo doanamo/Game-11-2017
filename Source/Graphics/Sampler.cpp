@@ -4,9 +4,6 @@ using namespace Graphics;
 
 namespace
 {
-    // Log error messages.
-    #define LogCreateError() "Failed to create a texture sampler! "
-
     // Invalid types.
     const GLuint InvalidHandle = 0;
 }
@@ -47,26 +44,24 @@ void Sampler::DestroyHandle()
 
 bool Sampler::Create(const SamplerInfo& info)
 {
+    Log() << "Creating sampler..." << LogIndent();
+
     // Check if handle has been already created.
-    if(m_handle != InvalidHandle)
-    {
-        Log() << LogCreateError() << "Sampler instance has been already initialized.";
-        return false;
-    }
+    Verify(m_handle == InvalidHandle, "Sampler instance has been already initialized!");
 
     // Setup a cleanup guard.
     bool initialized = false;
 
     // Create a sampler handle.
-    SCOPE_GUARD_IF(!initialized, this->DestroyHandle());
-
     glGenSamplers(1, &m_handle);
 
     if(m_handle == InvalidHandle)
     {
-        Log() << LogCreateError() << "Could not create a sampler.";
+        LogError() << "Could not create a sampler!";
         return false;
     }
+
+    SCOPE_GUARD_IF(!initialized, this->DestroyHandle());
 
     // Set sampling parameters.
     glSamplerParameteri(m_handle, GL_TEXTURE_WRAP_S, info.textureWrapS);
@@ -82,22 +77,27 @@ bool Sampler::Create(const SamplerInfo& info)
 
     glSamplerParameterfv(m_handle, GL_TEXTURE_BORDER_COLOR, &info.textureBorderColor[0]);
 
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
+
     // Success!
-    Log() << "Create a texture sampler.";
+    Log() << "Success!";
 
     return initialized = true;
 }
 
 void Sampler::SetParameter(GLenum parameter, GLint value)
 {
-    if(m_handle == InvalidHandle)
-        return;
+    Verify(m_handle != InvalidHandle, "Sampler handle has not been created!");
 
     glSamplerParameteri(m_handle, parameter, value);
+
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 }
 
 GLuint Sampler::GetHandle() const
 {
+    Verify(m_handle != InvalidHandle, "Sampler handle has not been created!");
+
     return m_handle;
 }
 
