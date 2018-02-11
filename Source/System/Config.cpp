@@ -35,7 +35,7 @@ bool Config::Load(const std::string filepath)
     }
 
     // Success!
-    Log() << "Success!";
+    LogInfo() << "Success!";
 
     return true;
 }
@@ -123,7 +123,7 @@ bool Config::Parse(const std::string text)
     }
 
     // Success!
-    Log() << "Success!";
+    LogInfo() << "Success!";
 
     return true;
 }

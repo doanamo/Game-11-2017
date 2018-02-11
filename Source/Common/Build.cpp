@@ -44,7 +44,7 @@ void Build::Initialize(int argc, char* argv[])
     LogInfo() << "Build commit date: " << Build::CommitDate;
 
     // Success!
-    Log() << "Success!";
+    LogInfo() << "Success!";
 }
 
 std::string Build::GetWorkingDir()

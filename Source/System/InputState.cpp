@@ -34,7 +34,7 @@ bool InputState::Subscribe(Window& window)
     }
 
     // Success!
-    Log() << "Success!";
+    LogInfo() << "Success!";
 
     return true;
 }

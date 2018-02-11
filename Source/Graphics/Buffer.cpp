@@ -94,7 +94,7 @@ bool Buffer::Create(const BufferInfo& info)
     LogInfo() << "Buffer size is " << bufferSize << " bytes.";
 
     // Success!
-    Log() << "Success!";
+    LogInfo() << "Success!";
 
     return initialized = true;
 }

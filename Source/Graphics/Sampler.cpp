@@ -80,7 +80,7 @@ bool Sampler::Create(const SamplerInfo& info)
     Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
     // Success!
-    Log() << "Success!";
+    LogInfo() << "Success!";
 
     return initialized = true;
 }

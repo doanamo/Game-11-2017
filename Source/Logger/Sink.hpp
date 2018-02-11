@@ -106,7 +106,7 @@ namespace Logger
         Log() << "Initializing nothingness..." << LogIndent();
 
         // Write a log message.
-        Log() << "Success!";
+        LogInfo() << "Success!";
     }
 */
 
