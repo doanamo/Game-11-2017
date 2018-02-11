@@ -34,9 +34,8 @@ ScreenSpace::~ScreenSpace()
 
 void ScreenSpace::SetTargetSize(int width, int height)
 {
-    // Floor and make a multiple of 2.
-    m_targetSize.x = FloorMultipleTwo(width);
-    m_targetSize.y = FloorMultipleTwo(height);
+    m_targetSize.x = (float)width;
+    m_targetSize.y = (float)height;
 
     m_rebuild = true;
 }
@@ -45,7 +44,7 @@ void ScreenSpace::SetSourceSize(float width, float height)
 {
     m_sourceSize.x = width;
     m_sourceSize.y = height;
-    m_sourceAspectRatio = 1.0f;
+    m_sourceAspectRatio = width / height;
 
     m_rebuildSourceSize = false;
     m_rebuild = true;
@@ -65,6 +64,11 @@ void ScreenSpace::Rebuild() const
 {
     if(m_rebuild)
     {
+        // Floor the target size and make a multiple of 2.
+        // This ensures that target and source sizes are uniform after possible integer to float conversions.
+        m_targetSize.x = FloorMultipleTwo(m_targetSize.x);
+        m_targetSize.y = FloorMultipleTwo(m_targetSize.y);
+
         // Build source size if needed.
         if(m_rebuildSourceSize)
         {
@@ -81,12 +85,13 @@ void ScreenSpace::Rebuild() const
             else
             {
                 m_sourceSize.y = m_targetSize.y * (targetAspectRatio / m_sourceAspectRatio);
-            }
-
-            // Floor and make a multiple of 2.
-            m_sourceSize.x = FloorMultipleTwo(m_sourceSize.x);
-            m_sourceSize.y = FloorMultipleTwo(m_sourceSize.y);
+            }   
         }
+
+        // Floor the source size and make a multiple of 2.
+        // This ensures that target and source sizes are uniform after possible integer to float conversions.
+        m_sourceSize.x = FloorMultipleTwo(m_sourceSize.x);
+        m_sourceSize.y = FloorMultipleTwo(m_sourceSize.y);
 
         // Calculate aspect ratios.
         float targetAspectRatio = m_targetSize.x / m_targetSize.y;
@@ -137,30 +142,30 @@ const glm::vec2& ScreenSpace::GetSourceSize() const
 
 const glm::vec4& ScreenSpace::GetRectangle() const
 {
-    Rebuild();
+    this->Rebuild();
     return m_rectangle;
 }
 
 const glm::vec2& ScreenSpace::GetOffset() const
 {
-    Rebuild();
+    this->Rebuild();
     return m_offset;
 }
 
 const glm::mat4& ScreenSpace::GetProjection() const
 {
-    Rebuild();
+    this->Rebuild();
     return m_projection;
 }
 
 const glm::mat4& ScreenSpace::GetView() const
 {
-    Rebuild();
+    this->Rebuild();
     return m_view;
 }
 
 const glm::mat4& ScreenSpace::GetTransform() const
 {
-    Rebuild();
+    this->Rebuild();
     return m_transform;
 }
