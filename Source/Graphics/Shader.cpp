@@ -4,10 +4,6 @@ using namespace Graphics;
 
 namespace
 {
-    // Log error message.
-    #define LogLoadError(filename) "Failed to load a shader from \"" << filename << "\" file! "
-    #define LogCreateError() "Failed to create a shader! "
-
     // Constant definitions.
     const GLuint InvalidHandle = 0;
     const GLint  InvalidAttribute = -1;
@@ -17,13 +13,13 @@ namespace
     struct ShaderType
     {
         const char* name;
-        GLenum      type;
+        GLenum type;
     };
 
     const int ShaderTypeCount = 3;
     const ShaderType ShaderTypes[ShaderTypeCount] =
     {
-        { "VERTEX_SHADER",   GL_VERTEX_SHADER },
+        { "VERTEX_SHADER",   GL_VERTEX_SHADER   },
         { "GEOMETRY_SHADER", GL_GEOMETRY_SHADER },
         { "FRAGMENT_SHADER", GL_FRAGMENT_SHADER },
     };
@@ -49,50 +45,43 @@ void Shader::DestroyHandle()
     }
 }
 
-bool Shader::Load(std::string filename)
+bool Shader::Load(std::string filepath)
 {
-    // Check if handle has been already created.
-    if(m_handle != InvalidHandle)
-    {
-        Log() << LogLoadError(filename) << "Instance has been already initialized.";
-        return false;
-    }
+    Log() << "Loading shader from \"" << filepath << "\" file..." << LogIndent();
 
     // Load the shader code from a file.
-    std::string shaderCode = Utility::GetTextFileContent(Build::GetWorkingDir() + filename);
+    std::string shaderCode = Utility::GetTextFileContent(Build::GetWorkingDir() + filepath);
 
     if(shaderCode.empty())
     {
-        Log() << LogLoadError(filename) << "Could not read the file.";
+        LogError() << "Could not read the file!";
         return false;
     }
 
-    // Call the initialization method.
-    if(!this->Create(shaderCode))
+    // Call the compile method.
+    if(!this->Compile(shaderCode))
     {
-        Log() << LogLoadError(filename) << "Could not compile the shader code.";
+        LogError() << "Could not compile the shader code!";
         return false;
     }
 
     // Success!
-    Log() << "Loaded a shader from \"" << filename << "\" file.";
+    LogInfo() << "Success!";
 
     return true;
 }
 
-bool Shader::Create(std::string shaderCode)
+bool Shader::Compile(std::string shaderCode)
 {
+    Log() << "Compiling shader code..." << LogIndent();
+
     // Check if handle has been already created.
-    if(m_handle != InvalidHandle)
-    {
-        Log() << LogCreateError() << "Instance has been already initialized.";
-        return false;
-    }
+    Verify(m_handle == InvalidHandle, "Shader instance has been already initialized!");
 
     // Validate arguments.
     if(shaderCode.empty())
     {
-        Log() << LogCreateError() << "Invalid argument - \"shaderCode\" is empty.";
+        LogError() << "Shader code cannot be empty!";
         return false;
     }
 
@@ -102,13 +91,14 @@ bool Shader::Create(std::string shaderCode)
     // Create an array of shader objects for each type that can be linked.
     GLuint shaderObjects[ShaderTypeCount] = { 0 };
 
-    SCOPE_GUARD
-    (
+    SCOPE_GUARD_BEGIN();
+    {
         for(int i = 0; i < ShaderTypeCount; ++i)
         {
             glDeleteShader(shaderObjects[i]);
         }
-    );
+    }
+    SCOPE_GUARD_END();
 
     // Extract shader version.
     std::string shaderVersion;
@@ -128,7 +118,7 @@ bool Shader::Create(std::string shaderCode)
     for(unsigned int i = 0; i < ShaderTypeCount; ++i)
     {
         const ShaderType& shaderType = ShaderTypes[i];
-        GLuint&           shaderObject = shaderObjects[i];
+        GLuint& shaderObject = shaderObjects[i];
 
         // Compile shader object if found.
         if(shaderCode.find(shaderType.name) != std::string::npos)
@@ -140,9 +130,11 @@ bool Shader::Create(std::string shaderCode)
 
             if(shaderObject == InvalidHandle)
             {
-                Log() << LogCreateError() << "Could not create a shader object.";
+                LogError() << "Could not create a shader object!";
                 return false;
             }
+
+            Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
             // Prepare preprocessor define.
             std::string shaderDefine = "#define ";
@@ -160,13 +152,15 @@ bool Shader::Create(std::string shaderCode)
             glShaderSource(shaderObject, Utility::ArraySize(shaderCodeSegments), (const GLchar**)&shaderCodeSegments, nullptr);
             glCompileShader(shaderObject);
 
+            Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
+
             // Check compiling results.
             GLint compileStatus = 0;
             glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &compileStatus);
 
             if(compileStatus == GL_FALSE)
             {
-                Log() << LogCreateError() << "Could not compile a shader object.";
+                LogError() << "Could not compile a shader object!";
 
                 GLint errorLength = 0;
                 glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &errorLength);
@@ -176,18 +170,20 @@ bool Shader::Create(std::string shaderCode)
                     std::vector<char> errorText(errorLength);
                     glGetShaderInfoLog(shaderObject, errorLength, &errorLength, &errorText[0]);
 
-                    Log() << "Shader compile errors: \"" << errorText.data() << "\".";
+                    LogError() << "Shader compile errors: \"" << errorText.data() << "\"";
                 }
 
                 return false;
             }
+
+            Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
         }
     }
 
     // Check if any shader objects were found.
     if(shaderObjectsFound == false)
     {
-        Log() << LogCreateError() << "Could not find any shader objects.";
+        LogError() << "Could not find any shader objects!";
         return false;
     }
 
@@ -198,9 +194,11 @@ bool Shader::Create(std::string shaderCode)
 
     if(m_handle == InvalidHandle)
     {
-        Log() << LogCreateError() << "Could not create a shader program.";
+        LogError() << "Could not create a shader program!";
         return false;
     }
+
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
     // Attach compiled shader objects.
     for(unsigned int i = 0; i < ShaderTypeCount; ++i)
@@ -213,8 +211,12 @@ bool Shader::Create(std::string shaderCode)
         }
     }
 
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
+
     // Link attached shader objects.
     glLinkProgram(m_handle);
+
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
     // Detach linked shader objects.
     for(unsigned int i = 0; i < ShaderTypeCount; ++i)
@@ -227,13 +229,15 @@ bool Shader::Create(std::string shaderCode)
         }
     }
 
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
+
     // Check linking results.
     GLint linkStatus = 0;
     glGetProgramiv(m_handle, GL_LINK_STATUS, &linkStatus);
 
     if(linkStatus == GL_FALSE)
     {
-        Log() << LogCreateError() << "Could not link a shader program.";
+        LogError()  << "Could not link a shader program!";
 
         GLint errorLength = 0;
         glGetProgramiv(m_handle, GL_INFO_LOG_LENGTH, &errorLength);
@@ -243,38 +247,49 @@ bool Shader::Create(std::string shaderCode)
             std::vector<char> errorText(errorLength);
             glGetProgramInfoLog(m_handle, errorLength, &errorLength, &errorText[0]);
 
-            Log() << "Shader link errors: \"" << errorText.data() << "\".";
+            LogError() << "Shader link errors: \"" << errorText.data() << "\"";
         }
 
         return false;
     }
 
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
+
     // Success!
-    Log() << "Created a shader (" << shaderCode.length() << " characters).";
+    LogInfo() << "Success!";
 
     return initialized = true;
 }
 
 GLint Shader::GetAttribute(std::string name) const
 {
-    if(m_handle == InvalidHandle)
-        return InvalidAttribute;
+    Verify(m_handle != InvalidHandle, "Shader program handle has not been created!");
+    Verify(!name.empty(), "Attribute name cannot be empty!");
 
-    if(name.empty())
-        return InvalidAttribute;
+    GLint location = glGetAttribLocation(m_handle, name.c_str());
 
-    return glGetAttribLocation(m_handle, name.c_str());
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
+
+    return location;
 }
 
 GLint Shader::GetUniform(std::string name) const
 {
-    if(m_handle == InvalidHandle)
-        return InvalidUniform;
+    Verify(m_handle != InvalidHandle, "Shader program handle has not been created!");
+    Verify(!name.empty(), "Uniform name cannot be empty!");
 
-    if(name.empty())
-        return InvalidUniform;
+    GLint location = glGetUniformLocation(m_handle, name.c_str());
 
-    return glGetUniformLocation(m_handle, name.c_str());
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
+
+    return location;
+}
+
+GLuint Shader::GetHandle() const
+{
+    Verify(m_handle != InvalidHandle, "Shader program handle has not been created!");
+
+    return m_handle;
 }
 
 bool Shader::IsValid() const

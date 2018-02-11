@@ -53,6 +53,8 @@ bool Sampler::Create(const SamplerInfo& info)
     bool initialized = false;
 
     // Create a sampler handle.
+    SCOPE_GUARD_IF(!initialized, this->DestroyHandle());
+    
     glGenSamplers(1, &m_handle);
 
     if(m_handle == InvalidHandle)
@@ -61,7 +63,7 @@ bool Sampler::Create(const SamplerInfo& info)
         return false;
     }
 
-    SCOPE_GUARD_IF(!initialized, this->DestroyHandle());
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
     // Set sampling parameters.
     glSamplerParameteri(m_handle, GL_TEXTURE_WRAP_S, info.textureWrapS);

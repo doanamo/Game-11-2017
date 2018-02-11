@@ -3,18 +3,24 @@
 #include "Precompiled.hpp"
 
 /*
-    Shader
+    Graphics Shader
     
-    Loads and links different OpenGL shaders into a program object.
+    Loads and links GLSL shaders into an OpenGL program object.
+    Supports geometry shaders, vertex shaders and fragment shaders.
     
-    Example usage:
+    void ExampleGraphicsShader()
+    {
+        // Create a shader instance.
         Graphics::Shader shader;
         shader.Load("Data/Shader.glsl");
 
+        // Use the shader in the rendering pipeline.
         glUseProgram(shader.GetHandle());
         glUniformMatrix4fv(shader.GetUniform("vertexTransform"), 1, GL_FALSE, glm::value_ptr(glm::mat4()));
+    }
 
-    Example shader code:
+    ExampleShader.glsl
+    [
         #version 330
         
         #if defined(VERTEX_SHADER)
@@ -33,9 +39,10 @@
         
             void main()
             {
-                finalColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                finalColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
             }
         #endif
+    ]
 */
 
 namespace Graphics
@@ -48,10 +55,10 @@ namespace Graphics
         ~Shader();
 
         // Loads the shader from a file.
-        bool Load(std::string filename);
+        bool Load(std::string filepath);
 
-        // Initializes the shader instance.
-        bool Create(std::string shaderCode);
+        // Compiles the shader from code.
+        bool Compile(std::string shaderCode);
 
         // Gets a shader attribute index.
         GLint GetAttribute(std::string name) const;
@@ -60,12 +67,9 @@ namespace Graphics
         GLint GetUniform(std::string name) const;
 
         // Gets the shader's program handle.
-        GLuint GetHandle() const
-        {
-            return m_handle;
-        }
+        GLuint GetHandle() const;
 
-        // Checks if instance is valid.
+        // Checks if the shader is valid.
         bool IsValid() const;
 
     private:
@@ -73,7 +77,7 @@ namespace Graphics
         void DestroyHandle();
 
     private:
-        // Linked program handle.
+        // Program handle.
         GLuint m_handle;
     };
 }

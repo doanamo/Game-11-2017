@@ -11,16 +11,6 @@
     {
         // Create a config instance.
         System::Config config;
-
-        // We can either parse a string or load from a file.
-        const char* configText =
-            "[Window]\n"
-            "Title = \"Game\"\n"
-            "Width = 1024\n"
-            "Height = 576\n"
-            "Vsync = true\n";
-
-        config.Parse(configText);
         config.Load("Game.cfg");
     
         // Retrieve loaded config parameters.
@@ -29,6 +19,15 @@
         int height = config.GetParameter<int>("Window.Height", 576);
         bool vsync = config.GetParameter<bool>("Window.Vsync", true);
     }
+
+    ExampleConfig.cfg
+    [
+        [Window]
+        Title = "Game"
+        Width = 1024
+        Height = 576
+        Vsync = true
+    ]
 */
 
 namespace System
@@ -41,7 +40,7 @@ namespace System
         ~Config();
 
         // Reads parameters from a configuration file.
-        bool Load(const std::string filename);
+        bool Load(const std::string filepath);
 
         // Parses parameters from a text string.
         bool Parse(const std::string text);

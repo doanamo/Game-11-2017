@@ -61,7 +61,7 @@ namespace Graphics
         virtual ~Buffer();
 
     public:
-        // Creates the buffer instance.
+        // Initializes the buffer instance.
         bool Create(const BufferInfo& info);
 
         // Updates the buffer's data.

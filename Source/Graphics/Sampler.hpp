@@ -55,7 +55,7 @@ namespace Graphics
         Sampler();
         ~Sampler();
 
-        // Crates the sampler object.
+        // Initializes the sampler object.
         bool Create(const SamplerInfo& info);
 
         // Sets the sampler's parameter.
