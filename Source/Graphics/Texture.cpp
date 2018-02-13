@@ -4,10 +4,6 @@ using namespace Graphics;
 
 namespace
 {
-    // Log error messages.
-    #define LogLoadError(filename) "Failed to load a texture from \"" << filename << "\" file! "
-    #define LogCreateError() "Failed to create a texture! "
-
     // Invalid types.
     const GLuint InvalidHandle = 0;
     const GLenum InvalidEnum = 0;
@@ -15,9 +11,9 @@ namespace
 
 Texture::Texture() :
     m_handle(InvalidHandle),
+    m_format(InvalidEnum),
     m_width(0),
-    m_height(0),
-    m_format(InvalidEnum)
+    m_height(0)
 {
 }
 
@@ -36,35 +32,26 @@ void Texture::DestroyHandle()
     }
 }
 
-bool Texture::Load(std::string filename)
+bool Texture::Load(std::string filepath)
 {
+    Log() << "Loading texture from \"" << filepath << "\" file..." << LogIndent();
+
     // Check if handle has been already created.
-    if(m_handle != InvalidHandle)
-    {
-        Log() << LogLoadError(filename) << "Instance has been already initialized.";
-        return false;
-    }
+    Verify(m_handle == InvalidHandle, "Texture instance has been already initialized!");
 
     // Validate arguments.
-    if(filename.empty())
+    if(filepath.empty())
     {
-        Log() << LogLoadError(filename) << "Invalid argument - \"filename\" is empty.";
-        return false;
-    }
-
-    // Check the file extenstion.
-    if(Utility::GetFileExtension(filename) != "png")
-    {
-        Log() << LogLoadError(filename) << "Unsupported file extension.";
+        LogError() << "Invalid argument - \"filepath\" is empty!";
         return false;
     }
 
     // Open the file stream.
-    std::ifstream file(Build::GetWorkingDir() + filename, std::ios::binary);
+    std::ifstream file(Build::GetWorkingDir() + filepath, std::ios::binary);
 
     if(!file.is_open())
     {
-        Log() << LogLoadError(filename) << "Could not open the file.";
+        LogError() << "Could not open the file!";
         return false;
     }
 
@@ -76,7 +63,7 @@ bool Texture::Load(std::string filename)
 
     if(png_sig_cmp(png_sig, 0, png_sig_size) != 0)
     {
-        Log() << LogLoadError(filename) << "Not a valid PNG file.";
+        LogError() << "Filepath does not contain a valid PNG file!";
         return false;
     }
 
@@ -85,7 +72,7 @@ bool Texture::Load(std::string filename)
 
     if(png_read_ptr == nullptr)
     {
-        Log() << LogLoadError(filename) << "Could not create PNG read structure.";
+        LogError() << "Could not create PNG read structure!";
         return false;
     }
 
@@ -93,14 +80,15 @@ bool Texture::Load(std::string filename)
 
     if(png_info_ptr == nullptr)
     {
-        Log() << LogLoadError(filename) << "Could not create PNG info structure.";
+        LogError() << "Could not create PNG info structure!";
         return false;
     }
 
-    SCOPE_GUARD
-    (
+    SCOPE_GUARD_BEGIN();
+    {
         png_destroy_read_struct(&png_read_ptr, &png_info_ptr, nullptr);
-    );
+    }
+    SCOPE_GUARD_END();
 
     // Declare file read function.
     auto png_read_function = [](png_structp png_ptr, png_bytep data, png_size_t length) -> void
@@ -113,22 +101,23 @@ bool Texture::Load(std::string filename)
     png_bytep* png_row_ptrs = nullptr;
     png_byte* png_data_ptr = nullptr;
 
-    SCOPE_GUARD
-    (
+    SCOPE_GUARD_BEGIN();
+    {
         delete[] png_row_ptrs;
         delete[] png_data_ptr;
-    );
+    }
+    SCOPE_GUARD_END();
 
     // Setup the error handling routine.
-    // This is apparently a standard way to handle errors with libpng and some
-    // embedded C code. Be aware of how dangerous it is to do this in C++.
-    // For ex. objects created past this if() won't have their destructors
-    // called if one of libpng functions jumps back here on an error!!!
-    // This is the reason why scope guards and other objects that require
-    // destruction are declared before this line.
+    // Apparently a standard way of handling errors with libpng...
+    // Library jumps here if one of its functions encounters an error!!!
+    // This is the reason why scope guards and other objects are declared
+    // before this call. Be aware of how dangerous it is to do in C++.
+    // For e.g. objects created past this line will not have their
+    // destructors called if the library jumps back here on an error.
     if(setjmp(png_jmpbuf(png_read_ptr)))
     {
-        Log() << LogLoadError(filename) << "An error occurred while reading the file.";
+        LogError() << "Error occurred while reading the file!";
         return false;
     }
 
@@ -180,7 +169,7 @@ bool Texture::Load(std::string filename)
         break;
 
     default:
-        Log() << LogLoadError(filename) << "Unsupported image format.";
+        LogError() << "Unsupported image format!";
         return false;
     }
 
@@ -192,7 +181,7 @@ bool Texture::Load(std::string filename)
 
     if(depth != 8)
     {
-        Log() << LogLoadError(filename) << "Unsupported image depth size.";
+        LogError() << "Unsupported image depth size!";
         return false;
     }
 
@@ -239,31 +228,29 @@ bool Texture::Load(std::string filename)
         break;
 
     default:
-        Log() << LogLoadError(filename) << "Unsupported number of channels.";
+        LogError() << "Unsupported number of channels!";
         return false;
     }
 
     // Call the initialization method.
     if(!this->Create(width, height, textureFormat, png_data_ptr))
     {
-        Log() << LogLoadError(filename) << "Texture could not be created.";
+        LogError() << "Texture could not be created!";
         return false;
     }
 
     // Success!
-    Log() << "Loaded a texture from \"" << filename << "\" file.";
+    LogInfo() << "Success!";
 
     return true;
 }
 
 bool Texture::Create(int width, int height, GLenum format, const void* data)
 {
+    Log() << "Creating texture..." << LogIndent();
+
     // Check if handle has been already created.
-    if(m_handle != InvalidHandle)
-    {
-        Log() << LogCreateError() << "Instance has been already initialized.";
-        return false;
-    }
+    Verify(m_handle == InvalidHandle, "Texture instance has been already initialized!");
 
     // Setup a cleanup guard.
     bool initialized = false;
@@ -271,29 +258,33 @@ bool Texture::Create(int width, int height, GLenum format, const void* data)
     // Validate arguments.
     if(width <= 0)
     {
-        Log() << LogCreateError() << "Invalid argument - \"width\" is invalid.";
+        LogError() << "Invalid argument - \"width\" is invalid.";
         return false;
     }
 
     if(height <= 0)
     {
-        Log() << LogCreateError() << "Invalid argument - \"height\" is invalid.";
+        LogError() << "Invalid argument - \"height\" is invalid.";
         return false;
     }
 
     // Create a texture handle.
+    SCOPE_GUARD_IF(!initialized, this->DestroyHandle());
+
     glGenTextures(1, &m_handle);
 
     if(m_handle == InvalidHandle)
     {
-        Log() << LogCreateError() << "Could not create a texture.";
+        LogError() << "Could not create a texture!";
         return false;
     }
 
-    SCOPE_GUARD_IF(!initialized, this->DestroyHandle());
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
     // Bind the texture.
     glBindTexture(GL_TEXTURE_2D, m_handle);
+
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
     // Set packing aligment for provided data.
     /*
@@ -301,40 +292,68 @@ bool Texture::Create(int width, int height, GLenum format, const void* data)
     {
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     }
+
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
     */
 
     // Allocated a texture surface on the hardware.
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
+
     // Generate texture mipmap.
     glGenerateMipmap(GL_TEXTURE_2D);
+
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
     // Unbind the texture.
     glBindTexture(GL_TEXTURE_2D, 0);
 
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
+
     // Save texture parameters.
+    m_format = format;
     m_width = width;
     m_height = height;
-    m_format = format;
 
     // Success!
-    Log() << "Created a texture (" << width << "x" << height << " size).";
+    LogInfo() << "Success!";
 
     return initialized = true;
 }
 
 void Texture::Update(const void* data)
 {
-    if(m_handle == InvalidHandle)
-        return;
+    Verify(m_handle != InvalidHandle, "Texture handle has not been created!");
+    Verify(data != nullptr, "Invalid argument - \"data\" is null!");
 
     // Upload new texture data.
-    if(data != nullptr)
-    {
-        glBindTexture(GL_TEXTURE_2D, m_handle);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, m_format, GL_UNSIGNED_BYTE, data);
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
+    glBindTexture(GL_TEXTURE_2D, m_handle);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, m_format, GL_UNSIGNED_BYTE, data);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
+}
+
+GLuint Texture::GetHandle() const
+{
+    Verify(m_handle != InvalidHandle, "Texture handle has not been created!");
+
+    return m_handle;
+}
+
+int Texture::GetWidth() const
+{
+    Verify(m_handle != InvalidHandle, "Texture handle has not been created!");
+
+    return m_width;
+}
+
+int Texture::GetHeight() const
+{
+    Verify(m_handle != InvalidHandle, "Texture handle has not been created!");
+
+    return m_height;
 }
 
 bool Texture::IsValid() const

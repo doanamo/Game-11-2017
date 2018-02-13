@@ -3,16 +3,20 @@
 #include "Precompiled.hpp"
 
 /*
-    Texture
+    Graphics Texture
     
-    Encapsulates an OpenGL texture surface.
+    Encapsulates an OpenGL texture object.
     Can also load images from PNG files.
     
-    Example usage:
+    void ExampleGraphicsTexture()
+    {
+        // Load a texture from file.
         Graphics::Texture texture;
         texture.Load("image.png");
         
+        // Retrieve the OpenGL handle.
         GLuint handle = texture.GetHandle();
+    }
 */
 
 namespace Graphics
@@ -25,7 +29,7 @@ namespace Graphics
         ~Texture();
 
         // Loads the texture from a file.
-        bool Load(std::string filename);
+        bool Load(std::string filepath);
 
         // Initializes the texture instance.
         bool Create(int width, int height, GLenum format, const void* data);
@@ -33,25 +37,16 @@ namespace Graphics
         // Updates the texture data.
         void Update(const void* data);
 
-        // Gets the texture handle.
-        GLuint GetHandle() const
-        {
-            return m_handle;
-        }
+        // Gets the texture's handle.
+        GLuint GetHandle() const;
 
-        // Gets the texture width.
-        int GetWidth() const
-        {
-            return m_width;
-        }
+        // Gets the texture's width.
+        int GetWidth() const;
 
-        // Gets the texture height.
-        int GetHeight() const
-        {
-            return m_height;
-        }
+        // Gets the texture's height.
+        int GetHeight() const;
 
-        // Checks if instance is valid.
+        // Checks if the texture instance is valid.
         bool IsValid() const;
 
     private:
@@ -63,8 +58,9 @@ namespace Graphics
         GLuint m_handle;
 
         // Texture parameters.
+        GLenum m_format;
         int m_width;
         int m_height;
-        GLenum m_format;
+        
     };
 }
