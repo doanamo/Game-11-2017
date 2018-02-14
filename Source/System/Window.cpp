@@ -75,6 +75,7 @@ bool Window::Open(const WindowInfo& info)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Create a window.
+    // This function call can randomly take twice as much memory after a system call to SetPixelFormat().
     m_window = glfwCreateWindow(info.width, info.height, info.title.c_str(), nullptr, nullptr);
 
     if(m_window == nullptr)
