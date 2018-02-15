@@ -14,9 +14,28 @@ namespace System
 }
 
 /*
-    Basic Renderer
+    Graphics Basic Renderer
 
-    Handles basic drawing routines.
+    Handles basic drawing routines such as clearing the screen or drawing sprites.
+
+    void ExampleBasicRenderer()
+    {
+        // Setup renderer info.
+        Graphics::BasicRendererInfo basicRendererInfo;
+        basicRendererInfo.resourceManager = &resourceManager;
+        basicRendererInfo.spriteBatchSize = 128;
+
+        // Create a basic renderer instance.
+        Graphics::BasicRenderer basicRenderer;
+        basicRenderer.Initialize(basicRendererInfo);
+
+        // Clear the backbuffer.
+        Graphics::ClearValues clearValues;
+        clearValues.color = glm::vec4(0.0f, 0.35f, 0.35f, 1.0f);
+        clearValues.depth = 1.0f;
+
+        basicRenderer.Clear(clearValues);
+    }
 */
 
 namespace Graphics
@@ -69,12 +88,12 @@ namespace Graphics
 
     private:
         // Graphics objects.
-        VertexBuffer   m_vertexBuffer;
+        VertexBuffer m_vertexBuffer;
         InstanceBuffer m_instanceBuffer;
-        VertexInput    m_vertexInput;
-        Sampler        m_nearestSampler;
-        Sampler        m_linearSampler;
-        ShaderPtr      m_shader;
+        VertexInput m_vertexInput;
+        Sampler m_nearestSampler;
+        Sampler m_linearSampler;
+        ShaderPtr m_shader;
 
         // Sprite batch size.
         int m_spriteBatchSize;
