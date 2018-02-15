@@ -4,11 +4,20 @@
 #include "State.hpp"
 
 /*
-    Stack Value
+    Scripting Stack Value
 
     Objects that references another object already on the stack by its index.
     This allows for example to push the table with a function as the function's
     argument, assuming that we know its exact relative index on the current stack.
+
+    void ExampleScriptingStackValue(Scripting::State& state, Scripting::Reference& script)
+    {
+        // Push an object on top of the stack.
+        Scripting::Push(state, scriptObject);
+
+        // Call a method of a pushed script object.
+        Scripting::Call(state, "Update", Scripting::StackValue(-1));
+    }
 */
 
 namespace Scripting
@@ -36,7 +45,7 @@ namespace Scripting
         template<>
         static void CalculateAbsoluteIndices(State& state, const StackValue& value)
         {
-            Assert(state.IsValid(), "Scripting state is invalid!");
+            Verify(state.IsValid(), "Scripting state is invalid!");
 
             // Convert relative index to an absolute position.
             if(value.m_index < 0)
@@ -48,7 +57,7 @@ namespace Scripting
         template<typename Type, typename... Types>
         static void CalculateAbsoluteIndices(State& state, const Type& value, const Types&... values)
         {
-            Assert(state.IsValid(), "Scripting state is invalid!");
+            Verify(state.IsValid(), "Scripting state is invalid!");
 
             // Call the template function on all values.
             CalculateAbsoluteIndices(state, value);
