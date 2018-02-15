@@ -3,11 +3,13 @@
 #include "Precompiled.hpp"
 
 /*
-    Vertex Input
+    Graphics Vertex Input
 
     Creates a vertex layout that binds vertex buffers to shader inputs on the pipeline.
 
-    Example usage:
+    void ExampleGraphicsVertexInput()
+    {
+        // Define the layout of vertex attributes.
         const Graphics::VertexAttribute vertexAttributes[] =
         {
             { &vertexBuffer, Graphics::VertexAttributeTypes::Float2 }, // Position
@@ -19,10 +21,13 @@
         vertexInputInfo.attributeCount = Utility::ArraySize(vertexAttributes);
         vertexInputInfo.attributes = &vertexAttributes[0];
     
+        // Create a vertex input instance.
         Graphics::VertexInput vertexInput;
         vertexInput.Create(vertexInputInfo);
     
+        // Bind vertex array inpuy.
         glBindVertexArray(vertexInput.GetHandle());
+    }
 */
 
 namespace Graphics
@@ -76,10 +81,7 @@ namespace Graphics
         bool Create(const VertexInputInfo& info);
 
         // Gets the vertex array object handle.
-        GLuint GetHandle() const
-        {
-            return m_handle;
-        }
+        GLuint GetHandle() const;
 
         // Checks if instance is valid.
         bool IsValid() const;

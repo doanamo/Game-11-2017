@@ -5,9 +5,6 @@ using namespace Graphics;
 
 namespace
 {
-    // Log error messages.
-    #define LogCreateError() "Failed to create a vertex input! "
-
     // Gets the row size of a vertex attribute type.
     int GetVertexAttributeTypeRowSize(VertexAttributeTypes type)
     {
@@ -29,10 +26,9 @@ namespace
             return 4;
 
         default:
-            Assert(false, "Unknown attribute type.");
+            Verify(false, "Unknown attribute type!");
+            return 0;
         }
-
-        return 0;
     }
 
     // Gets the row count of a vertex attribute type.
@@ -50,10 +46,9 @@ namespace
             return 4;
 
         default:
-            Assert(false, "Unknown attribute type.");
+            Verify(false, "Unknown attribute type!");
+            return 0;
         }
-
-        return 0;
     }
 
     // Gets the row offset of a vertex attribute type.
@@ -77,10 +72,9 @@ namespace
             return sizeof(float) * 4;
 
         default:
-            Assert(false, "Unknown attribute type.");
+            Verify(false, "Unknown attribute type!");
+            return 0;
         }
-
-        return 0;
     }
 
     // Gets the OpenGL enum of a vertex attribute type.
@@ -96,10 +90,9 @@ namespace
             return GL_FLOAT;
 
         default:
-            Assert(false, "Unknown attribute type.");
+            Verify(false, "Unknown attribute type!");
+            return GL_INVALID_ENUM;
         }
-
-        return GL_INVALID_ENUM;
     }
 
     // Constant definitions.
@@ -149,23 +142,21 @@ void VertexInput::DestroyHandle()
 
 bool VertexInput::Create(const VertexInputInfo& info)
 {
+    Log() << "Creating vertex input..." << LogIndent();
+
     // Check if handle has been already created.
-    if(m_handle != InvalidHandle)
-    {
-        Log() << LogCreateError() << "Vertex input instance has been already initialized.";
-        return false;
-    }
+    Verify(m_handle == InvalidHandle, "Vertex input instance has been already initialized!");
 
     // Validate arguments.
     if(info.attributeCount <= 0)
     {
-        Log() << LogCreateError() << "Invalid argument - \"count\" is 0.";
+        LogError() << "Invalid argument - \"count\" is zero!";
         return false;
     }
 
     if(info.attributes == nullptr)
     {
-        Log() << LogCreateError() << "Invalid argument - \"attributes\" is null.";
+        LogError() << "Invalid argument - \"attributes\" is null!";
         return false;
     }
 
@@ -175,25 +166,25 @@ bool VertexInput::Create(const VertexInputInfo& info)
 
         if(attribute.buffer == nullptr)
         {
-            Log() << LogCreateError() << "Invalid argument - \"attribute[" << i << "].buffer\" is null.";
+            LogError() << "Invalid argument - \"attribute[" << i << "].buffer\" is null!";
             return false;
         }
 
         if(!attribute.buffer->IsValid())
         {
-            Log() << LogCreateError() << "Invalid argument - \"attribute[" << i << "].buffer\" is invalid.";
+            LogError() << "Invalid argument - \"attribute[" << i << "].buffer\" is invalid!";
             return false;
         }
 
         if(attribute.buffer->GetType() != GL_ARRAY_BUFFER)
         {
-            Log() << LogCreateError() << "Invalid argument - \"attribute[" << i << "].buffer\" is not a vertex or an instance buffer.";
+            LogError() << "Invalid argument - \"attribute[" << i << "].buffer\" is not a vertex or an instance buffer!";
             return false;
         }
 
         if(attribute.type == VertexAttributeTypes::Invalid)
         {
-            Log() << LogCreateError() << "Invalid argument - \"attribute[" << i << "].type\" is invalid.";
+            LogError() << "Invalid argument - \"attribute[" << i << "].type\" is invalid!";
             return false;
         }
     }
@@ -208,18 +199,24 @@ bool VertexInput::Create(const VertexInputInfo& info)
 
     if(m_handle == 0)
     {
-        Log() << LogCreateError() << "Could not create a vertex array object.";
+        LogError() << "Could not create a vertex array handle!";
         return false;
     }
+
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
+
+    // Prepare a cleanup guard.
+    SCOPE_GUARD_BEGIN();
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+    }
+    SCOPE_GUARD_END();
 
     // Bind the vertex array handle.
     glBindVertexArray(m_handle);
 
-    SCOPE_GUARD
-    (
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-    );
+    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
     // Set the vertex array's state.
     const Buffer* currentBuffer = nullptr;
@@ -236,6 +233,8 @@ bool VertexInput::Create(const VertexInputInfo& info)
         {
             glBindBuffer(GL_ARRAY_BUFFER, attribute.buffer->GetHandle());
 
+            Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
+
             currentBuffer = attribute.buffer;
             currentOffset = 0;
         }
@@ -245,6 +244,8 @@ bool VertexInput::Create(const VertexInputInfo& info)
         {
             // Enable vertex attribute.
             glEnableVertexAttribArray(currentLocation);
+
+            Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
             // Set vertex attribute pointer.
             glVertexAttribPointer(
@@ -256,10 +257,14 @@ bool VertexInput::Create(const VertexInputInfo& info)
                 (void*)currentOffset
             );
 
+            Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
+
             // Make vertex location instanced.
             if(attribute.buffer->IsInstanced())
             {
                 glVertexAttribDivisor(currentLocation, 1);
+
+                Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
             }
 
             // Increment current location.
@@ -271,9 +276,16 @@ bool VertexInput::Create(const VertexInputInfo& info)
     }
 
     // Success!
-    Log() << "Created a vertex input (" << info.attributeCount << " attributes).";
+    LogInfo() << "Success!";
 
     return initialized = true;
+}
+
+GLuint VertexInput::GetHandle() const
+{
+    Verify(m_handle != InvalidHandle, "Vertex array handle has not been created!");
+
+    return m_handle;
 }
 
 bool VertexInput::IsValid() const
