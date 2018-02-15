@@ -3,9 +3,16 @@
 #include "Precompiled.hpp"
 
 /*
-    Lua State
+    Scripting State
 
-    Manages the internal state of Lua virtual machine.
+    Wraps Lua state object and provides utility.
+
+    void ExampleScriptingState()
+    {
+        // Create and load a script file.
+        Scripting::State scriptingState;
+        scriptingState.Load("Data/Scripts/Main.lua");
+    }
 */
 
 namespace Scripting
@@ -24,7 +31,7 @@ namespace Scripting
         bool Create();
 
         // Loads a script from a file.
-        bool Load(std::string filename);
+        bool Load(std::string filepath);
 
         // Parses a script from a string.
         bool Parse(std::string script);
@@ -36,7 +43,6 @@ namespace Scripting
         void PrintStack() const;
 
         // Cleans remaining objects on the stack.
-        // Prints the stack size before cleaning for debugging.
         void CleanStack();
 
         // Collects all memory garbage.

@@ -2,12 +2,6 @@
 #include "State.hpp"
 using namespace Scripting;
 
-namespace
-{
-    // Log error messages.
-    #define LogCreateError() "Failed to create a scripting state! "
-}
-
 extern "C"
 {
     // Prints a string on the stack to the log stream.
@@ -17,7 +11,7 @@ extern "C"
 
         if(lua_isstring(luaState, -1))
         {
-            Log() << lua_tostring(luaState, -1);
+            LogInfo() << lua_tostring(luaState, -1);
         }
 
         return 0;
@@ -78,12 +72,10 @@ void State::DestroyState()
 
 bool State::Create()
 {
+    Log() << "Creating scripting state..." << LogIndent();
+
     // Check if the instance has been already initialized.
-    if(m_state != nullptr)
-    {
-        Log() << LogCreateError() << "Instance has been already initialized.";
-        return false;
-    }
+    Verify(m_state == nullptr, "Instance has been already initialized!");
 
     // Setup a cleanup guard variable.
     bool initialized = false;
@@ -93,7 +85,7 @@ bool State::Create()
 
     if(m_state == nullptr)
     {
-        Log() << LogCreateError() << "Could not create a state for Lua virtual machine.";
+        LogError() << "Could not create a new Lua state!";
         return false;
     }
 
@@ -105,7 +97,7 @@ bool State::Create()
 
     if(lua_pcall(m_state, 1, 0, 0) != 0)
     {
-        Log() << LogCreateError() << "Could not load the base library.";
+        LogError() << "Could not load the base library!";
         this->PrintError();
         return false;
     }
@@ -125,13 +117,15 @@ bool State::Create()
     m_owner = true;
 
     // Success!
-    Log() << "Created a scripting Lua state.";
+    LogInfo() << "Success!";
 
     return initialized = true;
 }
 
-bool State::Load(std::string filename)
+bool State::Load(std::string filepath)
 {
+    Log() << "Loading scripting state from \"" << filepath << "\" file..." << LogIndent();
+
     // Create the state if needed.
     if(m_state == nullptr)
     {
@@ -140,17 +134,23 @@ bool State::Load(std::string filename)
     }
 
     // Parse the file.
-    if(luaL_dofile(m_state, (Build::GetWorkingDir() + filename).c_str()) != 0)
+    if(luaL_dofile(m_state, (Build::GetWorkingDir() + filepath).c_str()) != 0)
     {
+        LogError() << "Could not load the file!";
         this->PrintError();
         return false;
     }
+
+    // Success!
+    LogInfo() << "Success!";
 
     return true;
 }
 
 bool State::Parse(std::string text)
 {
+    Log() << "Parsing scripting state from string...";
+
     // Create the state if needed.
     if(m_state == nullptr)
     {
@@ -161,39 +161,42 @@ bool State::Parse(std::string text)
     // Parse the string.
     if(luaL_dostring(m_state, text.c_str()) != 0)
     {
+        LogError() << "Could not load the string!";
         this->PrintError();
         return false;
     }
+
+    // Success!
+    LogInfo() << "Success!";
 
     return true;
 }
 
 void State::PrintError()
 {
-    if(m_state == nullptr)
-        return;
+    Verify(m_state != nullptr, "Scripting state instance is not initialized!");
 
     // Make sure that we are getting a string.
     Assert(lua_isstring(m_state, -1), "Expected a string.");
 
     // Print a string to the log and pop it from the stack.
-    Log() << "Lua Error: " << lua_tostring(m_state, -1);
+    LogWarning() << "Lua Error: " << lua_tostring(m_state, -1);
     lua_pop(m_state, 1);
 }
 
 void State::PrintStack() const
 {
-    if(m_state == nullptr)
-        return;
+    Verify(m_state != nullptr, "Scripting state instance is not initialized!");
 
-    Log() << "Lua stack:";
+    // Starting printing the stack.
+    LogInfo() << "Lua stack:";
 
     // Get the index of the top element.
     int top = lua_gettop(m_state);
 
     if(top == 0)
     {
-        Log() << "  0: Empty";
+        LogInfo() << "  0: Empty";
         return;
     }
 
@@ -205,19 +208,19 @@ void State::PrintStack() const
         switch(type)
         {
         case LUA_TSTRING:
-            Log() << "  " << i << ": \"" << lua_tostring(m_state, i) << "\" (" << lua_typename(m_state, type) << ")";
+            LogInfo() << "  " << i << ": \"" << lua_tostring(m_state, i) << "\" (" << lua_typename(m_state, type) << ")";
             break;
 
         case LUA_TBOOLEAN:
-            Log() << "  " << i << ": " << (lua_toboolean(m_state, i) ? "true" : "false") << " (" << lua_typename(m_state, type) << ")";
+            LogInfo() << "  " << i << ": " << (lua_toboolean(m_state, i) ? "true" : "false") << " (" << lua_typename(m_state, type) << ")";
             break;
 
         case LUA_TNUMBER:
-            Log() << "  " << i << ": " << lua_tonumber(m_state, i) << " (" << lua_typename(m_state, type) << ")";
+            LogInfo() << "  " << i << ": " << lua_tonumber(m_state, i) << " (" << lua_typename(m_state, type) << ")";
             break;
 
         default:
-            Log() << "  " << i << ": ??? (" << lua_typename(m_state, type) << ")";
+            LogInfo() << "  " << i << ": ??? (" << lua_typename(m_state, type) << ")";
             break;
         }
     }
@@ -225,23 +228,21 @@ void State::PrintStack() const
 
 void State::CleanStack()
 {
-    if(m_state == nullptr)
-        return;
+    Verify(m_state != nullptr, "Scripting state instance is not initialized!");
 
     // Discard remaining objects on the Lua stack.
     int size = lua_gettop(m_state);
 
     if(size != 0)
     {
-        Log() << "Cleaning " << size << " abanoned objects on the scripting stack...";
+        LogDebug() << "Cleaning " << size << " abandoned objects on the scripting stack...";
         lua_settop(m_state, 0);
     }
 }
 
 void State::CollectGarbage()
 {
-    if(m_state == nullptr)
-        return;
+    Verify(m_state != nullptr, "Scripting state instance is not initialized!");
 
     // Collect all garbage at once.
     lua_gc(m_state, LUA_GCCOLLECT, 0);
@@ -249,11 +250,8 @@ void State::CollectGarbage()
 
 void State::CollectGarbage(float maxSeconds)
 {
-    if(m_state == nullptr)
-        return;
-
-    if(maxSeconds <= 0.0f)
-        return;
+    Verify(m_state != nullptr, "Scripting state instance is not initialized!");
+    Verify(maxSeconds > 0.0f, "Invalid argument - \"maxSeconds\" is invalid!");
 
     // Run the garbage collector for a specified time.
     double startTime = glfwGetTime();
@@ -273,8 +271,7 @@ bool State::IsValid() const
 
 State* State::GetOwner()
 {
-    if(m_state == nullptr)
-        return nullptr;
+    Verify(m_state != nullptr, "Scripting state instance is not initialized!");
 
     // Retrieve pointer to the instance that owns this Lua state.
     lua_getglobal(m_state, "ScriptingState");
@@ -289,10 +286,14 @@ State* State::GetOwner()
 
 lua_State* State::GetPrivate()
 {
+    Verify(m_state != nullptr, "Scripting state instance is not initialized!");
+
     return m_state;
 }
 
 State::operator lua_State*()
 {
+    Verify(m_state != nullptr, "Scripting state instance is not initialized!");
+
     return m_state;
 }
