@@ -63,8 +63,6 @@ bool Sampler::Create(const SamplerInfo& info)
         return false;
     }
 
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
-
     // Set sampling parameters.
     glSamplerParameteri(m_handle, GL_TEXTURE_WRAP_S, info.textureWrapS);
     glSamplerParameteri(m_handle, GL_TEXTURE_WRAP_T, info.textureWrapT);
@@ -79,8 +77,6 @@ bool Sampler::Create(const SamplerInfo& info)
 
     glSamplerParameterfv(m_handle, GL_TEXTURE_BORDER_COLOR, &info.textureBorderColor[0]);
 
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
-
     // Success!
     LogInfo() << "Success!";
 
@@ -92,8 +88,6 @@ void Sampler::SetParameter(GLenum parameter, GLint value)
     Verify(m_handle != InvalidHandle, "Sampler handle has not been created!");
 
     glSamplerParameteri(m_handle, parameter, value);
-
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 }
 
 GLuint Sampler::GetHandle() const

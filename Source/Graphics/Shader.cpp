@@ -134,8 +134,6 @@ bool Shader::Compile(std::string shaderCode)
                 return false;
             }
 
-            Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
-
             // Prepare preprocessor define.
             std::string shaderDefine = "#define ";
             shaderDefine += shaderType.name;
@@ -151,8 +149,6 @@ bool Shader::Compile(std::string shaderCode)
 
             glShaderSource(shaderObject, Utility::ArraySize(shaderCodeSegments), (const GLchar**)&shaderCodeSegments, nullptr);
             glCompileShader(shaderObject);
-
-            Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
             // Check compiling results.
             GLint compileStatus = 0;
@@ -175,8 +171,6 @@ bool Shader::Compile(std::string shaderCode)
 
                 return false;
             }
-
-            Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
         }
     }
 
@@ -198,8 +192,6 @@ bool Shader::Compile(std::string shaderCode)
         return false;
     }
 
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
-
     // Attach compiled shader objects.
     for(unsigned int i = 0; i < ShaderTypeCount; ++i)
     {
@@ -211,12 +203,8 @@ bool Shader::Compile(std::string shaderCode)
         }
     }
 
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
-
     // Link attached shader objects.
     glLinkProgram(m_handle);
-
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
     // Detach linked shader objects.
     for(unsigned int i = 0; i < ShaderTypeCount; ++i)
@@ -228,8 +216,6 @@ bool Shader::Compile(std::string shaderCode)
             glDetachShader(m_handle, shaderObject);
         }
     }
-
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
     // Check linking results.
     GLint linkStatus = 0;
@@ -253,8 +239,6 @@ bool Shader::Compile(std::string shaderCode)
         return false;
     }
 
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
-
     // Success!
     LogInfo() << "Success!";
 
@@ -268,8 +252,6 @@ GLint Shader::GetAttribute(std::string name) const
 
     GLint location = glGetAttribLocation(m_handle, name.c_str());
 
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
-
     return location;
 }
 
@@ -279,8 +261,6 @@ GLint Shader::GetUniform(std::string name) const
     Verify(!name.empty(), "Uniform name cannot be empty!");
 
     GLint location = glGetUniformLocation(m_handle, name.c_str());
-
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
     return location;
 }

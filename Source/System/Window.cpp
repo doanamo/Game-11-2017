@@ -184,7 +184,7 @@ void Window::Present()
         std::stringstream stream;
         stream << std::hex << std::setfill('0') << std::setw(4) << error;
 
-        LogWarning() << "Found uncaught OpenGL error in last frame (code 0x" << stream.str() << ")!";
+        LogWarning() << "Found uncaught OpenGL error in the last frame (code 0x" << stream.str() << ")!";
     }
 }
 

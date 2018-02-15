@@ -203,8 +203,6 @@ bool VertexInput::Create(const VertexInputInfo& info)
         return false;
     }
 
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
-
     // Prepare a cleanup guard.
     SCOPE_GUARD_BEGIN();
     {
@@ -215,8 +213,6 @@ bool VertexInput::Create(const VertexInputInfo& info)
 
     // Bind the vertex array handle.
     glBindVertexArray(m_handle);
-
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
     // Set the vertex array's state.
     const Buffer* currentBuffer = nullptr;
@@ -233,8 +229,6 @@ bool VertexInput::Create(const VertexInputInfo& info)
         {
             glBindBuffer(GL_ARRAY_BUFFER, attribute.buffer->GetHandle());
 
-            Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
-
             currentBuffer = attribute.buffer;
             currentOffset = 0;
         }
@@ -244,8 +238,6 @@ bool VertexInput::Create(const VertexInputInfo& info)
         {
             // Enable vertex attribute.
             glEnableVertexAttribArray(currentLocation);
-
-            Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
             // Set vertex attribute pointer.
             glVertexAttribPointer(
@@ -257,14 +249,10 @@ bool VertexInput::Create(const VertexInputInfo& info)
                 (void*)currentOffset
             );
 
-            Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
-
             // Make vertex location instanced.
             if(attribute.buffer->IsInstanced())
             {
                 glVertexAttribDivisor(currentLocation, 1);
-
-                Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
             }
 
             // Increment current location.

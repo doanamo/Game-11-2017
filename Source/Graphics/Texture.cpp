@@ -279,12 +279,8 @@ bool Texture::Create(int width, int height, GLenum format, const void* data)
         return false;
     }
 
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
-
     // Bind the texture.
     glBindTexture(GL_TEXTURE_2D, m_handle);
-
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
     // Set packing aligment for provided data.
     /*
@@ -292,24 +288,16 @@ bool Texture::Create(int width, int height, GLenum format, const void* data)
     {
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     }
-
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
     */
 
     // Allocated a texture surface on the hardware.
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
-
     // Generate texture mipmap.
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
-
     // Unbind the texture.
     glBindTexture(GL_TEXTURE_2D, 0);
-
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 
     // Save texture parameters.
     m_format = format;
@@ -331,8 +319,6 @@ void Texture::Update(const void* data)
     glBindTexture(GL_TEXTURE_2D, m_handle);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, m_format, GL_UNSIGNED_BYTE, data);
     glBindTexture(GL_TEXTURE_2D, 0);
-
-    Assert(glGetError() == GL_NO_ERROR, "OpenGL error has been encountered!");
 }
 
 GLuint Texture::GetHandle() const
