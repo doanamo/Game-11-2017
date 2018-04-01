@@ -4,7 +4,7 @@
 #include "State.hpp"
 
 /*
-    Stack Popper
+    Scripting Stack Popper
     
     Pops multiple values from the stacks and returns them as a tuple.
 */
@@ -23,24 +23,24 @@ namespace Scripting
         // Pops multiple objects from the stack and returns them in a tuple.
         static ReturnType Pop(State& state)
         {
-            Assert(state.IsValid(), "Invalid scripting state!");
+            Verify(state.IsValid(), "Invalid scripting state!");
             auto value = CreateTuple<Types...>(state, -(int)(sizeof...(Types)));
             lua_pop(state, (int)(sizeof...(Types)));
             return value;
         }
 
-        // Recursive function for creating a tuple.
+        // Recursive template functions for creating a tuple.
         template<typename Type>
         static std::tuple<Type> CreateTuple(State& state, const int index)
         {
-            Assert(state.IsValid(), "Invalid scripting state!");
+            Verify(state.IsValid(), "Invalid scripting state!");
             return std::make_tuple(Read<Type>(state, index));
         }
 
         template<typename Type1, typename Type2, typename... Rest>
         static std::tuple<Type1, Type2, Rest...> CreateTuple(State& state, const int index)
         {
-            Assert(state.IsValid(), "Invalid scripting state!");
+            Verify(state.IsValid(), "Invalid scripting state!");
             std::tuple<Type1> head = std::make_tuple(Read<Type1>(state, index));
             return std::tuple_cat(head, CreateTuple<Type2, Rest...>(state, index + 1));
         }
@@ -58,7 +58,7 @@ namespace Scripting
         // Pops an object from the stack and returns it.
         static ReturnType Pop(State& state)
         {
-            Assert(state.IsValid(), "Invalid scripting state!");
+            Verify(state.IsValid(), "Invalid scripting state!");
             ReturnType value = Read<Type>(state, -1);
             lua_pop(state, 1);
             return value;
