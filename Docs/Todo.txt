@@ -1,0 +1,65 @@
+
+todo:
+- DOCS SYSTEM - DONE!
+- DOCS LOGGER - DONE!
+- DOCS COMMON - DONE!
+- DOCS GRAPHICS - DONE!
+- DOCS SCRIPTING
+- DOCS GAME
+
+- Log(), LogFatal(), LogError(), LogWarning(), LogInfo(), LogDebug() <- debug still missing
+- allow above to be switched on/off or assigned to other loggers. logDefault = logger(); disable debug log in release
+- remove "a" and "an" from log, write IDs for indentifications for each thing.
+
+- integrate imgui
+- print lua stack in imgui
+- check what allocations the application makes and try to recude them to zero using custom allocators
+- create a callback error function for OpenGL errors, to avoid polluting with Asserts()
+- we are formatting log messages seperately for each logger output
+- seperate sciprtingSystem and scriptingBindings in initialize order
+- documentation for Lua bindings, with examples, for all functions
+- bindings are not available in the main entry file, before we initialize systems. no an issue when we move logic to lua, post initialization? lets load a config at the start using LoadScript, but put the results in a table. then query table values using one Scripting::Funcxtion method e.g. windowInfo.width = Scripting::GetVariable<int>(scriptingState, "Config.Window.Width");
+- script bindings needs more error checking to make sure we are not overwritting entries for metatables that are already there.
+- SCOPE_GUARD_IF(!m_initialized, m_garbageCollectionTime = 0.002f) <- this is bad, we are assuming the default value again here. we should fail permanently and not recover the instance? sounds even worse. whats the ideal solution?
+- universal way to retrive components with Game.ComponentSystem.GetComponent(Game.Components.Transform, entity)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+- auto globalLua = Lua::GlobalTable(); globalLua["Hello"]["world!"] = 42;
+- animate the character with simple sprites. character animations, sprite sheets,
+- multiple render components in one character? NO, multiple RenderElements in one RenderComponent. It should be possible to reference each by name/type.
+- draw a shadow below the character (changes size depending on height)
+- audio system, implement a sound system and library
+- moveable camera thta follows the player (with delay spring)
+- allow the character to jump (will need a new animation)
+- make moving, jumping and landing play different sounds (use midi generator)
+- create a facebook post :)
+- MILESTONE: SCRIPTED CHARACTER
+- identity system
+- use std::chrone time units and values where possible, replace the glfw timer too?
+- proper time loop (with alpha-interploated rendering?)
+- text rendering
+- create a seperate class for dequeue structure used in EntitySystem, that reallocated memory on resize like a vector? would simply the code there a lot
+- revert to // comments instead of /* */. Second cannot embed itself, first works unviersally
+- implement config files from lua. or allow lua to overwrite them in main()?
+- render system should accedpt a transform for the camera.
+- allow custom shaders to be used with BasicRenderer::DrawSprites (optional setting in init info)
+- hierarchy of entities, parent child of, chaining - HierarchySystem? CalculateMatrix -> parent->CalculateMatrix recursion, with lazy update of the matrix
+- passing only a part of a texture withing a single argument, store rectangle in texture sharedptr (sharedptr withing Texture class?, yo dawg, i heard you like sharedptr in your sharedptr) Render::SetTexture
+- lua sandboxed calls and security considerations
+- scripting stack guard object
+- once animated and sounding character is done: review, refactor and document all code
+- Resource pool always returns const shared_ptr references. What if we desire storing mutable resources?
+- fullscreen mode
+
+features:
+- Add a way to register a shared_ptr resource by string. ResourcePool->Register(shared_ptr, name);
+- Add a way to release unused resources of only one type.
+- filtering repeating errors on console (x2300)
+- Lua security considerations
+
+dangers:
+- make sure all OpenGL states are reset to default
+- need more asserts and error checking
+
+art style:
+- moving legs/torso/head with rotating weapon on seperate sprite on attack (like Death Road to Canada)
+- create a pixelating shader for both sprites above, so they look as one
